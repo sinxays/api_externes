@@ -1,0 +1,125 @@
+{
+  "partner-vehicle-identifier": "reference",
+  "is-used": true,
+  "is-executive": false, // à clarifier avec starterre
+  "seat-capacity": "seats",
+  "door-number": "doors",
+  "power-kw": 0, // puissance en kilowatt je ne l'ai pas sur kepler donc je mets à 0
+  "power-horsepower": "horsePower",
+  "mileage": "distanceTraveled",
+  "origin": "STANDARD", // l'énum est  [LEASING, TAXI, SCHOOL_VEHICLE, STANDARD] ==> faire foncrion
+  "co2-emission": "extraUrbanKmConsumption",
+  "co2-emission-type": "WLTP", // toujours WLTP
+  "transmission": "FWD",  // AWD: All Wheel Drive FWD: Front Wheel Drive RWD: Rear Wheel Drive, sur kepler c'est un input text et il n'ya que Traction avant donc FWD, dois je laisser par défaut FWD ? 
+  "origin-country": {
+    "code": "country"
+  },
+  "national-type": "vehicleType->name",
+  "body-type": "CITY_CAR", // pour le moment on laisse city_car, sur kepler c'est bodywork -> name mais l'enum est trop grande, à voir plus tard comment faire la fonction pour ne sortir que [ CITY_CAR, SUV, HATCHBACK, CROSSOVER, CONVERTIBLE, SEDAN, SPORTS_CAR, COUPE, ROADSTER, MINIVAN, STATION_WAGON, PICKUP_TRUCK, COMMERCIAL_VEHICLE ]
+  "fuel": "energy->name", // l'enum est [ NA, GO, ES, GP, EG, GN, FE, EL, EE, EH, GL, GH, H2 ] ==> faire fonction
+  "gearbox": "gearbox->name", // l'énum est [ MANUAL, AUTOMATIC, SEMI_AUTOMATIC, ROBOTIC ] ==> faire foncrion
+  "gear-number": null,
+  "brand": {
+    "name": "brand->name"
+  },
+  "prices": [
+    {
+      "price-without-taxes": "pricePublicWithoutTax",
+      "constructor-price-without-taxes": 0, // pas d'infos sur KEPLER
+      "estimated-costs-without-taxes": "estimateCost",
+      "ecological-malus": null, // pas d'infos sur KEPLER
+      "price-type": "prix_marchand_starterre", // à voir avec guillaume
+      "currency": "EUR", // toujours EUR
+      "sold-as-is": false,
+      "sold-under-delegation": false,
+      "sold-with-taxes": true
+    }
+  ],
+  "manufacturer-price-including-options-without-tax": 0, // pas d'infos sur KEPLER
+  "identification-number": "vin",
+  "release-year": "year",
+  "release-month": null,
+  "power-tax": "taxHorsepower",
+  "date-first-registration": "dateOfDistribution",
+  "registration-number": null,
+  "main-color": "color->name", // l'énum est [ BLACK, SILVER, GRAY, WHITE, BLUE, RED, YELLOW, BROWN, GREEN, ORANGE, PINK, PURPLE, BEIGE ] ==> fonction
+  "upholstery": "seatMaterial->name", // l'énum est [ LEATHER, CLOTH, MIXED ]
+  "natcode": true,
+  "deleted-at": true,
+  "model": "model->name",
+  "configuration": "version->name",
+  "internal-commercial-color": null,
+  "external-commercial-color": null,
+  "details": [
+    {
+      "language": {
+        "code": "fr"
+      },
+      "caracteristics": [
+        // la je dois boucler sur l'array (height,lenght,width,totalweight)
+        {
+          "value": "1603",
+          "category": "GENERALITY",
+          "type": "LENGTH",
+          "id-ref-caracteristic": "37200818"
+        }
+      ],
+      "equipments": [
+
+        {
+          "label": "Heated seats",
+          "price": 550,
+          "is-standard": false,
+          "is-missing": false,
+          "category": "COMFORT",
+          "id-eurotax": "Z1A",
+          "id-ref-equipment": "37200818"
+        }
+      ]
+    }
+  ],
+  "photos": [
+    {
+      "url": "https://stx.starterre.net/vehicules/xlarge/renault-clio-v-54ca1f105800db40b739cbe43c7fe473.jpg",
+      "camera-work": "OTHER", // on met OTHER dans tous les cas on se casse pas la tête car cela indique d'ou la photo a été prise
+      "order": 1,
+      "is-main": true
+    }
+  ],
+  "documents": [
+    {
+      // on a pas cette sortie depuis Kepler donc en url on peut mettre une url au hasard puis laisser expertise car c'est un champ obligatoire
+      "url": "https://www.your-cdn.com/vehicules/1/documents/1",
+      "type": "EXPERTISE"
+    }
+  ],
+  "avaibility": {
+    "avaibility": "STOCK",
+    "avaibility-date": null,
+    "shipping-days": null,
+    "retention-days": null,
+    "is-ready-to-go": true
+  },
+  "warranty": {
+    "type": "MANUFACTURER",
+    "start-date": "dateOfDistribution",
+    "duration": "warrantyDuration",
+    "mileage": "warrantyKilometric"
+  },
+  "address": [
+    //faire une fonction pour placer les valeurs dans les champs depuis les libellés CVO
+    {
+      "type": "STORAGE",
+      "street-number": "95",
+      "street-extension": "bis",
+      "street-type": "place",
+      "street-name": "place",
+      "additional-information": "Transport Abc",
+      "postcode": "69190",
+      "city": "Lyon",
+      "country": {
+        "code": "HR"
+      }
+    }
+  ]
+}
