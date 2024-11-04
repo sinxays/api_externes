@@ -3,9 +3,6 @@
 include 'fonctions_starterre.php';
 
 
-// Définir l'URL de l'API pour l'authentification
-$url = "https://cameleon.starterre.dev/api/vehicles";
-
 // Préparer les données du body (le payload JSON)
 $data_vh = [
     "partner-vehicle-identifier" => "95otsatw",
@@ -130,12 +127,12 @@ $data_vh = [
 // Convertir le tableau en format JSON
 $json_data_vh = json_encode($data_vh);
 
-// print_r($json_data_vh);
-
-// die();
 
 // Initialiser une session cURL
 $ch = curl_init();
+
+// Définir l'URL de l'API pour l'authentification
+$url = "https://cameleon.starterre.dev/api/vehicles";
 
 // Configuration de la requête cURL
 curl_setopt($ch, CURLOPT_URL, $url);
@@ -144,7 +141,7 @@ curl_setopt($ch, CURLOPT_POST, true);            // Indiquer qu'il s'agit d'une 
 
 curl_setopt($ch, CURLOPT_HTTPHEADER, [
     'Content-Type: application/json',
-    'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3MzAxMDc0NjYsImV4cCI6MTczMDExMTA2Niwicm9sZXMiOlsiUk9MRV9QT1NUX1ZFSElDTEUiLCJST0xFX0RFTEVURV9WRUhJQ0xFIiwiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoiZ3VpbGxhdW1lLmhvbm5lcnRAbWFzc291dHJlLWxvY2F0aW9ucy5jb20ifQ.BRrNE1cUWy-MIvtBxYzA_gorhmifLr0O-ZwoGOmHUVqTL3-LyThxm-RNXJ91kTiADK0YFHXvXz_vzTl4DlZo-VhMzQUoxciabyLnfQjXt9IrxdrieKdWp6BhyBP0m4x5YKxKoQHg102lF46yqGo1bTE7VUDmMxpPJCaYyjL03A40c920bdiukJ4Je3GdeogfwKK58DMPt4VKPx-cfkozEL4vy8UUvXmGJyRxoRq_OxSiubE1bESsvx5T3hDMWq4M7gik-DfzOcAnuz5sglnxMH4JYCkvP15YVHyXsgPWriBvSPWBaoqRFl4O9UvF1I3snicF5uDiNtKfNVmPTiBroA' // Remplace par ton token d'authentification
+    'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3MzA3MzI4MTcsImV4cCI6MTczMDczNjQxNywicm9sZXMiOlsiUk9MRV9QT1NUX1ZFSElDTEUiLCJST0xFX0RFTEVURV9WRUhJQ0xFIiwiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoiZ3VpbGxhdW1lLmhvbm5lcnRAbWFzc291dHJlLWxvY2F0aW9ucy5jb20ifQ.hrLgMvXBuvZIL1uE64MAHTkBFn8ihe3dkeYEBGHVr42pW406MA6-wHRzb2StsIeGvXd2gBhcPtdGU9Owv0iE9L6cGUW1TxgvqjQjOgU4HtAr3y4cjhlAn9O23mRqrcVfLdXkFDiWsp5FYsjy38TbkV7-4-R3f_pXgnCaCBaW1b7KIxaFNIYd2xQMnmrsDlWMqCFu9DnvMA03QwrmuNIi5z5Am4O_nEDnllCDwOcH76wX_uOrHpydIg29inlhQbQM01uHLtNPNBjJ_RjITkcYte3MUTJFZ2R9sRwxKMxmYg10Ah_fqobzmNfie5G21D1i9FdbpOI3_62ys4nQJcr4FQ' // Remplace par ton token d'authentification
 ]);
 curl_setopt($ch, CURLOPT_POSTFIELDS, $json_data_vh);
 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Désactiver la vérification SSL (à utiliser en développement seulement)
