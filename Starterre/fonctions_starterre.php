@@ -388,12 +388,12 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
 
     $adresse = get_adress_vh_for_post_starterre($vh->fleet);
 
-    $array_for_csv["adress"][0]["type"] = "STORAGE";
-    $array_for_csv["adress"][0]["street-number"] = $adresse["num_rue"];
-    $array_for_csv["adress"][0]["street-name"] = $adresse["rue"];
-    $array_for_csv["adress"][0]["postcode"] = $adresse["cp"];
-    $array_for_csv["adress"][0]["city"] = $adresse["ville"];
-    $array_for_csv["adress"][0]["country"]["code"] = $adresse["pays"];
+    $array_for_csv["address"][0]["type"] = "STORAGE";
+    $array_for_csv["address"][0]["street-number"] = $adresse["num_rue"];
+    $array_for_csv["address"][0]["street-name"] = $adresse["rue"];
+    $array_for_csv["address"][0]["postcode"] = $adresse["cp"];
+    $array_for_csv["address"][0]["city"] = $adresse["ville"];
+    $array_for_csv["address"][0]["country"]["code"] = $adresse["pays"];
 
     $json_data_vh = json_encode($array_for_csv);
 
@@ -407,7 +407,7 @@ function post_vh_to_starterre($donnees_vh_to_post)
 
     // Définir l'URL de l'API pour POST VEHICULES
     $url = "https://cameleon.starterre.dev/api/vehicles";
-    $token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3MzA3MzcyMjEsImV4cCI6MTczMDc0MDgyMSwicm9sZXMiOlsiUk9MRV9QT1NUX1ZFSElDTEUiLCJST0xFX0RFTEVURV9WRUhJQ0xFIiwiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoiZ3VpbGxhdW1lLmhvbm5lcnRAbWFzc291dHJlLWxvY2F0aW9ucy5jb20ifQ.H8PHr4QHQ1pLiO0Z9bE_GcIm5NLYLYcSxFg_mOAEI3LH3-cUVhBcYuWFt46VSsGJ1eSDRp85qemfNn0kgzEuhtJA_LTPRdjjYb0q7YxJaXIpXKDN-GTe9lFqp4MHTtHw0bw0lJWn7zFpdWsaPkTpq4Ae87J95zqhqTWhs74RV6fh7_i5jh20RNAhktn-KQcg4kwgEByB4Va-mgF8I7MvawO6OD0oltgpUcRblO41V7VNfazNwE9NEYIikncSZ--7PQhlzE_DEpIrdb1MXoWR6z56vq3KFc6E1_GaT9CavtRg1SCZAYVyz2zb6P71avOi8ZRcjrhlkcyHWen8_xM0Pg";
+    $token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3MzA5MDAxNjgsImV4cCI6MTczMDkwMzc2OCwicm9sZXMiOlsiUk9MRV9QT1NUX1ZFSElDTEUiLCJST0xFX0RFTEVURV9WRUhJQ0xFIiwiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoiZ3VpbGxhdW1lLmhvbm5lcnRAbWFzc291dHJlLWxvY2F0aW9ucy5jb20ifQ.YDOKh_T1gPD8D7fPJqPwe9nX6W3m2hSMcfaSSfakGvU7LM45bTTSNhPNfbGh3Q4EHztjxf7YYP5FxozzwfuLoN7YuE3ttNBIuQq7pwfT34l9k_15bX5z6n6lcp6uCDpp0BpOzH7iksIotQE-EHqlrGF3Etvy_RhO4XQw5dW9lLM8gH9YI3etiJSCy5zDkprJIc9wmUhfJq_uNzOHKWUXJJUgwwPXCxgZPYiFZfc3pd4TkEKwNbVX36IddBBNCMRadyoKmGIryiQoEV0krGX4bl3SwNlm8CQxm2MJ1o9UzALux4qYwPSdHKBm_IWGpOUaitZksbkVVUq4C34N3HuXeQ";
 
     // Configuration de la requête cURL
     curl_setopt($ch, CURLOPT_URL, $url);

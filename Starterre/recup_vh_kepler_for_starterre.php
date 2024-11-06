@@ -26,7 +26,7 @@ foreach ($parc_array as $parc) {
         // $recup_kepler_for_starterre = recup_vhs_kepler_for_starterre($parc, $page);
 
         /***  Pour test sur un seul véhicule ***/
-        $reference = '8v3xzk84';
+        $reference = 'clq6nxgv';
         $recup_kepler_for_starterre = recup_vh_unique_kepler_for_starterre($reference);
 
         var_dump($recup_kepler_for_starterre);
