@@ -407,7 +407,7 @@ function post_vh_to_starterre($donnees_vh_to_post)
 
     // Définir l'URL de l'API pour POST VEHICULES
     $url = "https://cameleon.starterre.dev/api/vehicles";
-    $token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3MzA5MDAxNjgsImV4cCI6MTczMDkwMzc2OCwicm9sZXMiOlsiUk9MRV9QT1NUX1ZFSElDTEUiLCJST0xFX0RFTEVURV9WRUhJQ0xFIiwiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoiZ3VpbGxhdW1lLmhvbm5lcnRAbWFzc291dHJlLWxvY2F0aW9ucy5jb20ifQ.YDOKh_T1gPD8D7fPJqPwe9nX6W3m2hSMcfaSSfakGvU7LM45bTTSNhPNfbGh3Q4EHztjxf7YYP5FxozzwfuLoN7YuE3ttNBIuQq7pwfT34l9k_15bX5z6n6lcp6uCDpp0BpOzH7iksIotQE-EHqlrGF3Etvy_RhO4XQw5dW9lLM8gH9YI3etiJSCy5zDkprJIc9wmUhfJq_uNzOHKWUXJJUgwwPXCxgZPYiFZfc3pd4TkEKwNbVX36IddBBNCMRadyoKmGIryiQoEV0krGX4bl3SwNlm8CQxm2MJ1o9UzALux4qYwPSdHKBm_IWGpOUaitZksbkVVUq4C34N3HuXeQ";
+    $token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3MzA5NzgxMjIsImV4cCI6MTczMDk4MTcyMiwicm9sZXMiOlsiUk9MRV9QT1NUX1ZFSElDTEUiLCJST0xFX0RFTEVURV9WRUhJQ0xFIiwiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoiZ3VpbGxhdW1lLmhvbm5lcnRAbWFzc291dHJlLWxvY2F0aW9ucy5jb20ifQ.TzqlvS7CUU8-ROOjkIkUXu-lT4LsJfCcsnCmaofi1EKHeCfFM0k4r51sKt1ogY8j4nHPEx91ydjYqUDOdeNlDEvQJ-MSAYQhdvHqQx7Qfuz_dGIAs1rHx2H6EoXZF92d3ctVbvglrcdNmLIRZuxCa3zr4j7znsa7YsrJI0v3vD1gxDKolh9SRjLkaEg7qUyF5GTueptsw4yXWyHlAEPFBx45TldnhzWheStIP4aPUOu4QBaem822-KrnNYdRYJSVeg-1vCaKoRR2HpaICc4Yxn8hLgx2zqkdRDJny8wCE-M6IORMXqwfiKWmGN9Ini3KHlJrvjcbdWBG2JwIwv585w";
 
     // Configuration de la requête cURL
     curl_setopt($ch, CURLOPT_URL, $url);
@@ -442,12 +442,16 @@ function post_vh_to_starterre($donnees_vh_to_post)
             echo "le véhicule crée porte l'identifiant partner : " . $identifier_vh;
             sautdeligne();
             echo "le véhicule crée porte l'id starterre : " . $id_vh_starterre;
-            sautdeligne();
             separateur();
         } else {
+            sautdeligne();
             echo "Erreur : le véhicule n'a pas été crée.";
+            var_dump($donnees_vh_to_post);
             sautdeligne();
             print_r($response_data);  // Pour déboguer la réponse
+            separateur();
+
+            die();
         }
     }
 
@@ -581,6 +585,7 @@ function get_adress_vh_for_post_starterre($parc)
 
 function separateur()
 {
+    sautdeligne();
     echo "________________________________________________________________________________________________________";
     sautdeligne();
 }
