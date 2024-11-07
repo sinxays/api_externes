@@ -438,11 +438,15 @@ function post_vh_to_starterre($donnees_vh_to_post)
         if (isset($response_data['partner-vehicle-identifier'])) {
             $identifier_vh = $response_data['partner-vehicle-identifier'];
             $id_vh_starterre = $response_data['id'];
+            sautdeligne();
             echo "le véhicule crée porte l'identifiant partner : " . $identifier_vh;
             sautdeligne();
             echo "le véhicule crée porte l'id starterre : " . $id_vh_starterre;
+            sautdeligne();
+            separateur();
         } else {
             echo "Erreur : le véhicule n'a pas été crée.";
+            sautdeligne();
             print_r($response_data);  // Pour déboguer la réponse
         }
     }
@@ -575,3 +579,8 @@ function get_adress_vh_for_post_starterre($parc)
 
 }
 
+function separateur()
+{
+    echo "________________________________________________________________________________________________________";
+    sautdeligne();
+}
