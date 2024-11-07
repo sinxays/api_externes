@@ -10,8 +10,8 @@ ini_set('xdebug.var_display_max_data', '-1');
 //EXPORT STARTERRE
 
 //creer un array avec tous les parc pour faire la boucle par parc
-// $parc_array = array("CVO BOURGES", "CVO CLERMONT FERRAND", "CVO MASSY", "CVO ORLEANS sud", "CVO TROYES");
-$parc_array = array("CVO ORLEANS sud");
+$parc_array = array("CVO BOURGES", "CVO CLERMONT FERRAND", "CVO MASSY", "CVO ORLEANS sud", "CVO TROYES");
+// $parc_array = array("CVO ORLEANS sud");
 
 $array_for_csv = array();
 
@@ -26,9 +26,8 @@ foreach ($parc_array as $parc) {
         $recup_kepler_for_starterre = recup_vhs_kepler_for_starterre($parc, $page);
 
         /***  Pour test sur un seul véhicule ***/
-        // $reference = 'clq6nxgv';
+        // $reference = '7yqji1';
         // $recup_kepler_for_starterre = recup_vh_unique_kepler_for_starterre($reference);
-
         // var_dump($recup_kepler_for_starterre);
         // die();
 
@@ -52,15 +51,3 @@ foreach ($parc_array as $parc) {
 sautdeligne();
 
 echo "nombre de vh crées : $nbr_vh_cree_starterre";
-
-
-
-
-
-
-
-
-
-
-
-

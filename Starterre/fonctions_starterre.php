@@ -332,7 +332,17 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
     $array_for_csv["date-first-registration"] = isset($vh->dateOfDistribution) ? $vh->dateOfDistribution : "0000-00-00";
     $array_for_csv["model"] = isset($vh->model->name) ? $vh->model->name : "";
     $array_for_csv["configuration"] = isset($vh->version->name) ? $vh->version->name : "";
-    $array_for_csv["external-commercial-color"] = isset($vh->color->name) ? $vh->color->name : "";
+
+    //la couleur ne doit pas dépasser 50 caracteres
+    if (isset($vh->color->name)) {
+        $color_name = $vh->color->name;
+        if (strlen($color_name) > 50) {
+            $array_for_csv["external-commercial-color"] = "N/C";
+        } else {
+            $array_for_csv["external-commercial-color"] = $color_name;
+        }
+    }
+
 
 
 
@@ -346,6 +356,14 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
         $array_for_csv["details"][0]["caracteristics"][$i]["category"] = "DIMENSIONS";
         $array_for_csv["details"][0]["caracteristics"][$i]["type"] = $detail;
         $i++;
+    }
+
+    //si véhicule électrique , kepler ne sort pas la distance maximale possible à 100% , donc je mets 0
+    if ($array_for_csv["fuel"] == 'EL') {
+        $array_for_csv["details"][0]["language"]["code"] = "fr";
+        $array_for_csv["details"][0]["caracteristics"][$i]["value"] = "0";
+        $array_for_csv["details"][0]["caracteristics"][$i]["category"] = "PERFORMANCE_CONSUMPTION";
+        $array_for_csv["details"][0]["caracteristics"][$i]["type"] = "BATTERY_RANGE_WLTP";
     }
 
     // equipements du véhicule de série
@@ -407,7 +425,7 @@ function post_vh_to_starterre($donnees_vh_to_post)
 
     // Définir l'URL de l'API pour POST VEHICULES
     $url = "https://cameleon.starterre.dev/api/vehicles";
-    $token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3MzA5NzgxMjIsImV4cCI6MTczMDk4MTcyMiwicm9sZXMiOlsiUk9MRV9QT1NUX1ZFSElDTEUiLCJST0xFX0RFTEVURV9WRUhJQ0xFIiwiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoiZ3VpbGxhdW1lLmhvbm5lcnRAbWFzc291dHJlLWxvY2F0aW9ucy5jb20ifQ.TzqlvS7CUU8-ROOjkIkUXu-lT4LsJfCcsnCmaofi1EKHeCfFM0k4r51sKt1ogY8j4nHPEx91ydjYqUDOdeNlDEvQJ-MSAYQhdvHqQx7Qfuz_dGIAs1rHx2H6EoXZF92d3ctVbvglrcdNmLIRZuxCa3zr4j7znsa7YsrJI0v3vD1gxDKolh9SRjLkaEg7qUyF5GTueptsw4yXWyHlAEPFBx45TldnhzWheStIP4aPUOu4QBaem822-KrnNYdRYJSVeg-1vCaKoRR2HpaICc4Yxn8hLgx2zqkdRDJny8wCE-M6IORMXqwfiKWmGN9Ini3KHlJrvjcbdWBG2JwIwv585w";
+    $token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3MzA5OTkzNzgsImV4cCI6MTczMTAwMjk3OCwicm9sZXMiOlsiUk9MRV9QT1NUX1ZFSElDTEUiLCJST0xFX0RFTEVURV9WRUhJQ0xFIiwiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoiZ3VpbGxhdW1lLmhvbm5lcnRAbWFzc291dHJlLWxvY2F0aW9ucy5jb20ifQ.WPqi1nKlWAikhqJr1eWfXiMc_OjtKiqBzQ8xp_KPytUeQGuBrRraJPispB57zfM9tfunL7emDN-NL9YBlTeQYIuxbKt9BMF_Lm7TXf2cJyat48x4rb7_gXg-yTXQR3PZYZTsHgmaS9VLmsZQjs_sMkd1fyhrTA-sX3o1qoMjiQBBsZxbE5C2PJ3Z8ny-rjmHEEg1kMFYy5nklO_ueB6kcvniIS2cFjKsDSteHY--_aUzpfc1jdMZcSg9mDZEzUTLW3nNVAaZt00qu1R8_PXu99HG43EznJKzjtCXEChXGLjE9A-zjMUw59sXlWnly9d_rP4ULgcQ54WzADm49sW-Nw";
 
     // Configuration de la requête cURL
     curl_setopt($ch, CURLOPT_URL, $url);
@@ -450,11 +468,8 @@ function post_vh_to_starterre($donnees_vh_to_post)
             sautdeligne();
             print_r($response_data);  // Pour déboguer la réponse
             separateur();
-
-            die();
         }
     }
-
 }
 
 
@@ -575,12 +590,10 @@ function get_adress_vh_for_post_starterre($parc)
             $adresse["cp"] = "00000";
             $adresse["ville"] = "Ville";
             break;
-
     }
 
     $adresse["pays"] = "FR";
     return $adresse;
-
 }
 
 function separateur()
