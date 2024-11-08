@@ -125,6 +125,61 @@ function get_token()
     return $data['value'];
 }
 
+function get_token_starterre()
+{
+    // Définir l'URL de l'API pour l'authentification
+    $url = "https://cameleon.starterre.dev/auth";
+
+    // Préparer les données du body (le payload JSON)
+    $data = array(
+        "email" => "guillaume.honnert@massoutre-locations.com",
+        "password" => "KXpOmwlRolW8%mAl"
+    );
+
+    // Convertir le tableau en format JSON
+    $json_data = json_encode($data);
+
+    // Initialiser une session cURL
+    $ch = curl_init();
+
+    // Configuration de la requête cURL
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);  // Retourner la réponse sous forme de chaîne
+    curl_setopt($ch, CURLOPT_POST, true);            // Indiquer qu'il s'agit d'une requête POST
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json')); // indique que c'est du JSON
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $json_data); // Envoyer les données en JSON
+
+
+    // Désactiver la vérification SSL (à utiliser en développement seulement)
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+
+    // Exécuter la requête
+    $response = curl_exec($ch);
+
+    // Fermer la session cURL
+    curl_close($ch);
+
+    // Traiter la réponse de l'API
+    if ($response === false) {
+        echo "Erreur dans la requête cURL.";
+        die();
+    } else {
+        // Convertir la réponse JSON en tableau PHP
+        $response_data = json_decode($response, true);
+
+        // Vérifier si le token est bien présent dans la réponse
+        if (isset($response_data['token'])) {
+            $token = $response_data['token'];
+            echo "Token JWT obtenu : " . $token;
+            return $token;
+        } else {
+            echo "Erreur : le token n'a pas été obtenu.";
+            print_r($response_data);  // Pour déboguer la réponse
+            die();
+        }
+    }
+}
+
 
 
 
@@ -132,8 +187,6 @@ function get_token()
 
 function recup_vhs_kepler_for_starterre($parc, $page)
 {
-
-
     // le token
     $token = get_token();
 
@@ -313,10 +366,10 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
     $array_for_csv["fuel"] = isset($vh->energy->name) ? get_energy_vh_for_starterre($vh->energy->name) : "";
     $array_for_csv["gearbox"] = isset($vh->gearbox->name) ? get_gearbox_vh_for_starterre($vh->gearbox->name) : "";
     $array_for_csv["gear-number"] = isset($vh->reportNumber->name) ? $vh->reportNumber->name : 0;
-    $array_for_csv["brand"]["name"] = isset($vh->brand->name) ? strtolower($vh->brand->name) : "";
+    $array_for_csv["brand"]["name"] = isset($vh->brand->name) ? trim(strtolower($vh->brand->name)) : "";
 
 
-    $array_for_csv["prices"][0]["price-without-taxes"] = isset($vh->pricePublicWithoutTax) ? floatval($vh->pricePublicWithoutTax) : 0;
+    $array_for_csv["prices"][0]["price-without-taxes"] = isset($vh->priceSellerWithoutTax) ? floatval($vh->priceSellerWithoutTax) : 0;
     $array_for_csv["prices"][0]["constructor-price-without-taxes"] = 0; // pas l'info sur kepler
     $array_for_csv["prices"][0]["estimated-costs-without-taxes"] = isset($vh->estimateCost) ? floatval($vh->estimateCost) : 0;
     $array_for_csv["prices"][0]["price-type"] = "prix_marchand_starterre";
@@ -425,7 +478,11 @@ function post_vh_to_starterre($donnees_vh_to_post)
 
     // Définir l'URL de l'API pour POST VEHICULES
     $url = "https://cameleon.starterre.dev/api/vehicles";
-    $token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3MzA5OTkzNzgsImV4cCI6MTczMTAwMjk3OCwicm9sZXMiOlsiUk9MRV9QT1NUX1ZFSElDTEUiLCJST0xFX0RFTEVURV9WRUhJQ0xFIiwiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoiZ3VpbGxhdW1lLmhvbm5lcnRAbWFzc291dHJlLWxvY2F0aW9ucy5jb20ifQ.WPqi1nKlWAikhqJr1eWfXiMc_OjtKiqBzQ8xp_KPytUeQGuBrRraJPispB57zfM9tfunL7emDN-NL9YBlTeQYIuxbKt9BMF_Lm7TXf2cJyat48x4rb7_gXg-yTXQR3PZYZTsHgmaS9VLmsZQjs_sMkd1fyhrTA-sX3o1qoMjiQBBsZxbE5C2PJ3Z8ny-rjmHEEg1kMFYy5nklO_ueB6kcvniIS2cFjKsDSteHY--_aUzpfc1jdMZcSg9mDZEzUTLW3nNVAaZt00qu1R8_PXu99HG43EznJKzjtCXEChXGLjE9A-zjMUw59sXlWnly9d_rP4ULgcQ54WzADm49sW-Nw";
+
+    $token = use_token_from_base();
+    // var_dump($token);
+
+    // $token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3MzEwODA3NDMsImV4cCI6MTczMTA4NDM0Mywicm9sZXMiOlsiUk9MRV9QT1NUX1ZFSElDTEUiLCJST0xFX0RFTEVURV9WRUhJQ0xFIiwiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoiZ3VpbGxhdW1lLmhvbm5lcnRAbWFzc291dHJlLWxvY2F0aW9ucy5jb20ifQ.PMzcKGxK-Uh1dMZ8cteBJYHVXMAhSMitCMHNIRZoekBjRfVSq1Yck1Qj7RPTJF5tCRdjhjgOJ4Z9lipyE8iDkk2KepO15MR2BdpmPqa9eTtEIPuNTgAz2JGxnfrwmfdZTwlle0-VVK6WwCso_20gGCVd35pxVKWoqnalx2G8cV88kuSYjq_awybc8jSO3vJU-KyysXpKKWaQ8nIkurGBfUf71R-gFZFTxhkpROr8h_76XsrijWcS0LuO4rSyuvtwluAAy3JMBvL8bEIiH-x9UCmxE4V5S0d-SIN9LIgqmNs6XjbSJmmweE0tsKHIigiWQQSttO_SyLeGv-G8bTUs5Q";
 
     // Configuration de la requête cURL
     curl_setopt($ch, CURLOPT_URL, $url);
@@ -461,13 +518,14 @@ function post_vh_to_starterre($donnees_vh_to_post)
             sautdeligne();
             echo "le véhicule crée porte l'id starterre : " . $id_vh_starterre;
             separateur();
+            return 1;
         } else {
-            sautdeligne();
             echo "Erreur : le véhicule n'a pas été crée.";
             var_dump($donnees_vh_to_post);
             sautdeligne();
             print_r($response_data);  // Pour déboguer la réponse
             separateur();
+            return 0;
         }
     }
 }
@@ -601,4 +659,51 @@ function separateur()
     sautdeligne();
     echo "________________________________________________________________________________________________________";
     sautdeligne();
+}
+
+
+function use_token_from_base()
+{
+
+    $pdo = Connection::getPDO_starterre();
+
+    $request = $pdo->query("SELECT token,date_creation FROM token WHERE ID = 1");
+    $token_starterre = $request->fetch(PDO::FETCH_ASSOC);
+
+    //si on trouve un token 
+    if ($token_starterre) {
+        //on voit la durée de création du token 
+        $time_token_created = new DateTime($token_starterre['date_creation'], new DateTimeZone("Europe/Paris"));
+        $current_time = new DateTime("now", new DateTimeZone("Europe/Paris"));
+
+        $interval_time = $time_token_created->diff($current_time);
+
+        $minute_passed = $interval_time->i;
+
+        //plus de 55 minutes alors on recrée un token dans la base
+        if ($minute_passed >= 55) {
+
+            $newTokenStarterre = get_token_starterre();
+
+            // update du token dans la base
+            $data = [
+                "token" => $newTokenStarterre
+            ];
+            $sql = "UPDATE token SET token = :token WHERE ID = 1";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute($data);
+
+            return $newTokenStarterre;
+
+        }
+
+
+        //si moins de 55 minutes
+        else {
+            $token = $token_starterre['token'];
+        }
+    }
+
+    return $token;
+
 }

@@ -5,6 +5,8 @@ include 'fonctions_starterre.php';
 ini_set('xdebug.var_display_max_depth', '-1');
 ini_set('xdebug.var_display_max_children', '-1');
 ini_set('xdebug.var_display_max_data', '-1');
+set_time_limit(300); // 300 secondes = 5 minutes, adapte selon tes besoins
+
 
 
 //EXPORT STARTERRE
@@ -26,7 +28,7 @@ foreach ($parc_array as $parc) {
         $recup_kepler_for_starterre = recup_vhs_kepler_for_starterre($parc, $page);
 
         /***  Pour test sur un seul véhicule ***/
-        // $reference = '7yqji1';
+        // $reference = 'j9voyfk';
         // $recup_kepler_for_starterre = recup_vh_unique_kepler_for_starterre($reference);
         // var_dump($recup_kepler_for_starterre);
         // die();
@@ -38,8 +40,8 @@ foreach ($parc_array as $parc) {
                 $retour_json = mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh);
 
                 //on le post vers l'api STARTERRE
-                post_vh_to_starterre($retour_json);
-                $nbr_vh_cree_starterre++;
+                $retour = post_vh_to_starterre($retour_json);
+                $nbr_vh_cree_starterre += $retour;
             }
             $page++;
         } else {
