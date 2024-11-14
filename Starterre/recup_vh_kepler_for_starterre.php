@@ -25,23 +25,29 @@ foreach ($parc_array as $parc) {
 
     // si plusieurs page, tant qu'on trouve des données on boucle
     while ($datas_find == TRUE) {
-        $recup_kepler_for_starterre = recup_vhs_kepler_for_starterre($parc, $page);
+        // $recup_kepler_for_starterre = recup_vhs_kepler_for_starterre($parc, $page);
+        $recup_kepler_for_starterre = recup_vhs_arrivage_kepler_for_starterre($parc, $page);
 
         /***  Pour test sur un seul véhicule ***/
-        // $reference = 'j9voyfk';
-        // $recup_kepler_for_starterre = recup_vh_unique_kepler_for_starterre($reference);
-        // var_dump($recup_kepler_for_starterre);
-        // die();
+        $reference = '5nclw5pfj3';
+        $recup_kepler_for_starterre = recup_vh_unique_kepler_for_starterre($reference);
+        var_dump($recup_kepler_for_starterre);
+        die();
 
         // si on trouve des données 
         if (!empty($recup_kepler_for_starterre)) {
             foreach ($recup_kepler_for_starterre as $nb_index_vh => $vh) {
                 //on met en forme les données
-                $retour_json = mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh);
+                // $retour_json = mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh);
+
+                echo $vh->reference;
+                echo " || " . $vh->vin;
+
+                echo "<br/>";
 
                 //on le post vers l'api STARTERRE
-                $retour = post_vh_to_starterre($retour_json);
-                $nbr_vh_cree_starterre += $retour;
+                // $retour = post_vh_to_starterre($retour_json);
+                // $nbr_vh_cree_starterre += $retour;
             }
             $page++;
         } else {
