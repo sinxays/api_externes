@@ -43,6 +43,9 @@
                 data-bs-target="#modal_api_starterre_get_vh"
                 style="max-width:200px;min-width: 200px;color:antiquewhite;font-weight: bold;">Test GET VH</button>
 
+            <button type="button" class="btn btn-success" id="btn_api_starterre_update_vhs_vendus"
+                style="max-width:200px;min-width: 200px;color:antiquewhite;font-weight: bold;">UPDATE vhs vendus</button>
+
         </div>
     </div>
 

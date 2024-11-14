@@ -17,6 +17,9 @@ $(document).ready(function () {
     $("#btn_api_starterre_post_vh").click(function (e) {
         window.location.href = 'Starterre/test_post_vh.php';
     });
+    $("#btn_api_starterre_update_vhs_vendus").click(function (e) {
+        window.location.href = 'Starterre/update_vhs_vendus.php';
+    });
 
 
 
@@ -27,7 +30,7 @@ $(document).ready(function () {
         let identifier_vh = $(this).val();
         if (identifier_vh !== "") {
             $("#button_rechercher_starterre_vh").prop("disabled", false);
-        }else{
+        } else {
             $("#button_rechercher_starterre_vh").prop("disabled", true);
 
         }

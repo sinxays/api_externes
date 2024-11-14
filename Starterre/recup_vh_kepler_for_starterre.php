@@ -26,13 +26,14 @@ foreach ($parc_array as $parc) {
     // si plusieurs page, tant qu'on trouve des données on boucle
     while ($datas_find == TRUE) {
         // $recup_kepler_for_starterre = recup_vhs_kepler_for_starterre($parc, $page);
-        $recup_kepler_for_starterre = recup_vhs_arrivage_kepler_for_starterre($parc, $page);
+        // $recup_kepler_for_starterre = recup_vhs_arrivage_kepler_for_starterre($parc, $page);
+        $recup_kepler_for_starterre = recup_vhs_vendus_kepler_for_starterre($parc, $page);
 
         /***  Pour test sur un seul véhicule ***/
-        $reference = '5nclw5pfj3';
-        $recup_kepler_for_starterre = recup_vh_unique_kepler_for_starterre($reference);
-        var_dump($recup_kepler_for_starterre);
-        die();
+        // $reference = '5nclw5pfj3';
+        // $recup_kepler_for_starterre = recup_vh_unique_kepler_for_starterre($reference);
+        // var_dump($recup_kepler_for_starterre);
+        // die();
 
         // si on trouve des données 
         if (!empty($recup_kepler_for_starterre)) {

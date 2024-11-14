@@ -269,9 +269,11 @@ function recup_vhs_vendus_kepler_for_starterre($parc, $page)
 
 
     $dataArray = array(
-        "state" => 'vehicle.state.sold,vehicle.state.sold_ar,vehicle.state.pending,vehicle.state.out',
+        // "state" => 'vehicle.state.sold,vehicle.state.sold_ar,vehicle.state.pending,vehicle.state.out',
+        "state" => 'vehicle.state.sold',
         "isNotAvailableForSelling" => FALSE,
-        "dateUpdatedStart" => "2024-11-12",
+        "dateUpdatedStart" => "2024-11-13",
+        "dateUpdatedEnd" => "2024-11-14",
         "fleet" => $parc,
         "count" => 100,
         "page" => $page
@@ -319,7 +321,85 @@ function recup_vhs_vendus_kepler_for_starterre($parc, $page)
 
 
     // var_dump(gettype($result));
-    // print_r($result);
+    print_r($result);
+
+
+    curl_close($ch);
+
+
+    // créer un objet à partir du retour qui est un string
+    $obj_vehicule = json_decode($result);
+
+
+    //on prend l'object qui est dans l'array
+    $return = $obj_vehicule;
+    // on retourne un objet
+
+
+    // var_dump($return);
+
+
+    return $return;
+}
+
+function recup_vhs_vendus_kepler_for_starterre_bis()
+{
+    // le token
+    $token = get_token();
+
+
+    $dataArray = array(
+        // "state" => 'vehicle.state.sold,vehicle.state.sold_ar,vehicle.state.pending,vehicle.state.out',
+        "state" => 'vehicle.state.sold',
+        "isNotAvailableForSelling" => FALSE,
+        "dateUpdatedStart" => "2024-11-13",
+        "dateUpdatedEnd" => "2024-11-14",
+        "count" => 100
+    );
+
+
+    $request_vehicule = "v3.7/vehicles/";
+    $url = "https://www.kepler-soft.net/api/";
+
+
+    $url_vehicule = $url . "" . $request_vehicule;
+
+
+    $data = http_build_query($dataArray);
+
+
+    $getURL = $url_vehicule . '?' . $data;
+
+
+    // print_r($getURL);
+    // sautdeligne();
+
+
+    $ch = curl_init();
+    $header = array();
+    $header[] = 'X-Auth-Token:' . $token;
+    $header[] = 'Content-Type:text/html;charset=utf-8';
+
+
+    curl_setopt($ch, CURLOPT_URL, $getURL);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+
+
+    $result = curl_exec($ch);
+
+
+    if (curl_error($ch)) {
+        $result = curl_error($ch);
+        print_r($result);
+        echo "<br/> erreur";
+    }
+
+
+    // var_dump(gettype($result));
+    print_r($result);
 
 
     curl_close($ch);
@@ -854,7 +934,6 @@ function use_token_from_base()
             $stmt->execute($data);
 
             return $newTokenStarterre;
-
         }
 
 
@@ -865,5 +944,4 @@ function use_token_from_base()
     }
 
     return $token;
-
 }
