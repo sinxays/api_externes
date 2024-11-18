@@ -33,6 +33,10 @@
                 style="max-width:200px;min-width: 200px;color:antiquewhite;font-weight: bold;">Export pour
                 Starterre</button>
 
+            <button type="button" class="btn btn-info" id="btn_api_starterre_update_vhs_vendus"
+                style="max-width:200px;min-width: 200px;color:antiquewhite;font-weight: bold;">UPDATE vhs
+                vendus</button>
+
             <button type="button" class="btn btn-success" id="btn_api_starterre_token"
                 style="max-width:200px;min-width: 200px;color:antiquewhite;font-weight: bold;">Recup Token</button>
 
@@ -43,8 +47,10 @@
                 data-bs-target="#modal_api_starterre_get_vh"
                 style="max-width:200px;min-width: 200px;color:antiquewhite;font-weight: bold;">Test GET VH</button>
 
-            <button type="button" class="btn btn-success" id="btn_api_starterre_update_vhs_vendus"
-                style="max-width:200px;min-width: 200px;color:antiquewhite;font-weight: bold;">UPDATE vhs vendus</button>
+            <button type="button" class="btn btn-danger" id="btn_api_starterre_page_test"
+                style="max-width:200px;min-width: 200px;color:antiquewhite;font-weight: bold;">page test</button>
+
+
 
         </div>
     </div>

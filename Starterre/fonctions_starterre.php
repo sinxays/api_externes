@@ -171,6 +171,8 @@ function get_token_starterre()
         if (isset($response_data['token'])) {
             $token = $response_data['token'];
             echo "Token JWT obtenu : " . $token;
+            sautdeligne();
+            sautdeligne();
             return $token;
         } else {
             echo "Erreur : le token n'a pas été obtenu.";
@@ -178,6 +180,17 @@ function get_token_starterre()
             die();
         }
     }
+}
+
+
+function get_vhs_starterre_from_base($id_kepler = '')
+{
+    $pdo = Connection::getPDO_starterre();
+
+    $request = $pdo->query("SELECT id_kepler,id_starterre FROM vehicules");
+    $result_vhs = $request->fetchAll(PDO::FETCH_ASSOC);
+
+    return $result_vhs;
 }
 
 
@@ -267,41 +280,33 @@ function recup_vhs_vendus_kepler_for_starterre($parc, $page)
     // le token
     $token = get_token();
 
-
     $dataArray = array(
         // "state" => 'vehicle.state.sold,vehicle.state.sold_ar,vehicle.state.pending,vehicle.state.out',
         "state" => 'vehicle.state.sold',
         "isNotAvailableForSelling" => FALSE,
-        "dateUpdatedStart" => "2024-11-13",
-        "dateUpdatedEnd" => "2024-11-14",
+        "dateUpdatedStart" => "2024-11-14",
+        "dateUpdatedEnd" => "2024-11-15",
         "fleet" => $parc,
         "count" => 100,
         "page" => $page
     );
 
-
     $request_vehicule = "v3.7/vehicles/";
     $url = "https://www.kepler-soft.net/api/";
 
-
     $url_vehicule = $url . "" . $request_vehicule;
-
 
     $data = http_build_query($dataArray);
 
-
     $getURL = $url_vehicule . '?' . $data;
-
 
     // print_r($getURL);
     // sautdeligne();
-
 
     $ch = curl_init();
     $header = array();
     $header[] = 'X-Auth-Token:' . $token;
     $header[] = 'Content-Type:text/html;charset=utf-8';
-
 
     curl_setopt($ch, CURLOPT_URL, $getURL);
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
@@ -309,9 +314,7 @@ function recup_vhs_vendus_kepler_for_starterre($parc, $page)
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
 
-
     $result = curl_exec($ch);
-
 
     if (curl_error($ch)) {
         $result = curl_error($ch);
@@ -319,26 +322,19 @@ function recup_vhs_vendus_kepler_for_starterre($parc, $page)
         echo "<br/> erreur";
     }
 
+    curl_close($ch);
 
     // var_dump(gettype($result));
     print_r($result);
 
-
-    curl_close($ch);
-
-
     // créer un objet à partir du retour qui est un string
     $obj_vehicule = json_decode($result);
 
-
     //on prend l'object qui est dans l'array
     $return = $obj_vehicule;
+
     // on retourne un objet
-
-
     // var_dump($return);
-
-
     return $return;
 }
 
@@ -347,39 +343,29 @@ function recup_vhs_vendus_kepler_for_starterre_bis()
     // le token
     $token = get_token();
 
-
     $dataArray = array(
-        // "state" => 'vehicle.state.sold,vehicle.state.sold_ar,vehicle.state.pending,vehicle.state.out',
         "state" => 'vehicle.state.sold',
         "isNotAvailableForSelling" => FALSE,
-        "dateUpdatedStart" => "2024-11-13",
-        "dateUpdatedEnd" => "2024-11-14",
+        "dateUpdatedStart" => "2024-11-18",
         "count" => 100
     );
-
 
     $request_vehicule = "v3.7/vehicles/";
     $url = "https://www.kepler-soft.net/api/";
 
-
     $url_vehicule = $url . "" . $request_vehicule;
-
 
     $data = http_build_query($dataArray);
 
-
     $getURL = $url_vehicule . '?' . $data;
-
 
     // print_r($getURL);
     // sautdeligne();
-
 
     $ch = curl_init();
     $header = array();
     $header[] = 'X-Auth-Token:' . $token;
     $header[] = 'Content-Type:text/html;charset=utf-8';
-
 
     curl_setopt($ch, CURLOPT_URL, $getURL);
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
@@ -387,36 +373,25 @@ function recup_vhs_vendus_kepler_for_starterre_bis()
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
 
-
     $result = curl_exec($ch);
-
 
     if (curl_error($ch)) {
         $result = curl_error($ch);
         print_r($result);
         echo "<br/> erreur";
     }
-
-
-    // var_dump(gettype($result));
-    print_r($result);
-
-
     curl_close($ch);
 
+    // var_dump(gettype($result));
+    // print_r($result);
 
     // créer un objet à partir du retour qui est un string
     $obj_vehicule = json_decode($result);
 
-
     //on prend l'object qui est dans l'array
     $return = $obj_vehicule;
     // on retourne un objet
-
-
     // var_dump($return);
-
-
     return $return;
 }
 
@@ -661,6 +636,8 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
     $array_equipements_serie = $vh->equipmentStandard;
 
     $i = 0;
+
+    //si il ya des équipements
     foreach ($array_equipements_serie as $equipement) {
         $array_for_csv["details"][0]["equipments"][$i]["label"] = $equipement->name;
         $array_for_csv["details"][0]["equipments"][$i]["price"] = isset($equipement->price) ? $equipement->price : 0;
@@ -669,6 +646,7 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
         $array_for_csv["details"][0]["equipments"][$i]["category"] = "OTHER";
         $i++;
     }
+
 
     //equipement en options
 
@@ -758,16 +736,130 @@ function post_vh_to_starterre($donnees_vh_to_post)
             sautdeligne();
             echo "le véhicule crée porte l'id starterre : " . $id_vh_starterre;
             separateur();
-            return 1;
+            $retour_array = array(
+                "id_partner" => $identifier_vh,
+                "id_starterre" => $id_vh_starterre
+            );
+            return $retour_array;
         } else {
             echo "Erreur : le véhicule n'a pas été crée.";
             var_dump($donnees_vh_to_post);
             sautdeligne();
             print_r($response_data);  // Pour déboguer la réponse
             separateur();
-            return 0;
+            return null;
         }
     }
+}
+
+function post_vh_to_delete_starterre($id_starterre)
+{
+    // Initialiser une session cURL
+    $ch = curl_init();
+
+    // Définir l'URL de l'API pour POST VEHICULES
+    $url = "https://cameleon.starterre.dev/api/vehicles/" . $id_starterre;
+
+    $token = use_token_from_base();
+    // var_dump($token);
+
+    // $token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3MzEwODA3NDMsImV4cCI6MTczMTA4NDM0Mywicm9sZXMiOlsiUk9MRV9QT1NUX1ZFSElDTEUiLCJST0xFX0RFTEVURV9WRUhJQ0xFIiwiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoiZ3VpbGxhdW1lLmhvbm5lcnRAbWFzc291dHJlLWxvY2F0aW9ucy5jb20ifQ.PMzcKGxK-Uh1dMZ8cteBJYHVXMAhSMitCMHNIRZoekBjRfVSq1Yck1Qj7RPTJF5tCRdjhjgOJ4Z9lipyE8iDkk2KepO15MR2BdpmPqa9eTtEIPuNTgAz2JGxnfrwmfdZTwlle0-VVK6WwCso_20gGCVd35pxVKWoqnalx2G8cV88kuSYjq_awybc8jSO3vJU-KyysXpKKWaQ8nIkurGBfUf71R-gFZFTxhkpROr8h_76XsrijWcS0LuO4rSyuvtwluAAy3JMBvL8bEIiH-x9UCmxE4V5S0d-SIN9LIgqmNs6XjbSJmmweE0tsKHIigiWQQSttO_SyLeGv-G8bTUs5Q";
+
+    // Configuration de la requête cURL
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);  // Retourner la réponse sous forme de chaîne
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE"); // Définit la méthode HTTP sur DELETE
+
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        "Content-Type: application/json",
+        "Authorization: Bearer $token" // Remplace par ton token d'authentification
+    ]);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Désactiver la vérification SSL (à utiliser en développement seulement)
+
+    // Exécuter la requête et obtenir la réponse
+    $response = curl_exec($ch);
+
+    // Fermer la session cURL
+    curl_close($ch);
+
+    // Traiter la réponse de l'API
+    if ($response === false) {
+        return null;
+    } else {
+        return 1;
+    }
+}
+function create_vh_replica_starterre($id_kepler, $id_starterre, $immatriculation, $vin)
+{
+    $pdo = Connection::getPDO_starterre();
+
+    // Définir le fuseau horaire à Paris
+    date_default_timezone_set('Europe/Paris');
+    $currentDateTime = date('Y-m-d H:i:s');
+
+    $data = [
+        'id_kepler' => $id_kepler,
+        'id_starterre' => $id_starterre,
+        'immatriculation' => $immatriculation,
+        'vin' => $vin,
+        'state' => 1,
+        'date_insert_starterre' => $currentDateTime,
+    ];
+
+    $sql = "INSERT INTO vehicules 
+    (id_kepler, id_starterre, immatriculation,vin,state,date_insert_starterre)
+    VALUES (:id_kepler, :id_starterre, :immatriculation, :vin, :state, :date_insert_starterre)";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($data);
+}
+
+function update_vh_replica_starterre($id_kepler)
+{
+
+    $pdo = Connection::getPDO_starterre();
+
+    // Définir le fuseau horaire à Paris
+    date_default_timezone_set('Europe/Paris');
+    $currentDateTime = date('Y-m-d H:i:s');
+
+    $data = [
+        'id_kepler' => $id_kepler,
+        'date_delete_starterre' => $currentDateTime,
+        'state' => 0
+    ];
+
+    $sql = "UPDATE vehicules SET state = :state, date_delete_starterre = :date_delete_starterre WHERE id_kepler = :id_kepler";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($data);
+}
+
+
+function check_if_vh_exist($reference_kepler)
+{
+    $pdo = Connection::getPDO_starterre();
+
+    $request = $pdo->query("SELECT * from vehicules WHERE id_kepler = '$reference_kepler'");
+    $result = $request->fetch(PDO::FETCH_ASSOC);
+
+    if ($result) {
+        return $result;
+    } else {
+        return null;
+    }
+}
+
+function get_idStarterre_from_idKepler($id_kepler)
+{
+    $pdo = Connection::getPDO_starterre();
+    $request = $pdo->query("SELECT id_starterre FROM vehicules WHERE id_kepler = '$id_kepler'");
+    $result = $request->fetch(PDO::FETCH_ASSOC);
+
+    if ($result) {
+        return $result['id_starterre'];
+    } else {
+        return null;
+    }
+
 }
 
 
@@ -916,9 +1008,11 @@ function use_token_from_base()
         $time_token_created = new DateTime($token_starterre['date_creation'], new DateTimeZone("Europe/Paris"));
         $current_time = new DateTime("now", new DateTimeZone("Europe/Paris"));
 
-        $interval_time = $time_token_created->diff($current_time);
+        $interval_time = $current_time->getTimestamp() - $time_token_created->getTimestamp();
 
-        $minute_passed = $interval_time->i;
+        $minute_passed = $interval_time / 60;
+
+        // var_dump($minute_passed);
 
         //plus de 55 minutes alors on recrée un token dans la base
         if ($minute_passed >= 55) {

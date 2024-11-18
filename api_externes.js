@@ -20,6 +20,9 @@ $(document).ready(function () {
     $("#btn_api_starterre_update_vhs_vendus").click(function (e) {
         window.location.href = 'Starterre/update_vhs_vendus.php';
     });
+    $("#btn_api_starterre_page_test").click(function (e) {
+        window.location.href = 'Starterre/test.php';
+    });
 
 
 

@@ -11,11 +11,7 @@ set_time_limit(300); // 300 secondes = 5 minutes, adapte selon tes besoins
 
 //UPDATE DE STARTERRE EN RECUPERANT LES VHS VENDUS
 
-
-
-$array_for_csv = array();
-
-$nbr_vh_update_starterre = 0;
+$nbr_vh_vendus_starterre = 0;
 
 $recup_kepler_vhs_vendus_for_starterre = recup_vhs_vendus_kepler_for_starterre_bis();
 
@@ -27,20 +23,29 @@ $recup_kepler_vhs_vendus_for_starterre = recup_vhs_vendus_kepler_for_starterre_b
 
 // si on trouve des données 
 if (!empty($recup_kepler_vhs_vendus_for_starterre)) {
-    foreach ($recup_kepler_vhs_vendus_for_starterre as $nb_index_vh => $vh) {
-        //on met en forme les données
-        // $retour_json = mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh);
+    foreach ($recup_kepler_vhs_vendus_for_starterre as $vh) {
 
-        echo $vh->reference;
-        echo " || " . $vh->vin;
-        echo "<br/>";
+        $reference_kepler = $vh->reference;
 
-        //on le post vers l'api STARTERRE
-        // $retour = post_vh_to_starterre($retour_json);
-        $nbr_vh_update_starterre++;
+        // il on va chercher le idStarterre depuis le idKepler , car le delete se fait depuis le idStarterre
+        $id_starterre = get_idStarterre_from_idKepler($reference_kepler);
+
+        // si on trouve un idStarterre c'est qu'il est dans ma base
+        if ($id_starterre) {
+            //on le post en DELETE vers l'api STARTERRE
+            $count = post_vh_to_delete_starterre($id_starterre);
+            // et on actualise ma base pour que ça soit iso
+            update_vh_replica_starterre($reference_kepler);
+
+            //on affiche les données pour infos.
+            echo $reference_kepler . " || " . $vh->vin . " || " . $vh->licenseNumber;
+            sautdeligne();
+
+            $nbr_vh_vendus_starterre++;
+        }
     }
     sautdeligne();
-    echo "nombre de vh crées : $nbr_vh_update_starterre";
+    echo "nombre de vh vendus : $nbr_vh_vendus_starterre";
 } else {
     sautdeligne();
     echo "Aucun véhicule vendu";
