@@ -43,20 +43,32 @@ foreach ($parc_array as $parc) {
                 if (isset($vh->priceSellerWithoutTax) && $vh->priceSellerWithoutTax !== '') {
                     //on met en forme les données
                     $retour_json = mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh);
-                    echo $reference_kepler . " || " . $vh->vin . " || " . $vh->licenseNumber;
-                    echo "<br/>";
+
 
                     //on le post vers l'api STARTERRE , si le vh existe déja il sera juste updaté, si il n'existe pas il sera crée.
                     $retour = post_vh_to_starterre($retour_json);
 
-                    //on crée le véhicule dans ma base pour avoir un replica base <> base starterre, mais il ne sera pas crée si il existe déja le vh 
+                    //on crée le véhicule dans ma base pour avoir un replica base <> base starterre, mais il ne sera pas crée si il existe déja
                     if ($retour) {
-                        // On check si le vh existe déja dans la base avant
+                        // On check si le vh existe déja et qu'il est a l'état delete dans la base avant, car ça peut etre un bdc annulé finalement et donc le véhicule ressort en état parc à nouveau.
                         $check_vh = check_if_vh_exist($reference_kepler);
+
                         //si il existe pas alors on le crée
                         if (!$check_vh) {
+
                             create_vh_replica_starterre($reference_kepler, $retour['id_starterre'], $vh->licenseNumber, $vh->vin);
                             $nbr_vh_cree_starterre++;
+
+                            sautdeligne();
+                            echo "le véhicule crée porte l'identifiant partner kepler : " . $identifier_vh . " || " . $vh->vin . " || " . $vh->licenseNumber;
+                            sautdeligne();
+                            echo "le véhicule crée porte l'id starterre : " . $id_vh_starterre;
+                            separateur();
+
+                        }
+                        //si il existe déja c'est qu'il a été placé sur BDC puis annulé, donc on repasse le vh a state 1 : parc
+                        else {
+                            update_vh_replica_starterre($check_vh['ID'], 1);
                         }
                     }
 

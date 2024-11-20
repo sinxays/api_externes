@@ -49,9 +49,6 @@
 
             <button type="button" class="btn btn-danger" id="btn_api_starterre_page_test"
                 style="max-width:200px;min-width: 200px;color:antiquewhite;font-weight: bold;">page test</button>
-
-
-
         </div>
     </div>
 

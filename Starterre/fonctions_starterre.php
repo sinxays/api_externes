@@ -173,6 +173,7 @@ function get_token_starterre()
             echo "Token JWT obtenu : " . $token;
             sautdeligne();
             sautdeligne();
+            separateur();
             return $token;
         } else {
             echo "Erreur : le token n'a pas été obtenu.";
@@ -343,10 +344,13 @@ function recup_vhs_vendus_kepler_for_starterre_bis()
     // le token
     $token = get_token();
 
+    // date du jour
+    $currentDateTime = date('Y-m-d');
+
     $dataArray = array(
         "state" => 'vehicle.state.sold',
         "isNotAvailableForSelling" => FALSE,
-        "dateUpdatedStart" => "2024-11-18",
+        "dateUpdatedStart" => $currentDateTime,
         "count" => 100
     );
 
@@ -727,15 +731,17 @@ function post_vh_to_starterre($donnees_vh_to_post)
         // Convertir la réponse JSON en tableau PHP
         $response_data = json_decode($response, true);
 
-        // Vérifier si le token est bien présent dans la réponse
+        // Vérifier si le idstarterre est bien présent dans la réponse
         if (isset($response_data['partner-vehicle-identifier'])) {
             $identifier_vh = $response_data['partner-vehicle-identifier'];
             $id_vh_starterre = $response_data['id'];
-            sautdeligne();
-            echo "le véhicule crée porte l'identifiant partner : " . $identifier_vh;
-            sautdeligne();
-            echo "le véhicule crée porte l'id starterre : " . $id_vh_starterre;
-            separateur();
+
+            // sautdeligne();
+            // echo "le véhicule crée porte l'identifiant partner kepler : " . $identifier_vh;
+            // sautdeligne();
+            // echo "le véhicule crée porte l'id starterre : " . $id_vh_starterre;
+            // separateur();
+
             $retour_array = array(
                 "id_partner" => $identifier_vh,
                 "id_starterre" => $id_vh_starterre
@@ -813,7 +819,7 @@ function create_vh_replica_starterre($id_kepler, $id_starterre, $immatriculation
     $stmt->execute($data);
 }
 
-function update_vh_replica_starterre($id_kepler)
+function update_vh_replica_starterre($id_kepler, $state)
 {
 
     $pdo = Connection::getPDO_starterre();
@@ -825,7 +831,7 @@ function update_vh_replica_starterre($id_kepler)
     $data = [
         'id_kepler' => $id_kepler,
         'date_delete_starterre' => $currentDateTime,
-        'state' => 0
+        'state' => $state
     ];
 
     $sql = "UPDATE vehicules SET state = :state, date_delete_starterre = :date_delete_starterre WHERE id_kepler = :id_kepler";
@@ -845,6 +851,21 @@ function check_if_vh_exist($reference_kepler)
         return $result;
     } else {
         return null;
+    }
+}
+
+function check_state_vh($reference_kepler)
+{
+
+    $pdo = Connection::getPDO_starterre();
+
+    $request = $pdo->query("SELECT state from vehicules WHERE id_kepler = '$reference_kepler'");
+    $result = $request->fetch(PDO::FETCH_COLUMN);
+
+    if ($result == 0) {
+        return null;
+    } else {
+        return true;
     }
 }
 

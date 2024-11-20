@@ -26,9 +26,6 @@ $(document).ready(function () {
 
 
 
-
-
-
     $("#starterre_reference_vh_input").change(function (e) {
         let identifier_vh = $(this).val();
         if (identifier_vh !== "") {

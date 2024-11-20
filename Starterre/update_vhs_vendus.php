@@ -27,21 +27,29 @@ if (!empty($recup_kepler_vhs_vendus_for_starterre)) {
 
         $reference_kepler = $vh->reference;
 
-        // il on va chercher le idStarterre depuis le idKepler , car le delete se fait depuis le idStarterre
+        // on va chercher le idStarterre depuis le idKepler , car le delete se fait depuis le idStarterre
         $id_starterre = get_idStarterre_from_idKepler($reference_kepler);
 
         // si on trouve un idStarterre c'est qu'il est dans ma base
         if ($id_starterre) {
-            //on le post en DELETE vers l'api STARTERRE
-            $count = post_vh_to_delete_starterre($id_starterre);
-            // et on actualise ma base pour que ça soit iso
-            update_vh_replica_starterre($reference_kepler);
 
-            //on affiche les données pour infos.
-            echo $reference_kepler . " || " . $vh->vin . " || " . $vh->licenseNumber;
-            sautdeligne();
+            // on check si il est pas déja à l'état 0 dans ma base
+            $check_state_vh = check_state_vh($reference_kepler);
 
-            $nbr_vh_vendus_starterre++;
+            // si il est à 1 donc a l'état PARC
+            if ($check_state_vh) {
+                //on le post en DELETE vers l'api STARTERRE
+                $count = post_vh_to_delete_starterre($id_starterre);
+                // et on actualise ma base pour que ça soit iso et on mt le vh à l'état 0 : deleted
+                update_vh_replica_starterre($reference_kepler,0);
+
+                //on affiche les données pour infos.
+                echo $reference_kepler . " || " . $vh->vin . " || " . $vh->licenseNumber;
+                sautdeligne();
+
+                $nbr_vh_vendus_starterre++;
+            }
+
         }
     }
     sautdeligne();
