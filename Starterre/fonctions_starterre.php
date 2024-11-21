@@ -2,9 +2,7 @@
 
 use App\Connection;
 
-include $_SERVER['DOCUMENT_ROOT'] . "/pdo.php";
-
-echo $_SERVER['DOCUMENT_ROOT'] . "/pdo.php";
+include "../pdo.php";
 
 
 
