@@ -2,7 +2,8 @@
 
 use App\Connection;
 
-include "../pdo.php";
+include __DIR__ . '/../pdo.php';
+
 
 
 
