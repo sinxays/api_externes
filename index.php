@@ -17,9 +17,11 @@
 
 </head>
 
+
+
 <?php
 
-// echo $_SERVER['DOCUMENT_ROOT'];
+echo $_SERVER['DOCUMENT_ROOT'] . "/pdo.php";
 
 ?>
 
@@ -30,7 +32,7 @@
     <div class="body_filtres">
         <div class="elements_row">
             <button type="button" class="btn btn-info" id="btn_export_kepler_for_starterre"
-                style="max-width:200px;min-width: 200px;color:antiquewhite;font-weight: bold;">Export pour
+                style="max-width:200px;min-width: 200px;color:antiquewhite;font-weight: bold;">Creation VH pour
                 Starterre</button>
 
             <button type="button" class="btn btn-info" id="btn_api_starterre_update_vhs_vendus"

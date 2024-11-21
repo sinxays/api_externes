@@ -60,9 +60,9 @@ foreach ($parc_array as $parc) {
                             $nbr_vh_cree_starterre++;
 
                             sautdeligne();
-                            echo "le véhicule crée porte l'identifiant partner kepler : " . $identifier_vh . " || " . $vh->vin . " || " . $vh->licenseNumber;
+                            echo "le véhicule crée porte l'identifiant partner kepler : " . $retour['id_partner'] . " || " . $vh->vin . " || " . $vh->licenseNumber;
                             sautdeligne();
-                            echo "le véhicule crée porte l'id starterre : " . $id_vh_starterre;
+                            echo "le véhicule crée porte l'id starterre : " . $retour['id_starterre'];
                             separateur();
 
                         }
