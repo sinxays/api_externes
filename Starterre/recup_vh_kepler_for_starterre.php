@@ -68,7 +68,7 @@ foreach ($parc_array as $parc) {
                         }
                         //si il existe déja c'est qu'il a été placé sur BDC puis annulé, donc on repasse le vh a state 1 : parc
                         else {
-                            update_vh_replica_starterre($check_vh['ID'], 1);
+                            update_vh_replica_starterre($reference_kepler, 1);
                         }
                     }
 

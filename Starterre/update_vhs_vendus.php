@@ -13,6 +13,7 @@ set_time_limit(300); // 300 secondes = 5 minutes, adapte selon tes besoins
 
 $nbr_vh_vendus_starterre = 0;
 
+// on recupere depuis kepler les vhs a l'état vendu depuis la date d'aujourd'hui
 $recup_kepler_vhs_vendus_for_starterre = recup_vhs_vendus_kepler_for_starterre_bis();
 
 /***  Pour test sur un seul véhicule ***/

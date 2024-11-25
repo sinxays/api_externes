@@ -21,7 +21,7 @@
 
 <?php
 
-echo $_SERVER['DOCUMENT_ROOT'] . "/pdo.php";
+// echo __DIR__ . '\pdo.php';
 
 ?>
 
