@@ -537,7 +537,7 @@ function recup_vh_unique_kepler_for_starterre($reference)
     }
 
     var_dump(gettype($result));
-    print_r($result);
+    // print_r($result);
 
     curl_close($ch);
 
@@ -712,6 +712,8 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
     $array_for_csv["address"][0]["postcode"] = $adresse["cp"];
     $array_for_csv["address"][0]["city"] = $adresse["ville"];
     $array_for_csv["address"][0]["country"]["code"] = $adresse["pays"];
+
+    var_dump($array_for_csv);
 
 
     // UPDATE : si on une donnée manquante ou non conventionelle pour starterre on post pas vers starterre
