@@ -535,7 +535,7 @@ function recup_vh_unique_kepler_for_starterre($reference)
     $obj_vehicule = json_decode($result);
 
     //on prend l'object qui est dans l'array
-    $return = $obj_vehicule;
+    $return = $obj_vehicule[0];
     // on retourne un objet
 
     return $return;
