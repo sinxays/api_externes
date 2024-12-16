@@ -30,7 +30,7 @@ foreach ($parc_array as $parc) {
         /***  Pour test sur un seul véhicule ***/
         $reference = '10yqbo5kb';
         $recup_kepler_for_starterre = recup_vh_unique_kepler_for_starterre($reference);
-        var_dump($recup_kepler_for_starterre);
+        // var_dump($recup_kepler_for_starterre);
         // die();
 
         // si on trouve des données 

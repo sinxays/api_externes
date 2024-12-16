@@ -719,6 +719,8 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
         return null;
     } else {
         $json_data_vh = json_encode($array_for_csv);
+        sautdeligne();
+        var_dump($json_data_vh);
         return $json_data_vh;
     }
 
