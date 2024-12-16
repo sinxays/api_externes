@@ -16,7 +16,7 @@ set_time_limit(300); // 300 secondes = 5 minutes, adapte selon tes besoins
 $parc_array = array("CVO ORLEANS sud");
 
 /***  Pour test sur un seul véhicule ***/
-$reference = 'cxz7h9';
+$reference = '46kxg';
 $recup_kepler_for_starterre = recup_vh_unique_kepler_for_starterre($reference);
 var_dump($recup_kepler_for_starterre);
 
