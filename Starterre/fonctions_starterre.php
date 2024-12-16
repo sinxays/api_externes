@@ -484,8 +484,6 @@ function recup_vhs_arrivage_kepler_for_starterre($parc, $page)
 
 function recup_vh_unique_kepler_for_starterre($reference)
 {
-
-
     // le token
     $token = get_token();
 
@@ -531,11 +529,14 @@ function recup_vh_unique_kepler_for_starterre($reference)
 
     curl_close($ch);
 
+    var_dump($result);
+    die();
+
     // créer un objet à partir du retour qui est un string
     $obj_vehicule = json_decode($result);
 
     //on prend l'object qui est dans l'array
-    $return = $obj_vehicule[0];
+    $return = $obj_vehicule;
     // on retourne un objet
 
     return $return;
