@@ -11,12 +11,6 @@ set_time_limit(300); // 300 secondes = 5 minutes, adapte selon tes besoins
 
 //EXPORT STARTERRE
 
-/***  Pour test sur un seul véhicule ***/
-// $reference = '10yqbo5kb';
-// $recup_kepler_for_starterre = recup_vh_unique_kepler_for_starterre($reference);
-// var_dump($recup_kepler_for_starterre);
-// die();
-
 //creer un array avec tous les parc pour faire la boucle par parc
 $parc_array = array("CVO BOURGES", "CVO CLERMONT FERRAND", "CVO MASSY", "CVO ORLEANS sud", "CVO TROYES");
 // $parc_array = array("CVO ORLEANS sud");
@@ -31,7 +25,13 @@ foreach ($parc_array as $parc) {
 
     // si plusieurs page, tant qu'on trouve des données on boucle
     while ($datas_find == TRUE) {
-        $recup_kepler_for_starterre = recup_vhs_kepler_for_starterre($parc, $page);
+        // $recup_kepler_for_starterre = recup_vhs_kepler_for_starterre($parc, $page);
+
+        /***  Pour test sur un seul véhicule ***/
+        $reference = '10yqbo5kb';
+        $recup_kepler_for_starterre = recup_vh_unique_kepler_for_starterre($reference);
+        var_dump($recup_kepler_for_starterre);
+        // die();
 
         // si on trouve des données 
         if (!empty($recup_kepler_for_starterre)) {
