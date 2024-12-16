@@ -529,8 +529,7 @@ function recup_vh_unique_kepler_for_starterre($reference)
 
     curl_close($ch);
 
-    var_dump($result);
-    die();
+    // var_dump($result);
 
     // créer un objet à partir du retour qui est un string
     $obj_vehicule = json_decode($result);

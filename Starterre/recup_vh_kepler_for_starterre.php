@@ -16,9 +16,8 @@ set_time_limit(300); // 300 secondes = 5 minutes, adapte selon tes besoins
 $parc_array = array("CVO ORLEANS sud");
 
 /***  Pour test sur un seul véhicule ***/
-$reference = '46kxg';
+$reference = '26tci6qlu';
 $recup_kepler_for_starterre = recup_vh_unique_kepler_for_starterre($reference);
-var_dump($recup_kepler_for_starterre);
 
 sautdeligne();
 sautdeligne();
@@ -42,8 +41,6 @@ $datas_find = TRUE;
 // si plusieurs page, tant qu'on trouve des données on boucle
 while ($datas_find == TRUE) {
     // $recup_kepler_for_starterre = recup_vhs_kepler_for_starterre($parc, $page);
-
-
 
     // si on trouve des données 
     if (!empty($recup_kepler_for_starterre)) {
