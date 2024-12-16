@@ -599,6 +599,9 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
     $array_for_csv["gearbox"] = isset($vh->gearbox->name) ? get_gearbox_vh_for_starterre($vh->gearbox->name) : "";
     $array_for_csv["gear-number"] = isset($vh->reportNumber->name) ? $vh->reportNumber->name : "N/A";
     if ($array_for_csv["gear-number"] == "N/A") {
+        sautdeligne();
+        echo "pas de nombre de rapport renseigné";
+        sautdeligne();
         $no_export = TRUE;
     }
     $array_for_csv["brand"]["name"] = isset($vh->brand->name) ? trim(strtolower($vh->brand->name)) : "";
