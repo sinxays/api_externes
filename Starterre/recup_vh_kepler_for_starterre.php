@@ -81,6 +81,10 @@ foreach ($parc_array as $parc) {
                 }
             }
             $page++;
+
+
+            $datas_find = FALSE;
+
         } else {
             $datas_find = FALSE;
         }
