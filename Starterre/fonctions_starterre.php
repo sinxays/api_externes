@@ -489,36 +489,28 @@ function recup_vh_unique_kepler_for_starterre($reference)
     // le token
     $token = get_token();
 
-
     $dataArray = array(
         "reference" => $reference,
         "state" => 'vehicle.state.sold,vehicle.state.sold_ar,vehicle.state.pending,vehicle.state.out,vehicle.state.out_ar,vehicle.state.canceled,vehicle.state.on_arrival,vehicle.state.parc',
         "isNotAvailableForSelling" => FALSE
     );
 
-
     $request_vehicule = "v3.7/vehicles/";
     $url = "https://www.kepler-soft.net/api/";
 
-
     $url_vehicule = $url . "" . $request_vehicule;
-
 
     $data = http_build_query($dataArray);
 
-
     $getURL = $url_vehicule . '?' . $data;
-
 
     // print_r($getURL);
     // sautdeligne();
-
 
     $ch = curl_init();
     $header = array();
     $header[] = 'X-Auth-Token:' . $token;
     $header[] = 'Content-Type:text/html;charset=utf-8';
-
 
     curl_setopt($ch, CURLOPT_URL, $getURL);
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
@@ -526,9 +518,7 @@ function recup_vh_unique_kepler_for_starterre($reference)
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
 
-
     $result = curl_exec($ch);
-
 
     if (curl_error($ch)) {
         $result = curl_error($ch);
@@ -536,15 +526,13 @@ function recup_vh_unique_kepler_for_starterre($reference)
         echo "<br/> erreur";
     }
 
-    var_dump(gettype($result));
+    // var_dump(gettype($result));
     // print_r($result);
 
     curl_close($ch);
 
     // créer un objet à partir du retour qui est un string
     $obj_vehicule = json_decode($result);
-
-
 
     //on prend l'object qui est dans l'array
     $return = $obj_vehicule;
