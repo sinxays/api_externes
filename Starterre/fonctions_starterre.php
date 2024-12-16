@@ -29,8 +29,8 @@ function starterre_recup_vh_by_identifier($identifier_vh)
     // Initialiser une session cURL
     $ch = curl_init();
 
-     // le token
-     $token = use_token_from_base();
+    // le token
+    $token = use_token_from_base();
 
     // Configuration de la requête cURL
     curl_setopt($ch, CURLOPT_URL, $full_url);
@@ -556,6 +556,8 @@ function recup_vh_unique_kepler_for_starterre($reference)
 
 function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
 {
+    $no_export = FALSE;
+
     $array_for_csv["partner-vehicle-identifier"] = isset($vh->reference) ? $vh->reference : "";
     $array_for_csv["is-used"] = true;
     $array_for_csv["is-executive"] = false;
@@ -568,12 +570,14 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
         $array_for_csv["power-kw"] = $power_kw;
         $array_for_csv["power-horsepower"] = $vh->horsepower;
     } else {
-        $array_for_csv["power-kw"] = 0;
-        $array_for_csv["power-horsepower"] = 0;
+        $no_export = TRUE;
     }
 
 
     $array_for_csv["mileage"] = isset($vh->distanceTraveled) ? $vh->distanceTraveled : 0;
+    if ($vh->distanceTraveled < 50) {
+        $array_for_csv["is-used"] = false;
+    }
 
 
     $array_for_csv["origin"] = isset($vh->origin) ? get_origin_vh_for_starterre($vh->origin) : "";
@@ -584,8 +588,11 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
     $array_for_csv["national-type"] = isset($vh->vehicleType->name) ? $vh->vehicleType->name : "";
     $array_for_csv["body-type"] = "CITY_CAR";
     $array_for_csv["fuel"] = isset($vh->energy->name) ? get_energy_vh_for_starterre($vh->energy->name) : "";
+    if ($array_for_csv["fuel"] == "NA") {
+        $no_export = TRUE;
+    }
     $array_for_csv["gearbox"] = isset($vh->gearbox->name) ? get_gearbox_vh_for_starterre($vh->gearbox->name) : "";
-    $array_for_csv["gear-number"] = isset($vh->reportNumber->name) ? $vh->reportNumber->name : 0;
+    $array_for_csv["gear-number"] = isset($vh->reportNumber->name) ? $vh->reportNumber->name : $no_export = TRUE;
     $array_for_csv["brand"]["name"] = isset($vh->brand->name) ? trim(strtolower($vh->brand->name)) : "";
 
 
@@ -621,7 +628,7 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
 
 
     // caractéristiques du VH
-    $array_for_details_dimensions = ["height" => 'HEIGHT', "length" => 'LENGTH', "width" => 'WIDTH'];
+    $array_for_details_dimensions = ["height" => 'HEIGHT', "length" => 'LENGTH', "width" => 'WIDTH', "unloadedWeight" => "WEIGHT"];
     $i = 0;
     foreach ($array_for_details_dimensions as $key => $detail) {
         $array_for_csv["details"][0]["language"]["code"] = "fr";
@@ -639,12 +646,9 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
         $array_for_csv["details"][0]["caracteristics"][$i]["type"] = "BATTERY_RANGE_WLTP";
     }
 
+    $i = 0;
     // equipements du véhicule de série
     $array_equipements_serie = $vh->equipmentStandard;
-
-    $i = 0;
-
-    //si il ya des équipements
     foreach ($array_equipements_serie as $equipement) {
         $array_for_csv["details"][0]["equipments"][$i]["label"] = $equipement->name;
         $array_for_csv["details"][0]["equipments"][$i]["price"] = isset($equipement->price) ? $equipement->price : 0;
@@ -654,9 +658,19 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
         $i++;
     }
 
+    if (isset($vh->equipmentOptional) && !empty($vh->equipmentOptional)) {
+        //equipement en options
+        $array_equipements_serie = $vh->equipmentOptional;
 
-    //equipement en options
-
+        foreach ($array_equipements_serie as $equipement) {
+            $array_for_csv["details"][0]["equipments"][$i]["label"] = $equipement->name;
+            $array_for_csv["details"][0]["equipments"][$i]["price"] = isset($equipement->price) ? $equipement->price : 0;
+            $array_for_csv["details"][0]["equipments"][$i]["is-standard"] = false;
+            $array_for_csv["details"][0]["equipments"][$i]["is-missing"] = false;
+            $array_for_csv["details"][0]["equipments"][$i]["category"] = "OTHER";
+            $i++;
+        }
+    }
 
 
 
@@ -691,9 +705,16 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
     $array_for_csv["address"][0]["city"] = $adresse["ville"];
     $array_for_csv["address"][0]["country"]["code"] = $adresse["pays"];
 
-    $json_data_vh = json_encode($array_for_csv);
 
-    return $json_data_vh;
+    // UPDATE : si on une donnée manquante ou non conventionelle pour starterre on post pas vers starterre
+    if ($no_export) {
+        return null;
+    } else {
+        $json_data_vh = json_encode($array_for_csv);
+        return $json_data_vh;
+    }
+
+
 }
 
 function post_vh_to_starterre($donnees_vh_to_post)
@@ -930,7 +951,6 @@ function get_energy_vh_for_starterre($energy_vh_kepler)
         case 'HYBRID':
             $energy_for_starterre = "EH";
             break;
-
 
         default:
             $energy_for_starterre = "NA";
