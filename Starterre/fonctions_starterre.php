@@ -623,10 +623,7 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
     }
 
 
-
-
-
-    // caractéristiques du VH
+    // caractéristiques du VH : DIMENSIONS
     $array_for_details_dimensions = ["height" => 'HEIGHT', "length" => 'LENGTH', "width" => 'WIDTH', "unloadedWeight" => "WEIGHT"];
     $i = 0;
     foreach ($array_for_details_dimensions as $key => $detail) {
@@ -637,6 +634,17 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
         $i++;
     }
 
+    // caractéristiques du VH : cylindrée
+    if (isset($vh->carEngine) && $vh->carEngine !== "") {
+        $array_for_csv["details"][0]["language"]["code"] = "fr";
+        $array_for_csv["details"][0]["caracteristics"][$i]["value"] = $vh->carEngine;
+        $array_for_csv["details"][0]["caracteristics"][$i]["category"] = "MOTOR";
+        $array_for_csv["details"][0]["caracteristics"][$i]["type"] = "ENGINE_CAPACITY";
+        $i++;
+    } else {
+        $no_export = TRUE;
+    }
+
     //si véhicule électrique , kepler ne sort pas la distance maximale possible à 100% , donc je mets 0
     if ($array_for_csv["fuel"] == 'EL') {
         $array_for_csv["details"][0]["language"]["code"] = "fr";
@@ -644,6 +652,8 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
         $array_for_csv["details"][0]["caracteristics"][$i]["category"] = "PERFORMANCE_CONSUMPTION";
         $array_for_csv["details"][0]["caracteristics"][$i]["type"] = "BATTERY_RANGE_WLTP";
     }
+
+
 
     $i = 0;
     // equipements du véhicule de série

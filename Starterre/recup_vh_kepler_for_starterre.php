@@ -32,7 +32,7 @@ foreach ($parc_array as $parc) {
 
     // si plusieurs page, tant qu'on trouve des données on boucle
     while ($datas_find == TRUE) {
-        $recup_kepler_for_starterre = recup_vhs_kepler_for_starterre($parc, $page);
+        // $recup_kepler_for_starterre = recup_vhs_kepler_for_starterre($parc, $page);
 
         // si on trouve des données 
         if (!empty($recup_kepler_for_starterre)) {
@@ -82,6 +82,7 @@ foreach ($parc_array as $parc) {
                 }
             }
             $page++;
+            // $datas_find = FALSE;
         } else {
             $datas_find = FALSE;
         }
