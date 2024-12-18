@@ -70,9 +70,14 @@ foreach ($parc_array as $parc) {
                                 separateur();
 
                             }
-                            //si il existe déja c'est qu'il a été placé sur BDC puis annulé, donc on repasse le vh a state 1 : parc
+                            //si il existe déja c'est qu'il a été placé sur BDC puis annulé donc state passé à 0 , donc on repasse le vh a state 1 : parc
                             else {
-                                update_vh_replica_starterre($reference_kepler, 1);
+                                //on check si le vh est à l'état 0 donc placé sur BDC
+                                if ($check_vh['state'] == 0) {
+                                    //on le repasse à 1 state parc
+                                    update_vh_replica_starterre($reference_kepler, 1);
+                                }
+
                             }
                         }
 

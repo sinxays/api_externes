@@ -867,15 +867,35 @@ function update_vh_replica_starterre($id_kepler, $state)
     date_default_timezone_set('Europe/Paris');
     $currentDateTime = date('Y-m-d H:i:s');
 
-    $data = [
-        'id_kepler' => $id_kepler,
-        'date_delete_starterre' => $currentDateTime,
-        'state' => $state
-    ];
 
-    $sql = "UPDATE vehicules SET state = :state, date_delete_starterre = :date_delete_starterre WHERE id_kepler = :id_kepler";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute($data);
+    switch ($state) {
+        // si c'est un véhicule qui passe à l'état vendu donc sur BDC
+        case 0:
+            $data = [
+                'id_kepler' => $id_kepler,
+                'date_delete_starterre' => $currentDateTime,
+                'state' => $state
+            ];
+
+            $sql = "UPDATE vehicules SET state = :state, date_delete_starterre = :date_delete_starterre WHERE id_kepler = :id_kepler";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute($data);
+            break;
+        // si c'est un véhicule qui repasse à l'état parc
+        case 1:
+            $data = [
+                'id_kepler' => $id_kepler,
+                'state' => $state
+            ];
+
+            $sql = "UPDATE vehicules SET state = :state WHERE id_kepler = :id_kepler";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute($data);
+            break;
+
+    }
+
+
 }
 
 
