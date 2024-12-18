@@ -637,7 +637,7 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
     // caractéristiques du VH : cylindrée
     if (isset($vh->carEngine) && $vh->carEngine !== "") {
         $array_for_csv["details"][0]["language"]["code"] = "fr";
-        $array_for_csv["details"][0]["caracteristics"][$i]["value"] = $vh->carEngine;
+        $array_for_csv["details"][0]["caracteristics"][$i]["value"] = strval($vh->carEngine);
         $array_for_csv["details"][0]["caracteristics"][$i]["category"] = "MOTOR";
         $array_for_csv["details"][0]["caracteristics"][$i]["type"] = "ENGINE_CAPACITY";
         $i++;
@@ -719,7 +719,7 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
     // UPDATE : si on une donnée manquante ou non conventionelle pour starterre on post pas vers starterre
     if ($no_export) {
         sautdeligne();
-        echo "no export";
+        echo "véhicule $vh->reference no export";
         sautdeligne();
         return null;
     } else {
