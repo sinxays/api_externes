@@ -660,7 +660,7 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
     $array_equipements_serie = $vh->equipmentStandard;
     foreach ($array_equipements_serie as $equipement) {
         $array_for_csv["details"][0]["equipments"][$i]["label"] = $equipement->name;
-        $array_for_csv["details"][0]["equipments"][$i]["price"] = isset($equipement->price) ? $equipement->price : 0;
+        $array_for_csv["details"][0]["equipments"][$i]["price"] = isset($equipement->price) ? floatval($equipement->price) : 0;
         $array_for_csv["details"][0]["equipments"][$i]["is-standard"] = true;
         $array_for_csv["details"][0]["equipments"][$i]["is-missing"] = false;
         $array_for_csv["details"][0]["equipments"][$i]["category"] = "OTHER";
@@ -673,7 +673,7 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
 
         foreach ($array_equipements_serie as $equipement) {
             $array_for_csv["details"][0]["equipments"][$i]["label"] = $equipement->name;
-            $array_for_csv["details"][0]["equipments"][$i]["price"] = isset($equipement->price) ? $equipement->price : 0;
+            $array_for_csv["details"][0]["equipments"][$i]["price"] = isset($equipement->price) ? floatval($equipement->price) : 0;
             $array_for_csv["details"][0]["equipments"][$i]["is-standard"] = false;
             $array_for_csv["details"][0]["equipments"][$i]["is-missing"] = false;
             $array_for_csv["details"][0]["equipments"][$i]["category"] = "OTHER";
