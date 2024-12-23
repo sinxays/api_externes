@@ -197,6 +197,33 @@ function get_vhs_starterre_from_base($id_kepler = '')
     return $result_vhs;
 }
 
+function get_vhs_starterre_from_csv()
+{
+
+    // Chemin vers le fichier CSV
+    $cheminFichier = $_SERVER['DOCUMENT_ROOT'] . '/api_vehicles_final.csv';
+
+    // Ouvrir le fichier en mode lecture
+    if (($handle = fopen($cheminFichier, "r")) !== FALSE) {
+        // Lire chaque ligne du fichier CSV
+        $i = 0;
+        while (($data = fgetcsv($handle, 1000, ";")) !== FALSE) {
+            // Afficher chaque ligne (tableau)
+            // print_r($data);
+            $array[$i]['id_starterre'] = $data[2];
+            $i++;
+        }
+        // Fermer le fichier après lecture
+        fclose($handle);
+
+        return $array;
+
+
+    } else {
+        echo "Impossible d'ouvrir le fichier.";
+    }
+}
+
 
 
 
@@ -623,6 +650,8 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
         }
     }
 
+    //changer la valeur de unloadedweight : ajouter 75kg au poids hors passager pour avoir le poids empty_weight 
+    $vh->unloadedWeight = perso_empty_weight($vh->unloadedWeight);
 
     // caractéristiques du VH : DIMENSIONS
     $array_for_details_dimensions = ["height" => 'HEIGHT', "length" => 'LENGTH', "width" => 'WIDTH', "unloadedWeight" => "EMPTY_WEIGHT"];
@@ -1122,4 +1151,12 @@ function use_token_from_base()
     }
 
     return $token;
+}
+
+function perso_empty_weight($unloadedweight)
+{
+    $a = intval($unloadedweight);
+    $result = $a + 75;
+
+    return strval($result);
 }

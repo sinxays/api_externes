@@ -16,7 +16,7 @@ $parc_array = array("CVO BOURGES", "CVO CLERMONT FERRAND", "CVO MASSY", "CVO ORL
 // $parc_array = array("CVO ORLEANS sud");
 
 /***  Pour test sur un seul véhicule ***/
-// $reference = 'bc888il5';
+// $reference = '3vuxhgm';
 // $recup_kepler_for_starterre = recup_vh_unique_kepler_for_starterre($reference);
 // sautdeligne();
 // sautdeligne();
