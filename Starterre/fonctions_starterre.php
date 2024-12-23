@@ -609,6 +609,7 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
     $array_for_csv["release-year"] = isset($vh->year) ? intval($vh->year) : 0;
     $array_for_csv["power-tax"] = isset($vh->taxHorsepower) ? $vh->taxHorsepower : 0;
     $array_for_csv["date-first-registration"] = isset($vh->dateOfDistribution) ? $vh->dateOfDistribution : "0000-00-00";
+    $array_for_csv["natcode"] = isset($vh->version->nationalityCode) ? $vh->version->nationalityCode : null;
     $array_for_csv["model"] = isset($vh->model->name) ? $vh->model->name : "";
     $array_for_csv["configuration"] = isset($vh->version->name) ? $vh->version->name : "";
 
@@ -624,7 +625,7 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
 
 
     // caractéristiques du VH : DIMENSIONS
-    $array_for_details_dimensions = ["height" => 'HEIGHT', "length" => 'LENGTH', "width" => 'WIDTH', "unloadedWeight" => "WEIGHT"];
+    $array_for_details_dimensions = ["height" => 'HEIGHT', "length" => 'LENGTH', "width" => 'WIDTH', "unloadedWeight" => "EMPTY_WEIGHT"];
     $i = 0;
     foreach ($array_for_details_dimensions as $key => $detail) {
         $array_for_csv["details"][0]["language"]["code"] = "fr";
@@ -682,17 +683,21 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
     }
 
 
-
-    // PHOTOS
-    foreach ($vh->gallery as $id_photo => $photo) {
-        $array_for_csv["photos"][$id_photo]["url"] = $photo->photo;
-        $array_for_csv["photos"][$id_photo]["camera-work"] = "OTHER";
-        $array_for_csv["photos"][$id_photo]["order"] = $id_photo + 1;
-        if ($id_photo == 0) {
-            $array_for_csv["photos"][$id_photo]["is-main"] = true;
-        } else {
-            $array_for_csv["photos"][$id_photo]["is-main"] = false;
+    if (isset($vh->gallery) && !empty($vh->gallery)) {
+        // PHOTOS
+        foreach ($vh->gallery as $id_photo => $photo) {
+            $array_for_csv["photos"][$id_photo]["url"] = $photo->photo;
+            $array_for_csv["photos"][$id_photo]["camera-work"] = "OTHER";
+            $array_for_csv["photos"][$id_photo]["order"] = $id_photo + 1;
+            if ($id_photo == 0) {
+                $array_for_csv["photos"][$id_photo]["is-main"] = true;
+            } else {
+                $array_for_csv["photos"][$id_photo]["is-main"] = false;
+            }
         }
+    } //si pas de photos alors on exporte pas 
+    else {
+        $no_export = TRUE;
     }
 
 
