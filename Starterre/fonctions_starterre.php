@@ -609,7 +609,7 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
     $array_for_csv["release-year"] = isset($vh->year) ? intval($vh->year) : 0;
     $array_for_csv["power-tax"] = isset($vh->taxHorsepower) ? $vh->taxHorsepower : 0;
     $array_for_csv["date-first-registration"] = isset($vh->dateOfDistribution) ? $vh->dateOfDistribution : "0000-00-00";
-    $array_for_csv["natcode"] = isset($vh->version->nationalityCode) ? $vh->version->nationalityCode : null;
+    $array_for_csv["natcode"] = isset($vh->version->nationalityCode) ? intval($vh->version->nationalityCode) : null;
     $array_for_csv["model"] = isset($vh->model->name) ? $vh->model->name : "";
     $array_for_csv["configuration"] = isset($vh->version->name) ? $vh->version->name : "";
 
