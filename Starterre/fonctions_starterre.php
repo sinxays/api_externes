@@ -1026,7 +1026,7 @@ function get_adress_vh_for_post_starterre($parc)
 {
 
 
-    switch ($parc) {
+    switch (strtoupper($parc)) {
         case 'CVO CLERMONT FERRAND':
             $adresse["rue"] = "Rue Bernard Palissy";
             $adresse["num_rue"] = "3";
@@ -1045,7 +1045,7 @@ function get_adress_vh_for_post_starterre($parc)
             $adresse["cp"] = "91300";
             $adresse["ville"] = "Massy";
             break;
-        case 'CVO ORLEANS sud':
+        case 'CVO ORLEANS SUD':
             $adresse["rue"] = "Rue de la Bergeresse";
             $adresse["num_rue"] = "845";
             $adresse["cp"] = "45160";
