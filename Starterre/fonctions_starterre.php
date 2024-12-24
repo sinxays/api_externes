@@ -1158,5 +1158,5 @@ function perso_empty_weight($unloadedweight)
     $a = intval($unloadedweight);
     $result = $a + 75;
 
-    return strval($result);
+    return $result;
 }
