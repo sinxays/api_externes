@@ -650,11 +650,14 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
         }
     }
 
-    //changer la valeur de unloadedweight : ajouter 75kg au poids hors passager pour avoir le poids empty_weight 
-    $vh->unloadedWeight = perso_empty_weight($vh->unloadedWeight);
+
 
     // caractéristiques du VH : DIMENSIONS
     $array_for_details_dimensions = ["height" => 'HEIGHT', "length" => 'LENGTH', "width" => 'WIDTH', "unloadedWeight" => "EMPTY_WEIGHT"];
+
+    //changer la valeur de unloadedweight : ajouter 75kg au poids hors passager pour avoir le poids empty_weight 
+    $vh->unloadedWeight = perso_empty_weight($vh->unloadedWeight);
+
     $i = 0;
     foreach ($array_for_details_dimensions as $key => $detail) {
         $array_for_csv["details"][0]["language"]["code"] = "fr";
@@ -687,21 +690,25 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
 
     $i = 0;
     // equipements du véhicule de série
-    $array_equipements_serie = $vh->equipmentStandard;
-    foreach ($array_equipements_serie as $equipement) {
-        $array_for_csv["details"][0]["equipments"][$i]["label"] = $equipement->name;
-        $array_for_csv["details"][0]["equipments"][$i]["price"] = isset($equipement->price) ? floatval($equipement->price) : 0;
-        $array_for_csv["details"][0]["equipments"][$i]["is-standard"] = true;
-        $array_for_csv["details"][0]["equipments"][$i]["is-missing"] = false;
-        $array_for_csv["details"][0]["equipments"][$i]["category"] = "OTHER";
-        $i++;
+    if (isset($vh->equipmentStandard) && !empty($vh->equipmentStandard)) {
+        $array_equipements_serie = $vh->equipmentStandard;
+        foreach ($array_equipements_serie as $equipement) {
+            $array_for_csv["details"][0]["equipments"][$i]["label"] = $equipement->name;
+            $array_for_csv["details"][0]["equipments"][$i]["price"] = isset($equipement->price) ? floatval($equipement->price) : 0;
+            $array_for_csv["details"][0]["equipments"][$i]["is-standard"] = true;
+            $array_for_csv["details"][0]["equipments"][$i]["is-missing"] = false;
+            $array_for_csv["details"][0]["equipments"][$i]["category"] = "OTHER";
+            $i++;
+        }
+    } else {
+        $no_export = TRUE;
     }
 
     if (isset($vh->equipmentOptional) && !empty($vh->equipmentOptional)) {
         //equipement en options
-        $array_equipements_serie = $vh->equipmentOptional;
+        $array_equipements_option = $vh->equipmentOptional;
 
-        foreach ($array_equipements_serie as $equipement) {
+        foreach ($array_equipements_option as $equipement) {
             $array_for_csv["details"][0]["equipments"][$i]["label"] = $equipement->name;
             $array_for_csv["details"][0]["equipments"][$i]["price"] = isset($equipement->price) ? floatval($equipement->price) : 0;
             $array_for_csv["details"][0]["equipments"][$i]["is-standard"] = false;
@@ -709,6 +716,8 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
             $array_for_csv["details"][0]["equipments"][$i]["category"] = "OTHER";
             $i++;
         }
+    } else {
+        $no_export = TRUE;
     }
 
 
