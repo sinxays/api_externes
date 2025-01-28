@@ -1175,42 +1175,79 @@ function set_bodywork_name_for_starterre($bodywork_name)
     $bodywork_name = strtolower($bodywork_name);
 
     switch ($bodywork_name) {
+        case 'targa':
+        case 'spider':
+            $bodytype = 'SPORTS_CAR';
+            break;
+        case 'roadster':
+            $bodytype = 'ROADSTER';
+            break;
         case '4x4':
         case 'crossover':
         case 'crossover-suv':
+        case 'suv':
             $bodytype = "SUV";
             break;
-
         case 'break':
             $bodytype = "STATION_WAGON";
             break;
-
         case 'cabriolet':
             $bodytype = "CONVERTIBLE";
             break;
-
-        case 'berline':
         case 'citadine':
             $bodytype = "CITY_CAR";
             break;
-
+        case 'coup':
         case 'coupé':
             $bodytype = "COUPE";
-
+            break;
+        case 'pick-up':
+        case 'pick-up (vp)':
+        case 'pick-up acier':
+        case 'pick-up cabine double':
+        case 'pick-up hardtop':
+        case 'pick-up long':
+        case 'pick-up-double-cabine':
+            $bodytype = "PICKUP_TRUCK";
+            break;
         case 'monospace':
+        case 'ludospace':
+        case 'mini bus':
+        case 'minibus':
+        case 'minispace':
         case 'monospace compact':
+        case 'combi i':
+        case 'combin':
+        case 'combispace':
         case 'multispace':
             $bodytype = "MINIVAN";
             break;
-
+        case 'châssis':
+        case 'châssis cabine':
+        case 'châssis cabine double':
+        case 'chassis-double Cabine':
+        case 'chassis-nu':
+        case 'fourgon':
+        case 'fourgon surélévé':
+        case 'fourgon vitr':
+        case 'fourgon vitré':
+        case 'fourgonnette':
+        case 'camionette':
         case 'utilitaire':
         case 'utilitaires':
+        case 'benne':
+        case 'benne-double-cabine':
+        case 'cabine':
+        case 'camion':
             $bodytype = "COMMERCIAL_VEHICLE";
             break;
-
+        case 'berline':
+            $bodytype = "SEDAN";
+            break;
         default:
             $bodytype = "SEDAN";
             break;
     }
+
     return $bodytype;
 }
