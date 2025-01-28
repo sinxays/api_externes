@@ -603,7 +603,7 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
     $array_for_csv["transmission"] = "FWD";
     $array_for_csv["origin-country"]["code"] = isset($vh->country) ? $vh->country : "";
     $array_for_csv["national-type"] = isset($vh->vehicleType->name) ? $vh->vehicleType->name : "";
-    $array_for_csv["body-type"] = "CITY_CAR";
+    $array_for_csv["body-type"] = isset($vh->bodywork->name) ? set_bodywork_name_for_starterre($vh->bodywork->name) : "SEDAN";
     $array_for_csv["fuel"] = isset($vh->energy->name) ? get_energy_vh_for_starterre($vh->energy->name) : "";
     if ($array_for_csv["fuel"] == "NA") {
         sautdeligne();
@@ -1168,4 +1168,49 @@ function perso_empty_weight($unloadedweight)
     $result = $a + 75;
 
     return $result;
+}
+
+function set_bodywork_name_for_starterre($bodywork_name)
+{
+    $bodywork_name = strtolower($bodywork_name);
+
+    switch ($bodywork_name) {
+        case '4x4':
+        case 'crossover':
+        case 'crossover-suv':
+            $bodytype = "SUV";
+            break;
+
+        case 'break':
+            $bodytype = "STATION_WAGON";
+            break;
+
+        case 'cabriolet':
+            $bodytype = "CONVERTIBLE";
+            break;
+
+        case 'berline':
+        case 'citadine':
+            $bodytype = "CITY_CAR";
+            break;
+
+        case 'coupé':
+            $bodytype = "COUPE";
+
+        case 'monospace':
+        case 'monospace compact':
+        case 'multispace':
+            $bodytype = "MINIVAN";
+            break;
+
+        case 'utilitaire':
+        case 'utilitaires':
+            $bodytype = "COMMERCIAL_VEHICLE";
+            break;
+
+        default:
+            $bodytype = "SEDAN";
+            break;
+    }
+    return $bodytype;
 }
