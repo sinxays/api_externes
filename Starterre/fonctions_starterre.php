@@ -587,8 +587,7 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
     } else {
         sautdeligne();
         echo "pas de cv renseigné";
-        $no_export['state'] = TRUE;
-        $no_export['cause'] = TRUE;
+        $no_export = TRUE;
     }
 
 
