@@ -587,7 +587,8 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
     } else {
         sautdeligne();
         echo "pas de cv renseigné";
-        $no_export = TRUE;
+        $no_export['state'] = TRUE;
+        $no_export['cause'] = TRUE;
     }
 
 
@@ -604,19 +605,17 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
     $array_for_csv["origin-country"]["code"] = isset($vh->country) ? $vh->country : "";
     $array_for_csv["national-type"] = isset($vh->vehicleType->name) ? $vh->vehicleType->name : "";
     $array_for_csv["body-type"] = isset($vh->bodywork->name) ? set_bodywork_name_for_starterre($vh->bodywork->name) : "SEDAN";
-    $array_for_csv["fuel"] = isset($vh->energy->name) ? get_energy_vh_for_starterre($vh->energy->name) : "";
-    if ($array_for_csv["fuel"] == "NA") {
+    $array_for_csv["fuel"] = isset($vh->energy->name) ? get_energy_vh_for_starterre($vh->energy->name) : "N/A";
+    if ($array_for_csv["fuel"] == "N/A") {
         sautdeligne();
-        echo "pas de energie renseigné";
-        sautdeligne();
+        echo "Erreur energie faussé ou manquant";
         $no_export = TRUE;
     }
     $array_for_csv["gearbox"] = isset($vh->gearbox->name) ? get_gearbox_vh_for_starterre($vh->gearbox->name) : "";
     $array_for_csv["gear-number"] = isset($vh->reportNumber) ? $vh->reportNumber : "N/A";
     if ($array_for_csv["gear-number"] == "N/A") {
         sautdeligne();
-        echo "pas de nombre de rapport renseigné";
-        sautdeligne();
+        echo "Erreur nombre de rapport non renseigné";
         $no_export = TRUE;
     }
     $array_for_csv["brand"]["name"] = isset($vh->brand->name) ? trim(strtolower($vh->brand->name)) : "";
@@ -675,6 +674,8 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
         $array_for_csv["details"][0]["caracteristics"][$i]["type"] = "ENGINE_CAPACITY";
         $i++;
     } else {
+        sautdeligne();
+        echo "Erreur Cylindrée non renseignée";
         $no_export = TRUE;
     }
 
@@ -701,6 +702,8 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
             $i++;
         }
     } else {
+        sautdeligne();
+        echo "Erreur pas d'équipements de série";
         $no_export = TRUE;
     }
 
@@ -717,6 +720,8 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
             $i++;
         }
     } else {
+        sautdeligne();
+        echo "Erreur pas d'équipements optionnels";
         $no_export = TRUE;
     }
 
@@ -735,6 +740,8 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
         }
     } //si pas de photos alors on exporte pas 
     else {
+        sautdeligne();
+        echo "Erreur pas de photos";
         $no_export = TRUE;
     }
 
@@ -763,7 +770,7 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
     if ($no_export) {
         sautdeligne();
         echo "véhicule $vh->reference no export";
-        sautdeligne();
+        separateur();
         return null;
     } else {
         $json_data_vh = json_encode($array_for_csv);
@@ -1024,14 +1031,14 @@ function get_energy_vh_for_starterre($energy_vh_kepler)
             $energy_for_starterre = "EL";
             break;
 
-        case 'Essence / Courant électrique':
+        case 'Essence / Courant electrique':
         case 'Hybride':
         case 'HYBRID':
             $energy_for_starterre = "EH";
             break;
 
         default:
-            $energy_for_starterre = "NA";
+            $energy_for_starterre = "N/A";
             break;
     }
 
