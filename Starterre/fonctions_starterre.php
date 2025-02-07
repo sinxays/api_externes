@@ -207,7 +207,7 @@ function get_token_starterre($environnement)
 
 function get_vhs_starterre_from_base($id_kepler = '')
 {
-    $pdo = Connection::getPDO_starterre();
+    $pdo = Connection::getPDO_starterre_prod();
 
     $request = $pdo->query("SELECT id_kepler,id_starterre FROM vehicules");
     $result_vhs = $request->fetchAll(PDO::FETCH_ASSOC);
@@ -921,7 +921,7 @@ function post_vh_to_delete_starterre($id_starterre, $environnement)
 }
 function create_vh_replica_starterre($id_kepler, $id_starterre, $immatriculation, $vin)
 {
-    $pdo = Connection::getPDO_starterre();
+    $pdo = Connection::getPDO_starterre_prod();
 
     // Définir le fuseau horaire à Paris
     date_default_timezone_set('Europe/Paris');
@@ -946,7 +946,7 @@ function create_vh_replica_starterre($id_kepler, $id_starterre, $immatriculation
 function update_vh_replica_starterre($id_kepler, $state)
 {
 
-    $pdo = Connection::getPDO_starterre();
+    $pdo = Connection::getPDO_starterre_prod();
 
     // Définir le fuseau horaire à Paris
     date_default_timezone_set('Europe/Paris');
@@ -986,7 +986,7 @@ function update_vh_replica_starterre($id_kepler, $state)
 
 function check_if_vh_exist($reference_kepler)
 {
-    $pdo = Connection::getPDO_starterre();
+    $pdo = Connection::getPDO_starterre_prod();
 
     $request = $pdo->query("SELECT * from vehicules WHERE id_kepler = '$reference_kepler'");
     $result = $request->fetch(PDO::FETCH_ASSOC);
@@ -1001,7 +1001,7 @@ function check_if_vh_exist($reference_kepler)
 function check_state_vh($reference_kepler)
 {
 
-    $pdo = Connection::getPDO_starterre();
+    $pdo = Connection::getPDO_starterre_prod();
 
     $request = $pdo->query("SELECT state from vehicules WHERE id_kepler = '$reference_kepler'");
     $result = $request->fetch(PDO::FETCH_COLUMN);
@@ -1015,7 +1015,7 @@ function check_state_vh($reference_kepler)
 
 function get_idStarterre_from_idKepler($id_kepler)
 {
-    $pdo = Connection::getPDO_starterre();
+    $pdo = Connection::getPDO_starterre_prod();
     $request = $pdo->query("SELECT id_starterre FROM vehicules WHERE id_kepler = '$id_kepler'");
     $result = $request->fetch(PDO::FETCH_ASSOC);
 
@@ -1161,7 +1161,7 @@ function separateur()
 function use_token_from_base($environnement)
 {
 
-    $pdo = Connection::getPDO_starterre();
+    $pdo = Connection::getPDO_starterre_prod();
 
     $request = $pdo->query("SELECT token,date_creation FROM token WHERE ID = 1");
     $token_starterre = $request->fetch(PDO::FETCH_ASSOC);
