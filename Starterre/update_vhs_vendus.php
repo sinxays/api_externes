@@ -40,9 +40,9 @@ if (!empty($recup_kepler_vhs_vendus_for_starterre)) {
             // si il est à 1 donc a l'état PARC
             if ($check_state_vh) {
                 //on le post en DELETE vers l'api STARTERRE
-                $count = post_vh_to_delete_starterre($id_starterre);
+                $count = post_vh_to_delete_starterre($id_starterre, 'prod');
                 // et on actualise ma base pour que ça soit iso et on mt le vh à l'état 0 : deleted
-                update_vh_replica_starterre($reference_kepler,0);
+                update_vh_replica_starterre($reference_kepler, 0);
 
                 //on affiche les données pour infos.
                 echo $reference_kepler . " || " . $vh->vin . " || " . $vh->licenseNumber;

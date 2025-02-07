@@ -53,7 +53,7 @@ foreach ($parc_array as $parc) {
                     if ($retour_json) {
 
                         //on le post vers l'api STARTERRE , si le vh existe déja il sera juste updaté, si il n'existe pas il sera crée.
-                        $retour = post_vh_to_starterre($retour_json);
+                        $retour = post_vh_to_starterre($retour_json, 'prod');
 
                         //on crée le véhicule dans ma base pour avoir un replica base <> base starterre, mais il ne sera pas crée si il existe déja
                         if ($retour) {

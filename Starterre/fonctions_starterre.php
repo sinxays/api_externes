@@ -30,7 +30,7 @@ function starterre_recup_vh_by_identifier($identifier_vh)
     $ch = curl_init();
 
     // le token
-    $token = use_token_from_base();
+    $token = use_token_from_base('prod');
 
     // Configuration de la requête cURL
     curl_setopt($ch, CURLOPT_URL, $full_url);
@@ -128,16 +128,34 @@ function get_token()
     return $data['value'];
 }
 
-function get_token_starterre()
+function get_token_starterre($environnement)
 {
     // Définir l'URL de l'API pour l'authentification
-    $url = "https://cameleon.starterre.dev/auth";
+    switch ($environnement) {
+        case 'prod':
+            $url = "https://cameleon.starterre.fr/auth";
+            break;
+        case 'dev':
+            $url = "https://cameleon.starterre.dev/auth";
+            break;
+    }
+
 
     // Préparer les données du body (le payload JSON)
-    $data = array(
-        "email" => "guillaume.honnert@massoutre-locations.com",
-        "password" => "KXpOmwlRolW8%mAl"
-    );
+    switch ($environnement) {
+        case 'prod':
+            $data = array(
+                "email" => "sinxay.souvannavong@massoutre-locations.com",
+                "password" => "wUK8aqXcTlxqQ8!M"
+            );
+            break;
+        case 'dev':
+            $data = array(
+                "email" => "guillaume.honnert@massoutre-locations.com",
+                "password" => "KXpOmwlRolW8%mAl"
+            );
+            break;
+    }
 
     // Convertir le tableau en format JSON
     $json_data = json_encode($data);
@@ -164,7 +182,7 @@ function get_token_starterre()
 
     // Traiter la réponse de l'API
     if ($response === false) {
-        echo "Erreur dans la requête cURL.";
+        echo "Erreur dans la requête cURL. get_token_starterre";
         die();
     } else {
         // Convertir la réponse JSON en tableau PHP
@@ -781,15 +799,25 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
 
 }
 
-function post_vh_to_starterre($donnees_vh_to_post)
+function post_vh_to_starterre($donnees_vh_to_post, $environnement)
 {
     // Initialiser une session cURL
     $ch = curl_init();
 
-    // Définir l'URL de l'API pour POST VEHICULES
-    $url = "https://cameleon.starterre.dev/api/vehicles";
 
-    $token = use_token_from_base();
+    // Définir l'URL de l'API pour POST VEHICULES
+    switch ($environnement) {
+        case 'prod':
+            $url = "https://cameleon.starterre.fr/api/vehicles";
+            break;
+        case 'dev':
+            $url = "https://cameleon.starterre.dev/api/vehicles";
+            break;
+    }
+
+
+
+    $token = use_token_from_base($environnement);
     // var_dump($token);
 
     // $token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3MzEwODA3NDMsImV4cCI6MTczMTA4NDM0Mywicm9sZXMiOlsiUk9MRV9QT1NUX1ZFSElDTEUiLCJST0xFX0RFTEVURV9WRUhJQ0xFIiwiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoiZ3VpbGxhdW1lLmhvbm5lcnRAbWFzc291dHJlLWxvY2F0aW9ucy5jb20ifQ.PMzcKGxK-Uh1dMZ8cteBJYHVXMAhSMitCMHNIRZoekBjRfVSq1Yck1Qj7RPTJF5tCRdjhjgOJ4Z9lipyE8iDkk2KepO15MR2BdpmPqa9eTtEIPuNTgAz2JGxnfrwmfdZTwlle0-VVK6WwCso_20gGCVd35pxVKWoqnalx2G8cV88kuSYjq_awybc8jSO3vJU-KyysXpKKWaQ8nIkurGBfUf71R-gFZFTxhkpROr8h_76XsrijWcS0LuO4rSyuvtwluAAy3JMBvL8bEIiH-x9UCmxE4V5S0d-SIN9LIgqmNs6XjbSJmmweE0tsKHIigiWQQSttO_SyLeGv-G8bTUs5Q";
@@ -814,7 +842,7 @@ function post_vh_to_starterre($donnees_vh_to_post)
 
     // Traiter la réponse de l'API
     if ($response === false) {
-        echo "Erreur dans la requête cURL.";
+        echo "Erreur dans la requête cURL.post_vh_to_starterre";
     } else {
         // Convertir la réponse JSON en tableau PHP
         $response_data = json_decode($response, true);
@@ -846,15 +874,23 @@ function post_vh_to_starterre($donnees_vh_to_post)
     }
 }
 
-function post_vh_to_delete_starterre($id_starterre)
+function post_vh_to_delete_starterre($id_starterre, $environnement)
 {
     // Initialiser une session cURL
     $ch = curl_init();
 
     // Définir l'URL de l'API pour POST VEHICULES
-    $url = "https://cameleon.starterre.dev/api/vehicles/" . $id_starterre;
+    switch ($environnement) {
+        case 'prod':
+            $url = "https://cameleon.starterre.fr/api/vehicles/" . $id_starterre;
+            break;
+        case 'dev':
+            $url = "https://cameleon.starterre.dev/api/vehicles/" . $id_starterre;
+            break;
+    }
 
-    $token = use_token_from_base();
+
+    $token = use_token_from_base($environnement);
     // var_dump($token);
 
     // $token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3MzEwODA3NDMsImV4cCI6MTczMTA4NDM0Mywicm9sZXMiOlsiUk9MRV9QT1NUX1ZFSElDTEUiLCJST0xFX0RFTEVURV9WRUhJQ0xFIiwiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoiZ3VpbGxhdW1lLmhvbm5lcnRAbWFzc291dHJlLWxvY2F0aW9ucy5jb20ifQ.PMzcKGxK-Uh1dMZ8cteBJYHVXMAhSMitCMHNIRZoekBjRfVSq1Yck1Qj7RPTJF5tCRdjhjgOJ4Z9lipyE8iDkk2KepO15MR2BdpmPqa9eTtEIPuNTgAz2JGxnfrwmfdZTwlle0-VVK6WwCso_20gGCVd35pxVKWoqnalx2G8cV88kuSYjq_awybc8jSO3vJU-KyysXpKKWaQ8nIkurGBfUf71R-gFZFTxhkpROr8h_76XsrijWcS0LuO4rSyuvtwluAAy3JMBvL8bEIiH-x9UCmxE4V5S0d-SIN9LIgqmNs6XjbSJmmweE0tsKHIigiWQQSttO_SyLeGv-G8bTUs5Q";
@@ -1122,7 +1158,7 @@ function separateur()
 }
 
 
-function use_token_from_base()
+function use_token_from_base($environnement)
 {
 
     $pdo = Connection::getPDO_starterre();
@@ -1145,7 +1181,7 @@ function use_token_from_base()
         //plus de 55 minutes alors on recrée un token dans la base
         if ($minute_passed >= 55) {
 
-            $newTokenStarterre = get_token_starterre();
+            $newTokenStarterre = get_token_starterre($environnement);
 
             // update du token dans la base
             $data = [

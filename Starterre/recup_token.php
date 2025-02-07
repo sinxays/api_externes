@@ -3,12 +3,18 @@
 include 'fonctions_starterre.php';
 
 // Définir l'URL de l'API pour l'authentification
-$url = "https://cameleon.starterre.dev/auth";
+// $url = "https://cameleon.starterre.dev/auth";
+$url = "https://cameleon.starterre.fr/auth";
 
 // Préparer les données du body (le payload JSON)
+// $data = array(
+//     "email" => "guillaume.honnert@massoutre-locations.com",
+//     "password" => "KXpOmwlRolW8%mAl"
+// );
+
 $data = array(
-    "email" => "guillaume.honnert@massoutre-locations.com",
-    "password" => "KXpOmwlRolW8%mAl"
+    "email" => "sinxay.souvannavong@massoutre-locations.com",
+    "password" => "wUK8aqXcTlxqQ8!M"
 );
 
 // Convertir le tableau en format JSON
