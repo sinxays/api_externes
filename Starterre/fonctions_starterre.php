@@ -590,6 +590,8 @@ function recup_vh_unique_kepler_for_starterre($reference)
 function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
 {
     $no_export = FALSE;
+    $no_export_array = array();
+    
 
     $array_for_csv["partner-vehicle-identifier"] = isset($vh->reference) ? $vh->reference : "";
     $array_for_csv["is-used"] = true;
@@ -736,11 +738,12 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
             $array_for_csv["details"][0]["equipments"][$i]["category"] = "OTHER";
             $i++;
         }
-    } else {
-        sautdeligne();
-        echo "Erreur pas d'équipements optionnels";
-        $no_export = TRUE;
-    }
+    } 
+    // else {
+    //     sautdeligne();
+    //     echo "Erreur pas d'équipements optionnels";
+    //     $no_export = TRUE;
+    // }
 
 
     if (isset($vh->gallery) && !empty($vh->gallery)) {
