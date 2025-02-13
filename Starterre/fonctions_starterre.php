@@ -1069,7 +1069,7 @@ function get_energy_vh_for_starterre($energy_vh_kepler)
             $energy_for_starterre = "EL";
             break;
 
-        case 'Essence / courant electrique':
+        case 'essence / courant electrique':
         case 'hybride':
         case 'hybrid':
             $energy_for_starterre = "EH";
