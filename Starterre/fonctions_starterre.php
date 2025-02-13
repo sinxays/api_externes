@@ -591,7 +591,7 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
 {
     $no_export = FALSE;
     $no_export_array = array();
-    
+
 
     $array_for_csv["partner-vehicle-identifier"] = isset($vh->reference) ? $vh->reference : "";
     $array_for_csv["is-used"] = true;
@@ -738,7 +738,7 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
             $array_for_csv["details"][0]["equipments"][$i]["category"] = "OTHER";
             $i++;
         }
-    } 
+    }
     // else {
     //     sautdeligne();
     //     echo "Erreur pas d'équipements optionnels";
@@ -1052,26 +1052,26 @@ function get_origin_vh_for_starterre($origin_kepler)
 
 function get_energy_vh_for_starterre($energy_vh_kepler)
 {
-    switch ($energy_vh_kepler) {
-        case 'Essence sans plomb':
-        case 'ESSENCE':
-        case 'Essence plomb':
+    switch (strtolower($energy_vh_kepler)) {
+        case 'essence sans plomb':
+        case 'essence':
+        case 'essence plomb':
             $energy_for_starterre = "ES";
             break;
-        case 'Diesel':
+        case 'diesel':
             $energy_for_starterre = "GO";
             break;
-        case 'GPL':
+        case 'gpl':
             $energy_for_starterre = "PLG";
             break;
-        case 'Courant electrique':
-        case 'Electrique':
+        case 'courant electrique':
+        case 'electrique':
             $energy_for_starterre = "EL";
             break;
 
-        case 'Essence / Courant electrique':
-        case 'Hybride':
-        case 'HYBRID':
+        case 'Essence / courant electrique':
+        case 'hybride':
+        case 'hybrid':
             $energy_for_starterre = "EH";
             break;
 
