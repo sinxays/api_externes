@@ -688,7 +688,12 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
     // caractéristiques du VH : cylindrée
     if (isset($vh->carEngine) && $vh->carEngine !== "") {
         $array_for_csv["details"][0]["language"]["code"] = "fr";
-        $array_for_csv["details"][0]["caracteristics"][$i]["value"] = strval($vh->carEngine);
+        //si c'est un vh électrique alors on met la cylindrée à 1
+        if ($array_for_csv["fuel"] == 'EL' || $array_for_csv["fuel"] == 'EH') {
+            $array_for_csv["details"][0]["caracteristics"][$i]["value"] = '1';
+        } else {
+            $array_for_csv["details"][0]["caracteristics"][$i]["value"] = strval($vh->carEngine);
+        }
         $array_for_csv["details"][0]["caracteristics"][$i]["category"] = "MOTOR";
         $array_for_csv["details"][0]["caracteristics"][$i]["type"] = "ENGINE_CAPACITY";
         $i++;
