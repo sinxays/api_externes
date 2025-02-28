@@ -855,14 +855,14 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
         echo "véhicule $vh->reference no export";
         separateur();
         $return['state'] = 0;
-        $return['detail_erreur'] = $no_export_cause_array ;
+        $return['detail_erreur'] = $no_export_cause_array;
         return $return;
     } else {
         $json_data_vh = json_encode($array_for_csv);
         // sautdeligne();
         // var_dump($json_data_vh);
         $return['state'] = 1;
-        $return['datas'] = $json_data_vh ;
+        $return['datas'] = $json_data_vh;
         return $return;
     }
 
@@ -888,9 +888,6 @@ function post_vh_to_starterre($donnees_vh_to_post, $environnement)
 
 
     $token = use_token_from_base($environnement);
-    // var_dump($token);
-
-    // $token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3MzEwODA3NDMsImV4cCI6MTczMTA4NDM0Mywicm9sZXMiOlsiUk9MRV9QT1NUX1ZFSElDTEUiLCJST0xFX0RFTEVURV9WRUhJQ0xFIiwiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoiZ3VpbGxhdW1lLmhvbm5lcnRAbWFzc291dHJlLWxvY2F0aW9ucy5jb20ifQ.PMzcKGxK-Uh1dMZ8cteBJYHVXMAhSMitCMHNIRZoekBjRfVSq1Yck1Qj7RPTJF5tCRdjhjgOJ4Z9lipyE8iDkk2KepO15MR2BdpmPqa9eTtEIPuNTgAz2JGxnfrwmfdZTwlle0-VVK6WwCso_20gGCVd35pxVKWoqnalx2G8cV88kuSYjq_awybc8jSO3vJU-KyysXpKKWaQ8nIkurGBfUf71R-gFZFTxhkpROr8h_76XsrijWcS0LuO4rSyuvtwluAAy3JMBvL8bEIiH-x9UCmxE4V5S0d-SIN9LIgqmNs6XjbSJmmweE0tsKHIigiWQQSttO_SyLeGv-G8bTUs5Q";
 
     // Configuration de la requête cURL
     curl_setopt($ch, CURLOPT_URL, $url);
@@ -1231,7 +1228,19 @@ function separateur()
 function use_token_from_base($environnement)
 {
 
-    $pdo = Connection::getPDO_starterre_prod();
+
+    switch ($environnement) {
+        case 'dev':
+            $pdo = Connection::getPDO_starterre();
+            break;
+        case 'prod':
+            $pdo = Connection::getPDO_starterre_prod();
+            break;
+
+        default:
+            $pdo = Connection::getPDO_starterre();
+            break;
+    }
 
     $request = $pdo->query("SELECT token,date_creation FROM token WHERE ID = 1");
     $token_starterre = $request->fetch(PDO::FETCH_ASSOC);

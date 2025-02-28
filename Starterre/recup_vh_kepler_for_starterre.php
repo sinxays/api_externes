@@ -83,7 +83,7 @@ foreach ($parc_array as $parc) {
                     if ($retour_json['state'] == 1) {
 
                         //on le post vers l'api STARTERRE , si le vh existe déja il sera juste updaté, si il n'existe pas il sera crée.
-                        $retour = post_vh_to_starterre($retour_json, $environnement);
+                        $retour = post_vh_to_starterre($retour_json['datas'], $environnement);
 
                         $array_vhs_ok[$nbr_vhs_OK] = $reference_kepler;
 

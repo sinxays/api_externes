@@ -27,8 +27,8 @@ $environnement = 'dev';
 
 
 //creer un array avec tous les parc pour faire la boucle par parc
-// $parc_array = array("CVO BOURGES", "CVO CLERMONT FERRAND", "CVO MASSY", "CVO ORLEANS sud", "CVO TROYES");
-$parc_array = array("CVO BOURGES");
+// $parc_array = array("CVO BOURGES", "CVO CLERMONT FERRAND", "CVO MASSY", "CVO ORLEANS sud", "CVO TROYES","CVO ARRIVAGE");
+$parc_array = array("CVO ARRIVAGE");
 
 /***  Pour test sur un seul véhicule ***/
 // $reference = '2obmcquh';
@@ -60,11 +60,11 @@ foreach ($parc_array as $parc) {
     // si plusieurs page, tant qu'on trouve des données on boucle
     while ($datas_find == TRUE) {
 
-        $recup_kepler_for_starterre = recup_vhs_kepler_for_starterre($parc, $page, 'parc');
-        // $recup_kepler_for_starterre = recup_vhs_kepler_for_starterre($parc, $page, 'arrivage');
+        $recup_kepler_for_starterre_parc = recup_vhs_kepler_for_starterre($parc, $page, 'parc');
+        $recup_kepler_for_starterre_arrivage = recup_vhs_kepler_for_starterre($parc, $page, 'arrivage');
 
         //on assemble les deux tableaux (parc et arrivage) en un 
-        // $recup_kepler_for_starterre = array_merge($recup_kepler_for_starterre_parc, $recup_kepler_for_starterre_arrivage);
+        $recup_kepler_for_starterre = array_merge($recup_kepler_for_starterre_parc, $recup_kepler_for_starterre_arrivage);
 
         // si on trouve des données 
         if (!empty($recup_kepler_for_starterre)) {
@@ -163,10 +163,6 @@ sautdeligne();
 echo "LISTE DE VHS EN ERREUR :";
 sautdeligne();
 if (!empty($array_vhs_no_ok)) {
-
-    // var_dump($array_vhs_no_ok);
-
-
     foreach ($array_vhs_no_ok as $vh_no_ok) {
         $detail_cause = '';
         foreach ($vh_no_ok['cause'] as $cause) {
