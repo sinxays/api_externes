@@ -5,18 +5,33 @@ include 'fonctions_starterre.php';
 ini_set('xdebug.var_display_max_depth', '-1');
 ini_set('xdebug.var_display_max_children', '-1');
 ini_set('xdebug.var_display_max_data', '-1');
-set_time_limit(300); // 300 secondes = 5 minutes, adapte selon tes besoins
+set_time_limit(600); // 300 secondes = 5 minutes, adapte selon tes besoins
+
 
 
 
 //EXPORT STARTERRE
+
+
+/*************************** BIEN MODIFIER L'ENVIRONNEMENT SI PASSAGE EN TEST OU EN PROD (dev ou prod) !!!  *******************************/
+$environnement = 'dev';
+/*************************** BIEN MODIFIER L'ENVIRONNEMENT SI PASSAGE EN TEST OU EN PROD (dev ou prod) !!!  *******************************/
+
+if ($environnement === 'prod') {
+    echo "<script>
+        if (!confirm('Vous êtes en mode PRODUCTION ! Voulez-vous continuer ?')) {
+            window.location.href = '../index.php'; // Redirige ou stoppe l'exécution
+        }
+    </script>";
+}
+
 
 //creer un array avec tous les parc pour faire la boucle par parc
 $parc_array = array("CVO BOURGES", "CVO CLERMONT FERRAND", "CVO MASSY", "CVO ORLEANS sud", "CVO TROYES");
 // $parc_array = array("CVO ORLEANS sud");
 
 /***  Pour test sur un seul véhicule ***/
-// $reference = 'sdqpzmfhi';
+// $reference = '97o2iyl6pr';
 // $recup_kepler_for_starterre = recup_vh_unique_kepler_for_starterre($reference);
 // sautdeligne();
 // sautdeligne();
@@ -35,7 +50,12 @@ foreach ($parc_array as $parc) {
 
     // si plusieurs page, tant qu'on trouve des données on boucle
     while ($datas_find == TRUE) {
-        $recup_kepler_for_starterre = recup_vhs_kepler_for_starterre($parc, $page);
+
+        $recup_kepler_for_starterre_parc = recup_vhs_kepler_for_starterre($parc, $page, 'parc');
+        $recup_kepler_for_starterre_arrivage = recup_vhs_kepler_for_starterre($parc, $page, 'arrivage');
+
+        //on assemble les deux tableaux (parc et arrivage) en un 
+        $recup_kepler_for_starterre = array_merge($recup_kepler_for_starterre_parc, $recup_kepler_for_starterre_arrivage);
 
         // si on trouve des données 
         if (!empty($recup_kepler_for_starterre)) {
@@ -53,17 +73,17 @@ foreach ($parc_array as $parc) {
                     if ($retour_json) {
 
                         //on le post vers l'api STARTERRE , si le vh existe déja il sera juste updaté, si il n'existe pas il sera crée.
-                        $retour = post_vh_to_starterre($retour_json, 'prod');
+                        $retour = post_vh_to_starterre($retour_json, $environnement);
 
                         //on crée le véhicule dans ma base pour avoir un replica base <> base starterre, mais il ne sera pas crée si il existe déja
                         if ($retour) {
                             // On check si le vh existe déja et qu'il est a l'état delete dans la base avant, car ça peut etre un bdc annulé finalement et donc le véhicule ressort en état parc à nouveau.
-                            $check_vh = check_if_vh_exist($reference_kepler);
+                            $check_vh = check_if_vh_exist($reference_kepler, $environnement);
 
                             //si il existe pas alors on le crée
                             if (!$check_vh) {
 
-                                create_vh_replica_starterre($reference_kepler, $retour['id_starterre'], $vh->licenseNumber, $vh->vin);
+                                create_vh_replica_starterre($reference_kepler, $retour['id_starterre'], $vh->licenseNumber, $vh->vin, $environnement);
                                 $nbr_vh_cree_starterre++;
 
                                 sautdeligne();
@@ -78,7 +98,7 @@ foreach ($parc_array as $parc) {
                                 //on check si le vh est à l'état 0 donc placé sur BDC
                                 if ($check_vh['state'] == 0) {
                                     //on le repasse à 1 state parc
-                                    update_vh_replica_starterre($reference_kepler, 1);
+                                    update_vh_replica_starterre($reference_kepler, 1, $environnement);
                                 }
 
                             }

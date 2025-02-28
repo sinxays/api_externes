@@ -205,9 +205,21 @@ function get_token_starterre($environnement)
 }
 
 
-function get_vhs_starterre_from_base($id_kepler = '')
+function get_vhs_starterre_from_base($environnement, $id_kepler = '')
 {
-    $pdo = Connection::getPDO_starterre_prod();
+
+    switch ($environnement) {
+        case 'dev':
+            $pdo = Connection::getPDO_starterre();
+            break;
+        case 'prod':
+            $pdo = Connection::getPDO_starterre_prod();
+            break;
+
+        default:
+            $pdo = Connection::getPDO_starterre();
+            break;
+    }
 
     $request = $pdo->query("SELECT id_kepler,id_starterre FROM vehicules");
     $result_vhs = $request->fetchAll(PDO::FETCH_ASSOC);
@@ -219,16 +231,19 @@ function get_vhs_starterre_from_csv()
 {
 
     // Chemin vers le fichier CSV
-    $cheminFichier = $_SERVER['DOCUMENT_ROOT'] . '/api_vehicles_final.csv';
+    $cheminFichier = $_SERVER['DOCUMENT_ROOT'] . '/Starterre/api_vehicles_final.csv';
 
     // Ouvrir le fichier en mode lecture
     if (($handle = fopen($cheminFichier, "r")) !== FALSE) {
+        // Ignorer la première ligne (en-têtes)
+        fgetcsv($handle);
+
         // Lire chaque ligne du fichier CSV
         $i = 0;
         while (($data = fgetcsv($handle, 1000, ";")) !== FALSE) {
             // Afficher chaque ligne (tableau)
             // print_r($data);
-            $array[$i]['id_starterre'] = $data[2];
+            $array[$i]['id_starterre'] = $data[3];
             $i++;
         }
         // Fermer le fichier après lecture
@@ -247,15 +262,34 @@ function get_vhs_starterre_from_csv()
 
 
 
-function recup_vhs_kepler_for_starterre($parc, $page)
+function recup_vhs_kepler_for_starterre($parc, $page, $state)
 {
     // le token
     $token = get_token();
 
 
+    // parc || arrivage 
+    switch ($state) {
+        case 'parc':
+            $conditions['state'] = 'vehicle.state.parc';
+            $conditions['isNotAvailableForSelling'] = FALSE;
+            break;
+
+        case 'arrivage':
+            $conditions['state'] = 'vehicle.state.on_arrival';
+            $conditions['isNotAvailableForSelling'] = FALSE;
+            break;
+
+        default:
+            $conditions['state'] = 'vehicle.state.parc';
+            $conditions['isNotAvailableForSelling'] = FALSE;
+            break;
+    }
+
+
     $dataArray = array(
-        "state" => 'vehicle.state.parc',
-        "isNotAvailableForSelling" => FALSE,
+        "state" => $conditions['state'],
+        "isNotAvailableForSelling" => $conditions['isNotAvailableForSelling'],
         "fleet" => $parc,
         "count" => 100,
         "page" => $page
@@ -305,21 +339,14 @@ function recup_vhs_kepler_for_starterre($parc, $page)
     // var_dump(gettype($result));
     // print_r($result);
 
-
     curl_close($ch);
-
 
     // créer un objet à partir du retour qui est un string
     $obj_vehicule = json_decode($result);
 
-
     //on prend l'object qui est dans l'array
     $return = $obj_vehicule;
     // on retourne un objet
-
-
-    // var_dump($return);
-
 
     return $return;
 }
@@ -532,6 +559,8 @@ function recup_vh_unique_kepler_for_starterre($reference)
     // le token
     $token = get_token();
 
+    var_dump($token);
+
     $dataArray = array(
         "reference" => $reference,
         "state" => 'vehicle.state.sold,vehicle.state.sold_ar,vehicle.state.pending,vehicle.state.out,vehicle.state.out_ar,vehicle.state.canceled,vehicle.state.on_arrival,vehicle.state.parc',
@@ -574,7 +603,7 @@ function recup_vh_unique_kepler_for_starterre($reference)
 
     curl_close($ch);
 
-    // var_dump($result);
+    var_dump($result);
 
     // créer un objet à partir du retour qui est un string
     $obj_vehicule = json_decode($result);
@@ -671,10 +700,14 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
 
 
     // caractéristiques du VH : DIMENSIONS
-    $array_for_details_dimensions = ["height" => 'HEIGHT', "length" => 'LENGTH', "width" => 'WIDTH', "unloadedWeight" => "EMPTY_WEIGHT"];
 
-    //changer la valeur de unloadedweight : ajouter 75kg au poids hors passager pour avoir le poids empty_weight 
-    $vh->unloadedWeight = perso_empty_weight($vh->unloadedWeight);
+    //changer la valeur de unloadedweight : ajouter 75kg au poids hors passager pour avoir le poids empty_weight
+    if (isset($vh->unloadedWeight)) {
+        $array_for_details_dimensions = ["height" => 'HEIGHT', "length" => 'LENGTH', "width" => 'WIDTH', "unloadedWeight" => "EMPTY_WEIGHT"];
+        $vh->unloadedWeight = perso_empty_weight($vh->unloadedWeight);
+    } else {
+        $array_for_details_dimensions = ["height" => 'HEIGHT', "length" => 'LENGTH', "width" => 'WIDTH'];
+    }
 
     $i = 0;
     foreach ($array_for_details_dimensions as $key => $detail) {
@@ -927,9 +960,9 @@ function post_vh_to_delete_starterre($id_starterre, $environnement)
         return 1;
     }
 }
-function create_vh_replica_starterre($id_kepler, $id_starterre, $immatriculation, $vin)
+function create_vh_replica_starterre($id_kepler, $id_starterre, $immatriculation, $vin, $environnement)
 {
-    $pdo = Connection::getPDO_starterre_prod();
+    $pdo = set_environnement_pdo($environnement);
 
     // Définir le fuseau horaire à Paris
     date_default_timezone_set('Europe/Paris');
@@ -951,10 +984,10 @@ function create_vh_replica_starterre($id_kepler, $id_starterre, $immatriculation
     $stmt->execute($data);
 }
 
-function update_vh_replica_starterre($id_kepler, $state)
+function update_vh_replica_starterre($id_kepler, $state, $environnement)
 {
 
-    $pdo = Connection::getPDO_starterre_prod();
+    $pdo = set_environnement_pdo($environnement);
 
     // Définir le fuseau horaire à Paris
     date_default_timezone_set('Europe/Paris');
@@ -992,9 +1025,9 @@ function update_vh_replica_starterre($id_kepler, $state)
 }
 
 
-function check_if_vh_exist($reference_kepler)
+function check_if_vh_exist($reference_kepler, $environnement)
 {
-    $pdo = Connection::getPDO_starterre_prod();
+    $pdo = set_environnement_pdo($environnement);
 
     $request = $pdo->query("SELECT * from vehicules WHERE id_kepler = '$reference_kepler'");
     $result = $request->fetch(PDO::FETCH_ASSOC);
@@ -1300,4 +1333,22 @@ function set_bodywork_name_for_starterre($bodywork_name)
     }
 
     return $bodytype;
+}
+
+function set_environnement_pdo($environnement)
+{
+    switch ($environnement) {
+        case 'dev':
+            $pdo = Connection::getPDO_starterre();
+            break;
+
+        case 'prod':
+            $pdo = Connection::getPDO_starterre_prod();
+            break;
+
+        default:
+            $pdo = Connection::getPDO_starterre();
+            break;
+    }
+    return $pdo;
 }
