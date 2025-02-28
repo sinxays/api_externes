@@ -46,10 +46,6 @@ if (isset($_POST)) {
                 $result_final = FALSE;
             }
 
-            var_dump($datas_vh_for_starterre);
-
-
-            die();
             echo $result_final;
             break;
 

@@ -106,6 +106,7 @@ function sautdeligne()
 }
 
 
+
 function get_token()
 {
     $url_token = "https://www.kepler-soft.net/api/v3.0/auth-token/";
@@ -619,7 +620,7 @@ function recup_vh_unique_kepler_for_starterre($reference)
 function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
 {
     $no_export = FALSE;
-    $no_export_array = array();
+    $no_export_cause_array = array();
 
 
     $array_for_csv["partner-vehicle-identifier"] = isset($vh->reference) ? $vh->reference : "";
@@ -635,7 +636,8 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
         $array_for_csv["power-horsepower"] = $vh->horsepower;
     } else {
         sautdeligne();
-        echo "pas de cv renseigné";
+        // echo "pas de cv renseigné";
+        array_push($no_export_cause_array, "Erreur: pas de cv renseigné");
         $no_export = TRUE;
     }
 
@@ -656,14 +658,16 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
     $array_for_csv["fuel"] = isset($vh->energy->name) ? get_energy_vh_for_starterre($vh->energy->name) : "N/A";
     if ($array_for_csv["fuel"] == "N/A") {
         sautdeligne();
-        echo "Erreur energie faussé ou manquant";
+        // echo "Erreur energie faussé ou manquant";
+        array_push($no_export_cause_array, "Erreur: energie faussé ou manquant");
         $no_export = TRUE;
     }
     $array_for_csv["gearbox"] = isset($vh->gearbox->name) ? get_gearbox_vh_for_starterre($vh->gearbox->name) : "";
     $array_for_csv["gear-number"] = isset($vh->reportNumber) ? $vh->reportNumber : "N/A";
     if ($array_for_csv["gear-number"] == "N/A") {
         sautdeligne();
-        echo "Erreur nombre de rapport non renseigné";
+        // echo "Erreur nombre de rapport non renseigné";
+        array_push($no_export_cause_array, "Erreur: nombre de rapport non renseigné");
         $no_export = TRUE;
     }
     $array_for_csv["brand"]["name"] = isset($vh->brand->name) ? trim(strtolower($vh->brand->name)) : "";
@@ -732,7 +736,8 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
         $i++;
     } else {
         sautdeligne();
-        echo "Erreur Cylindrée non renseignée";
+        // echo "Erreur Cylindrée non renseignée";
+        array_push($no_export_cause_array, "Erreur: Cylindrée non renseignée");
         $no_export = TRUE;
     }
 
@@ -760,7 +765,8 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
         }
     } else {
         sautdeligne();
-        echo "Erreur pas d'équipements de série";
+        // echo "Erreur pas d'équipements de série";
+        array_push($no_export_cause_array, "Erreur: Erreur pas d'équipements de série");
         $no_export = TRUE;
     }
 
@@ -799,7 +805,8 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
     } //si pas de photos alors on exporte pas 
     else {
         sautdeligne();
-        echo "Erreur pas de photos";
+        // echo "Erreur pas de photos";
+        array_push($no_export_cause_array, "Erreur: Pas de photos");
         $no_export = TRUE;
     }
 
@@ -813,14 +820,32 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
 
     $array_for_csv["warranty"]["type"] = "MANUFACTURER";
 
-    $adresse = get_adress_vh_for_post_starterre($vh->fleet);
+    $cvo = $vh->fleet;
 
-    $array_for_csv["address"][0]["type"] = "STORAGE";
-    $array_for_csv["address"][0]["street-number"] = $adresse["num_rue"];
-    $array_for_csv["address"][0]["street-name"] = $adresse["rue"];
-    $array_for_csv["address"][0]["postcode"] = $adresse["cp"];
-    $array_for_csv["address"][0]["city"] = $adresse["ville"];
-    $array_for_csv["address"][0]["country"]["code"] = $adresse["pays"];
+    // si ce ne sont pas des vhs stellantis on prend l'adresses des CVO
+    if ($cvo !== 'CVO ARRIVAGE') {
+        $adresse = get_adress_vh_for_post_starterre($vh->fleet);
+
+        $array_for_csv["address"][0]["type"] = "STORAGE";
+        $array_for_csv["address"][0]["street-number"] = $adresse["num_rue"];
+        $array_for_csv["address"][0]["street-name"] = $adresse["rue"];
+        $array_for_csv["address"][0]["postcode"] = $adresse["cp"];
+        $array_for_csv["address"][0]["city"] = $adresse["ville"];
+        $array_for_csv["address"][0]["country"]["code"] = $adresse["pays"];
+    }
+    //sinon on prend l'endroit du stockage avec les Notes sites privé de l'onglet note de kepler
+    else {
+        if (isset($vh->notes->website)) {
+            $notes = $vh->notes->website;
+            $adresse = get_adresse_from_notes_vh_kepler($notes);
+            $array_for_csv["address"][0]["type"] = "STORAGE";
+            $array_for_csv["address"][0]["street-number"] = $adresse['numero_rue'];
+            $array_for_csv["address"][0]["street-name"] = $adresse['nom_rue'];
+            $array_for_csv["address"][0]["postcode"] = $adresse['code_postal'];
+            $array_for_csv["address"][0]["city"] = $adresse['ville'];
+            $array_for_csv["address"][0]["country"]["code"] = $adresse['code_pays'];
+        }
+    }
 
 
 
@@ -829,12 +854,16 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
         sautdeligne();
         echo "véhicule $vh->reference no export";
         separateur();
-        return null;
+        $return['state'] = 0;
+        $return['detail_erreur'] = $no_export_cause_array ;
+        return $return;
     } else {
         $json_data_vh = json_encode($array_for_csv);
         // sautdeligne();
         // var_dump($json_data_vh);
-        return $json_data_vh;
+        $return['state'] = 1;
+        $return['datas'] = $json_data_vh ;
+        return $return;
     }
 
 
@@ -1351,4 +1380,17 @@ function set_environnement_pdo($environnement)
             break;
     }
     return $pdo;
+}
+
+function get_adresse_from_notes_vh_kepler($notes_public)
+{
+    $explode_notes = explode(",", $notes_public);
+
+    $adresse['numero_rue'] = $explode_notes[0];
+    $adresse['nom_rue'] = $explode_notes[1];
+    $adresse['code_postal'] = $explode_notes[2];
+    $adresse['ville'] = $explode_notes[3];
+    $adresse['code_pays'] = $explode_notes[4];
+
+    return $adresse;
 }

@@ -27,8 +27,8 @@ $environnement = 'prod';
 
 
 //creer un array avec tous les parc pour faire la boucle par parc
-$parc_array = array("CVO BOURGES", "CVO CLERMONT FERRAND", "CVO MASSY", "CVO ORLEANS sud", "CVO TROYES");
-// $parc_array = array("CVO ORLEANS sud");
+$parc_array = array("CVO BOURGES", "CVO CLERMONT FERRAND", "CVO MASSY", "CVO ORLEANS sud", "CVO TROYES", "CVO ARRIVAGE");
+// $parc_array = array("CVO ARRIVAGE");
 
 /***  Pour test sur un seul véhicule ***/
 // $reference = '97o2iyl6pr';
@@ -41,6 +41,15 @@ $parc_array = array("CVO BOURGES", "CVO CLERMONT FERRAND", "CVO MASSY", "CVO ORL
 
 
 $array_for_csv = array();
+
+$nbr_vhs_OK = 0;
+$nbr_vhs_NO_OK = 0;
+$nbr_vhs_NO_prix_pro = 0;
+
+
+$array_vhs_ok = array();
+$array_vhs_no_ok = array();
+$array_vhs_prix_pro_none = array();
 
 $nbr_vh_cree_starterre = 0;
 foreach ($parc_array as $parc) {
@@ -63,17 +72,20 @@ foreach ($parc_array as $parc) {
 
                 $reference_kepler = $vh->reference;
 
-                //si le vh à un prix négociant HT on crée le véhicule
+                //si le vh à un prix négociant/pro HT on crée le véhicule
                 if (isset($vh->priceSellerWithoutTax) && $vh->priceSellerWithoutTax !== '') {
                     //on met en forme les données
 
-                    //UPDATE : si il ya un truc qui manque ou qui ne va pas pour starterre on s'embete pas on l'importe pas dans starterre.
                     $retour_json = mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh);
 
-                    if ($retour_json) {
+                    // si retour[state] == 1 alors OK
+                    // si retour[state] == 0 alors on va alimenter le tableau des erreurs 
+                    if ($retour_json['state'] == 1) {
 
                         //on le post vers l'api STARTERRE , si le vh existe déja il sera juste updaté, si il n'existe pas il sera crée.
                         $retour = post_vh_to_starterre($retour_json, $environnement);
+
+                        $array_vhs_ok[$nbr_vhs_OK] = $reference_kepler;
 
                         //on crée le véhicule dans ma base pour avoir un replica base <> base starterre, mais il ne sera pas crée si il existe déja
                         if ($retour) {
@@ -103,10 +115,20 @@ foreach ($parc_array as $parc) {
 
                             }
                         }
-
-
+                        $nbr_vhs_OK++;
+                    }
+                    //si pas ok pour mise en forme 
+                    else {
+                        $array_vhs_no_ok[$nbr_vhs_NO_OK]['reference_kepler'] = $reference_kepler;
+                        $array_vhs_no_ok[$nbr_vhs_NO_OK]['cause'] = $retour_json['detail_erreur'];
+                        $nbr_vhs_NO_OK++;
                     }
 
+                }
+                //si pas de prix pro HT
+                else {
+                    $array_vhs_prix_pro_none[$nbr_vhs_NO_prix_pro] = $reference_kepler;
+                    $nbr_vhs_NO_prix_pro++;
                 }
             }
             $page++;
@@ -120,3 +142,45 @@ foreach ($parc_array as $parc) {
 sautdeligne();
 
 echo "nombre de vh crées : $nbr_vh_cree_starterre";
+
+sautdeligne();
+echo "nombre de vhs OK ==> $nbr_vhs_OK";
+sautdeligne();
+echo "LISTE de VH OK:";
+sautdeligne();
+if (!empty($array_vhs_ok)) {
+    foreach ($array_vhs_ok as $vh_ok) {
+        echo $vh_ok . "<br>";
+    }
+}
+
+sautdeligne();
+separateur();
+
+echo "nombre de vhs PAS OK ==> $nbr_vhs_NO_OK";
+sautdeligne();
+echo "LISTE DE VHS EN ERREUR :";
+sautdeligne();
+if (!empty($array_vhs_no_ok)) {
+    foreach ($array_vhs_no_ok as $vh_no_ok) {
+        $detail_cause = '';
+        foreach ($vh_no_ok['cause'] as $cause) {
+            $detail_cause .= $cause . " |";
+        }
+        echo $vh_no_ok['reference_kepler'] . " > " . $detail_cause . " <br>";
+    }
+}
+
+sautdeligne();
+separateur();
+
+echo "nombre de vhs sans prix pro HT ==> $nbr_vhs_NO_prix_pro";
+sautdeligne();
+echo "LISTE DE VHS SANS PRIX PRO HT:";
+sautdeligne();
+if (!empty($array_vhs_prix_pro_none)) {
+    foreach ($array_vhs_prix_pro_none as $vh_prix_none) {
+        echo $vh_prix_none . "<br>";
+    }
+}
+

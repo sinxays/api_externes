@@ -8,21 +8,48 @@ ini_set('xdebug.var_display_max_data', '-1');
 set_time_limit(600); // 300 secondes = 5 minutes, adapte selon tes besoins
 
 
-//PAGE TEST
 
-// $recup_kepler_for_starterre = recup_vhs_kepler_for_starterre($parc, $page, 'arrivage');
-// $recup_kepler_for_starterre = recup_vh_unique_kepler_for_starterre('3bj03lvyh');
+
+//EXPORT STARTERRE
+
+
+/*************************** BIEN MODIFIER L'ENVIRONNEMENT SI PASSAGE EN TEST OU EN PROD (dev ou prod) !!!  *******************************/
+$environnement = 'dev';
+/*************************** BIEN MODIFIER L'ENVIRONNEMENT SI PASSAGE EN TEST OU EN PROD (dev ou prod) !!!  *******************************/
+
+// if ($environnement === 'prod') {
+//     echo "<script>
+//         if (!confirm('Vous êtes en mode PRODUCTION ! Voulez-vous continuer ?')) {
+//             window.location.href = '../index.php'; // Redirige ou stoppe l'exécution
+//         }
+//     </script>";
+// }
+
+
+//creer un array avec tous les parc pour faire la boucle par parc
+// $parc_array = array("CVO BOURGES", "CVO CLERMONT FERRAND", "CVO MASSY", "CVO ORLEANS sud", "CVO TROYES");
+$parc_array = array("CVO BOURGES");
+
+/***  Pour test sur un seul véhicule ***/
+// $reference = '2obmcquh';
+// $recup_kepler_for_starterre = recup_vh_unique_kepler_for_starterre($reference);
+// sautdeligne();
+// sautdeligne();
 
 // var_dump($recup_kepler_for_starterre);
 // die();
 
-//creer un array avec tous les parc pour faire la boucle par parc
-$parc_array = array("CVO BOURGES", "CVO CLERMONT FERRAND", "CVO MASSY", "CVO ORLEANS sud", "CVO TROYES");
 
 $array_for_csv = array();
 
 $nbr_vhs_OK = 0;
 $nbr_vhs_NO_OK = 0;
+$nbr_vhs_NO_prix_pro = 0;
+
+
+$array_vhs_ok = array();
+$array_vhs_no_ok = array();
+$array_vhs_prix_pro_none = array();
 
 $nbr_vh_cree_starterre = 0;
 foreach ($parc_array as $parc) {
@@ -33,15 +60,11 @@ foreach ($parc_array as $parc) {
     // si plusieurs page, tant qu'on trouve des données on boucle
     while ($datas_find == TRUE) {
 
-        $recup_kepler_for_starterre_parc = recup_vhs_kepler_for_starterre($parc, $page, 'parc');
-        $recup_kepler_for_starterre_arrivage = recup_vhs_kepler_for_starterre($parc, $page, 'arrivage');
+        $recup_kepler_for_starterre = recup_vhs_kepler_for_starterre($parc, $page, 'parc');
+        // $recup_kepler_for_starterre = recup_vhs_kepler_for_starterre($parc, $page, 'arrivage');
 
-        $recup_kepler_for_starterre = array_merge($recup_kepler_for_starterre_parc, $recup_kepler_for_starterre_arrivage);
-        // var_dump($recup_kepler_for_starterre);
-        // die();
-
-        // echo gettype($recup_kepler_for_starterre);
-        // die();
+        //on assemble les deux tableaux (parc et arrivage) en un 
+        // $recup_kepler_for_starterre = array_merge($recup_kepler_for_starterre_parc, $recup_kepler_for_starterre_arrivage);
 
         // si on trouve des données 
         if (!empty($recup_kepler_for_starterre)) {
@@ -49,34 +72,120 @@ foreach ($parc_array as $parc) {
 
                 $reference_kepler = $vh->reference;
 
-                //si le vh à un prix négociant HT on crée le véhicule
+                //si le vh à un prix négociant/pro HT on crée le véhicule
                 if (isset($vh->priceSellerWithoutTax) && $vh->priceSellerWithoutTax !== '') {
                     //on met en forme les données
 
-                    //UPDATE : si il ya un truc qui manque ou qui ne va pas pour starterre on s'embete pas on l'importe pas dans starterre.
                     $retour_json = mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh);
 
-                    if ($retour_json) {
+                    // si retour[state] == 1 alors OK
+                    //si retour[state] == 0 alors on va alimenter le tableau des erreurs 
+                    if ($retour_json['state'] == 1) {
 
-                        echo $reference_kepler . " OK";
-                        sautdeligne();
+                        //on le post vers l'api STARTERRE , si le vh existe déja il sera juste updaté, si il n'existe pas il sera crée.
+                        $retour = post_vh_to_starterre($retour_json, $environnement);
+
+                        $array_vhs_ok[$nbr_vhs_OK] = $reference_kepler;
+
+                        //on crée le véhicule dans ma base pour avoir un replica base <> base starterre, mais il ne sera pas crée si il existe déja
+                        if ($retour) {
+                            // On check si le vh existe déja et qu'il est a l'état delete dans la base avant, car ça peut etre un bdc annulé finalement et donc le véhicule ressort en état parc à nouveau.
+                            $check_vh = check_if_vh_exist($reference_kepler, $environnement);
+
+                            //si il existe pas alors on le crée
+                            if (!$check_vh) {
+
+                                create_vh_replica_starterre($reference_kepler, $retour['id_starterre'], $vh->licenseNumber, $vh->vin, $environnement);
+                                $nbr_vh_cree_starterre++;
+
+                                sautdeligne();
+                                echo "le véhicule crée porte l'identifiant partner kepler : " . $retour['id_partner'] . " || " . $vh->vin . " || " . $vh->licenseNumber;
+                                sautdeligne();
+                                echo "le véhicule crée porte l'id starterre : " . $retour['id_starterre'];
+                                separateur();
+
+                            }
+                            //si il existe déja c'est qu'il a été placé sur BDC puis annulé donc state passé à 0 , donc on repasse le vh a state 1 : parc
+                            else {
+                                //on check si le vh est à l'état 0 donc placé sur BDC
+                                if ($check_vh['state'] == 0) {
+                                    //on le repasse à 1 state parc
+                                    update_vh_replica_starterre($reference_kepler, 1, $environnement);
+                                }
+
+                            }
+                        }
                         $nbr_vhs_OK++;
-
-                    } else {
+                    }
+                    //si pas ok pour mise en forme 
+                    else {
+                        $array_vhs_no_ok[$nbr_vhs_NO_OK]['reference_kepler'] = $reference_kepler;
+                        $array_vhs_no_ok[$nbr_vhs_NO_OK]['cause'] = $retour_json['detail_erreur'];
                         $nbr_vhs_NO_OK++;
                     }
 
                 }
+                //si pas de prix pro HT
+                else {
+                    $array_vhs_prix_pro_none[$nbr_vhs_NO_prix_pro] = $reference_kepler;
+                    $nbr_vhs_NO_prix_pro++;
+                }
             }
             $page++;
+            //a décommenter ci dessous si un seul vh a tester.
+            // $datas_find = FALSE;
         } else {
             $datas_find = FALSE;
         }
     }
 }
 
+sautdeligne();
+
+echo "nombre de vh crées : $nbr_vh_cree_starterre";
 
 sautdeligne();
 echo "nombre de vhs OK ==> $nbr_vhs_OK";
 sautdeligne();
+echo "LISTE de VH OK:";
+sautdeligne();
+if (!empty($array_vhs_ok)) {
+    foreach ($array_vhs_ok as $vh_ok) {
+        echo $vh_ok . "<br>";
+    }
+}
+
+sautdeligne();
+separateur();
+
 echo "nombre de vhs PAS OK ==> $nbr_vhs_NO_OK";
+sautdeligne();
+echo "LISTE DE VHS EN ERREUR :";
+sautdeligne();
+if (!empty($array_vhs_no_ok)) {
+
+    // var_dump($array_vhs_no_ok);
+
+
+    foreach ($array_vhs_no_ok as $vh_no_ok) {
+        $detail_cause = '';
+        foreach ($vh_no_ok['cause'] as $cause) {
+            $detail_cause .= $cause . " |";
+        }
+        echo $vh_no_ok['reference_kepler'] . " > " . $detail_cause . " <br>";
+    }
+}
+
+sautdeligne();
+separateur();
+
+echo "nombre de vhs sans prix pro HT ==> $nbr_vhs_NO_prix_pro";
+sautdeligne();
+echo "LISTE DE VHS SANS PRIX PRO HT:";
+sautdeligne();
+if (!empty($array_vhs_prix_pro_none)) {
+    foreach ($array_vhs_prix_pro_none as $vh_prix_none) {
+        echo $vh_prix_none . "<br>";
+    }
+}
+
