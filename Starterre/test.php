@@ -12,6 +12,25 @@ set_time_limit(600); // 300 secondes = 5 minutes, adapte selon tes besoins
 
 //EXPORT STARTERRE
 
+$recup_kepler_vhs_vendus_for_starterre = recup_vhs_vendus_kepler_for_starterre_bis();
+
+// si on trouve des données 
+if (!empty($recup_kepler_vhs_vendus_for_starterre)) {
+    foreach ($recup_kepler_vhs_vendus_for_starterre as $vh) {
+
+        $reference_kepler = $vh->reference;
+        echo $reference_kepler;
+        sautdeligne();
+
+    }
+}
+
+$id_starterre = '1efe57f0-8295-68ca-af4c-034d59ae7bbd';
+
+post_vh_to_delete_starterre($id_starterre, 'prod');
+
+die();
+
 
 /*************************** BIEN MODIFIER L'ENVIRONNEMENT SI PASSAGE EN TEST OU EN PROD (dev ou prod) !!!  *******************************/
 $environnement = 'dev';
@@ -83,7 +102,7 @@ foreach ($parc_array as $parc) {
                     if ($retour_json['state'] == 1) {
 
                         //on le post vers l'api STARTERRE , si le vh existe déja il sera juste updaté, si il n'existe pas il sera crée.
-                        $retour = post_vh_to_starterre($retour_json, $environnement);
+                        $retour = post_vh_to_starterre($retour_json['datas'], $environnement);
 
                         $array_vhs_ok[$nbr_vhs_OK] = $reference_kepler;
 
