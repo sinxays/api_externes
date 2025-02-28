@@ -14,16 +14,16 @@ set_time_limit(600); // 300 secondes = 5 minutes, adapte selon tes besoins
 
 
 /*************************** BIEN MODIFIER L'ENVIRONNEMENT SI PASSAGE EN TEST OU EN PROD (dev ou prod) !!!  *******************************/
-$environnement = 'dev';
+$environnement = 'prod';
 /*************************** BIEN MODIFIER L'ENVIRONNEMENT SI PASSAGE EN TEST OU EN PROD (dev ou prod) !!!  *******************************/
 
-if ($environnement === 'prod') {
-    echo "<script>
-        if (!confirm('Vous êtes en mode PRODUCTION ! Voulez-vous continuer ?')) {
-            window.location.href = '../index.php'; // Redirige ou stoppe l'exécution
-        }
-    </script>";
-}
+// if ($environnement === 'prod') {
+//     echo "<script>
+//         if (!confirm('Vous êtes en mode PRODUCTION ! Voulez-vous continuer ?')) {
+//             window.location.href = '../index.php'; // Redirige ou stoppe l'exécution
+//         }
+//     </script>";
+// }
 
 
 //creer un array avec tous les parc pour faire la boucle par parc
