@@ -139,6 +139,10 @@ foreach ($parc_array as $parc) {
     }
 }
 
+
+$texte_html_vhs_erreur = 'LISTE DE VHS EN ERREUR (' . count($array_vhs_no_ok) . ') : <br>';
+$texte_html_vhs_no_prix_pro = 'LISTE DE VHS SANS PRIX PRO (' . count($array_vhs_prix_pro_none) . ') : <br>';
+
 sautdeligne();
 
 echo "nombre de vh crées : $nbr_vh_cree_starterre";
@@ -168,6 +172,7 @@ if (!empty($array_vhs_no_ok)) {
             $detail_cause .= $cause . " |";
         }
         echo $vh_no_ok['reference_kepler'] . " > " . $detail_cause . " <br>";
+        $texte_html_vhs_erreur .= $vh_no_ok['reference_kepler'] . " > " . $detail_cause . " <br>";
     }
 }
 
@@ -181,6 +186,23 @@ sautdeligne();
 if (!empty($array_vhs_prix_pro_none)) {
     foreach ($array_vhs_prix_pro_none as $vh_prix_none) {
         echo $vh_prix_none . "<br>";
+        $texte_html_vhs_no_prix_pro .= $vh_prix_none . "<br>";
     }
 }
+
+//si il y a des véhicules en erreur ou des vhs sans prix pro
+if (count($array_vhs_no_ok) >= 1 || count($array_vhs_prix_pro_none) >= 1) {
+    $tenant_id = get_tenantId_for_accessToken();
+
+    $token = getAccessToken($tenant_id);
+
+    $expediteur = 'portail@massoutre-locations.com';
+    // $to = 'sinxay.souvannavong@massoutre-locations.com';
+    $to = 'guillaume.honnert@massoutre-locations.com';
+    $objet = 'Rapport vhs en erreur pour Starterre';
+    $body = $texte_html_vhs_erreur . " <br><br>" . $texte_html_vhs_no_prix_pro;
+
+    sendEmail($token, $expediteur, $to, $objet, $body);
+}
+
 

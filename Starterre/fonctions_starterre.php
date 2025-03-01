@@ -1443,6 +1443,12 @@ function getAccessToken($tenantId)
         'Content-Type: application/x-www-form-urlencoded'
     ]);
 
+
+    //environnement de DEV
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+
+
     $response = curl_exec($ch);
 
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -1466,7 +1472,7 @@ function sendEmail($accessToken, $fromBox, $to, $subject, $body)
         "message" => [
             "subject" => $subject,
             "body" => [
-                "contentType" => "Text",
+                "contentType" => "HTML",
                 "content" => $body
             ],
             "toRecipients" => [
@@ -1484,6 +1490,10 @@ function sendEmail($accessToken, $fromBox, $to, $subject, $body)
         "Authorization: Bearer $accessToken",
         "Content-Type: application/json"
     ]);
+
+    //environnement de DEV
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
 
     $response = curl_exec($ch);
     curl_close($ch);
