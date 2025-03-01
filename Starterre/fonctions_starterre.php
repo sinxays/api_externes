@@ -1403,3 +1403,90 @@ function get_adresse_from_notes_vh_kepler($notes_public)
 
     return $adresse;
 }
+
+
+/**
+ * Emails avec Microsoft Graph & OAuth2
+ * - tenantId : Identifiant du tenant Microsoft
+ * - clientId : Identifiant client (application)
+ * - clientSecret : Secret client (clÃ© d'authentification)
+ * - scope : Scopes d'accÃ¨s pour l'API
+ * - fromBox : Adresse e-mail de l'expÃ©diteur
+ */
+
+function get_tenantId_for_accessToken()
+{
+    $result = 'bc8e81f2-032f-4e06-9ae2-88dc5b16203b';
+
+    return $result;
+}
+
+
+
+function getAccessToken($tenantId)
+{
+    $url = "https://login.microsoftonline.com/$tenantId/oauth2/v2.0/token";
+
+    $data = http_build_query([
+        'client_id' => '1bc1e464-4aef-430a-8ec9-71442047586f',
+        'client_secret' => 'KRV8Q~uUCjzLofx_bt_dRnTikWa24SDB1Ca-UaU4',
+        'scope' => 'https://graph.microsoft.com/.default',
+        'grant_type' => 'client_credentials',
+    ]);
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Content-Type: application/x-www-form-urlencoded'
+    ]);
+
+    $response = curl_exec($ch);
+
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    echo "Code HTTP : $httpCode\n";
+
+    if ($response === false) {
+        echo 'Erreur cURL : ' . curl_error($ch);
+    }
+
+    curl_close($ch);
+
+    $tokenData = json_decode($response, true);
+    return $tokenData['access_token'] ?? null;
+}
+
+function sendEmail($accessToken, $fromBox, $to, $subject, $body)
+{
+    $graph_url = "https://graph.microsoft.com/v1.0/users/$fromBox/sendMail";
+
+    $emailData = json_encode([
+        "message" => [
+            "subject" => $subject,
+            "body" => [
+                "contentType" => "Text",
+                "content" => $body
+            ],
+            "toRecipients" => [
+                ["emailAddress" => ["address" => $to]]
+            ]
+        ]
+    ]);
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $graph_url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $emailData);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        "Authorization: Bearer $accessToken",
+        "Content-Type: application/json"
+    ]);
+
+    $response = curl_exec($ch);
+    curl_close($ch);
+
+    return $response;
+}

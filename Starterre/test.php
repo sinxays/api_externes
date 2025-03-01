@@ -13,6 +13,21 @@ set_time_limit(600); // 300 secondes = 5 minutes, adapte selon tes besoins
 //EXPORT STARTERRE
 
 
+$tenant_id = get_tenantId_for_accessToken();
+
+$token = getAccessToken($tenant_id);
+
+$expediteur = 'portail@massoutre-locations.com';
+$to = 'sinxay.souvannavong@massoutre-locations.com';
+$objet = 'test mail';
+$body = 'ceci est un test mail';
+
+sendEmail($token, $expediteur, $to, $objet, $body);
+
+die();
+
+
+
 /*************************** BIEN MODIFIER L'ENVIRONNEMENT SI PASSAGE EN TEST OU EN PROD (dev ou prod) !!!  *******************************/
 $environnement = 'dev';
 /*************************** BIEN MODIFIER L'ENVIRONNEMENT SI PASSAGE EN TEST OU EN PROD (dev ou prod) !!!  *******************************/
