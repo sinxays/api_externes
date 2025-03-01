@@ -1414,22 +1414,39 @@ function get_adresse_from_notes_vh_kepler($notes_public)
  * - fromBox : Adresse e-mail de l'expÃ©diteur
  */
 
-function get_tenantId_for_accessToken()
+function getInfosForAccesToken()
 {
-    $result = 'bc8e81f2-032f-4e06-9ae2-88dc5b16203b';
+    $pdo = Connection::getPDO_Microsoft();
+
+    $request = $pdo->query("SELECT value FROM graphmail where libelle = 'tenantId'");
+    $tenantID = $request->fetch(PDO::FETCH_COLUMN);
+
+    $result['tenantId'] = $tenantID;
+
+    $request = $pdo->query("SELECT value FROM graphmail where libelle = 'clientId'");
+    $clientId = $request->fetch(PDO::FETCH_COLUMN);
+
+    $result['tenantId'] = $tenantID;
+
+    $request = $pdo->query("SELECT value FROM graphmail where libelle = 'clientSecret'");
+    $clientSecret = $request->fetch(PDO::FETCH_COLUMN);
+
+    $result['tenantId'] = $tenantID;
+    $result['clientId'] = $clientId;
+    $result['clientSecret'] = $clientSecret;
 
     return $result;
 }
 
 
 
-function getAccessToken($tenantId)
+function getAccessToken($infos_graph)
 {
-    $url = "https://login.microsoftonline.com/$tenantId/oauth2/v2.0/token";
+    $url = "https://login.microsoftonline.com/" . $infos_graph['tenantId'] . "/oauth2/v2.0/token";
 
     $data = http_build_query([
-        'client_id' => '1bc1e464-4aef-430a-8ec9-71442047586f',
-        'client_secret' => 'KRV8Q~uUCjzLofx_bt_dRnTikWa24SDB1Ca-UaU4',
+        'client_id' => $infos_graph['clientId'],
+        'client_secret' => $infos_graph['clientSecret'],
         'scope' => 'https://graph.microsoft.com/.default',
         'grant_type' => 'client_credentials',
     ]);

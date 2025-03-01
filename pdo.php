@@ -31,6 +31,15 @@ class Connection
         ]);
     }
 
+    public static function getPDO_Microsoft(): PDO
+    {
+        $user = 'root';
+        $password = self::ADMINER_PASSWORD;
+
+        return new PDO('mysql:host=localhost;dbname=microsoft_authentification', $user, $password, [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+        ]);
+    }
 
 
     public static function getPDO_starterre(): PDO

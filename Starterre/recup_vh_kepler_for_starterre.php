@@ -192,9 +192,9 @@ if (!empty($array_vhs_prix_pro_none)) {
 
 //si il y a des véhicules en erreur ou des vhs sans prix pro
 if (count($array_vhs_no_ok) >= 1 || count($array_vhs_prix_pro_none) >= 1) {
-    $tenant_id = get_tenantId_for_accessToken();
+    $infos_graphmail = getInfosForAccesToken();
 
-    $token = getAccessToken($tenant_id);
+    $token = getAccessToken($infos_graphmail);
 
     $expediteur = 'portail@massoutre-locations.com';
     // $to = 'sinxay.souvannavong@massoutre-locations.com';

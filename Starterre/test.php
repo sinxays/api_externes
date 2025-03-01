@@ -8,10 +8,7 @@ ini_set('xdebug.var_display_max_data', '-1');
 set_time_limit(600); // 300 secondes = 5 minutes, adapte selon tes besoins
 
 
-
-
 //EXPORT STARTERRE
-
 
 /*************************** BIEN MODIFIER L'ENVIRONNEMENT SI PASSAGE EN TEST OU EN PROD (dev ou prod) !!!  *******************************/
 $environnement = 'dev';
@@ -195,13 +192,13 @@ if (!empty($array_vhs_prix_pro_none)) {
 
 //si il y a des véhicules en erreur ou des vhs sans prix pro
 if (count($array_vhs_no_ok) >= 1 || count($array_vhs_prix_pro_none) >= 1) {
-    $tenant_id = get_tenantId_for_accessToken();
+    $infos_graphmail = getInfosForAccesToken();
 
-    $token = getAccessToken($tenant_id);
+    $token = getAccessToken($infos_graphmail);
 
     $expediteur = 'portail@massoutre-locations.com';
-    // $to = 'sinxay.souvannavong@massoutre-locations.com';
-    $to = 'guillaume.honnert@massoutre-locations.com';
+    $to = 'sinxay.souvannavong@massoutre-locations.com';
+    // $to = 'guillaume.honnert@massoutre-locations.com';
     $objet = 'Rapport vhs en erreur pour Starterre';
     $body = $texte_html_vhs_erreur . " <br><br>" . $texte_html_vhs_no_prix_pro;
 
