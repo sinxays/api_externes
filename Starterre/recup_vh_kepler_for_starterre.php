@@ -171,7 +171,7 @@ if (!empty($array_vhs_no_ok)) {
         foreach ($vh_no_ok['cause'] as $cause) {
             $detail_cause .= $cause . " |";
         }
-        echo $vh_no_ok['reference_kepler'] . " > " . $detail_cause . " <br>";
+        echo "<b style='color: red;'>" . $vh_no_ok['reference_kepler'] . "</b> > " . $detail_cause . " <br>";
         $texte_html_vhs_erreur .= $vh_no_ok['reference_kepler'] . " > " . $detail_cause . " <br>";
     }
 }
@@ -197,8 +197,8 @@ if (count($array_vhs_no_ok) >= 1 || count($array_vhs_prix_pro_none) >= 1) {
     $token = getAccessToken($infos_graphmail);
 
     $expediteur = 'portail@massoutre-locations.com';
-    // $to = 'sinxay.souvannavong@massoutre-locations.com';
-    $to = 'guillaume.honnert@massoutre-locations.com';
+    $to = ['sinxay.souvannavong@massoutre-locations.com', 'guillaume.honnert@massoutre-locations.com'];
+    // $to = 'guillaume.honnert@massoutre-locations.com';
     $objet = 'Rapport vhs en erreur pour Starterre';
     $body = $texte_html_vhs_erreur . " <br><br>" . $texte_html_vhs_no_prix_pro;
 

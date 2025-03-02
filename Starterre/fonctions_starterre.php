@@ -1468,8 +1468,8 @@ function getAccessToken($infos_graph)
 
     $response = curl_exec($ch);
 
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    echo "Code HTTP : $httpCode\n";
+    // $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    // echo "Code HTTP : $httpCode\n";
 
     if ($response === false) {
         echo 'Erreur cURL : ' . curl_error($ch);
@@ -1485,6 +1485,14 @@ function sendEmail($accessToken, $fromBox, $to, $subject, $body)
 {
     $graph_url = "https://graph.microsoft.com/v1.0/users/$fromBox/sendMail";
 
+    // Préparer les destinataires (si plusieurs)
+    $toRecipients = [];
+    foreach ($to as $email) {
+        $toRecipients[] = [
+            "emailAddress" => ["address" => $email]
+        ];
+    }
+
     $emailData = json_encode([
         "message" => [
             "subject" => $subject,
@@ -1492,9 +1500,10 @@ function sendEmail($accessToken, $fromBox, $to, $subject, $body)
                 "contentType" => "HTML",
                 "content" => $body
             ],
-            "toRecipients" => [
-                ["emailAddress" => ["address" => $to]]
-            ]
+            // "toRecipients" => [
+            //     ['emailAddress' => ['address' => $to]]
+            // ]
+            "toRecipients" => $toRecipients
         ]
     ]);
 
