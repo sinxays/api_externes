@@ -20,11 +20,51 @@ $(document).ready(function () {
     $("#btn_api_starterre_update_vhs_vendus").click(function (e) {
         window.location.href = 'Starterre/update_vhs_vendus.php';
     });
-    $("#btn_api_starterre_delete_vhs").click(function (e) {
-        window.location.href = 'Starterre/delete_vhs.php';
-    });
+
     $("#btn_api_starterre_page_test").click(function (e) {
         window.location.href = 'Starterre/test.php';
+    });
+
+
+
+    $('input[name="flexRadioDefault"]').on('change', function () {
+        let selectedValue = $('input[name="flexRadioDefault"]:checked').val();
+        console.log("Nouvelle valeur sélectionnée :", selectedValue);
+
+        $("#starterre_reference_vh_input_to_delete_starterre").prop("disabled", false);
+    });
+
+
+
+    // si appui sur le bouton de delete vhs 
+    $("#button_delete_starterre_vh").click(function (e) {
+        loader.show();
+        // window.location.href = 'Starterre/delete_vhs.php';
+        let identifier_vh_kepler = $("#starterre_reference_vh_input_to_delete_starterre").val();
+        let selectedValue = $('input[name="flexRadioDefault"]:checked').val();
+        let datas = {
+            id_kepler: identifier_vh_kepler,
+            type_delete: 'unique',
+            environnement: selectedValue
+        };
+
+
+        console.log(datas);
+
+
+        $.ajax({
+            url: "starterre/delete_vhs.php",
+            type: "POST",
+            data: datas,
+            success: function (data_retour) {
+                loader.hide();
+                remove_modal($("#modal_api_starterre_delete_vh"));
+                $("#area_result").html(data_retour);
+            },
+            error: function () {
+                $("#area_result").html("VH NON TROUVE");
+            }
+        });
     });
 
 
@@ -48,9 +88,25 @@ $(document).ready(function () {
     });
 
 
+    $("#starterre_reference_vh_input_to_delete_starterre").change(function (e) {
+        let identifier_vh_kepler = $(this).val();
+        console.log(identifier_vh_kepler);
+        if (identifier_vh_kepler !== "") {
+            $("#button_delete_starterre_vh").prop("disabled", false);
+        } else {
+            $("#button_delete_starterre_vh").prop("disabled", true);
+        }
+    });
+
+
     $("#btn_close_modal_recherche_vehicule_starterre").click(function (e) {
         e.preventDefault();
         remove_modal($("#modal_api_starterre_get_vh"));
+    });
+
+    $("#btn_close_modal_delete_vehicule_starterre").click(function (e) {
+        e.preventDefault();
+        remove_modal($("#modal_api_starterre_delete_vh"));
     });
 
     $("#btn_close_modal_recherche_vehicule_kepler").click(function (e) {

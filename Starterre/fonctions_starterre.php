@@ -943,6 +943,7 @@ function post_vh_to_starterre($donnees_vh_to_post, $environnement)
 
 function post_vh_to_delete_starterre($id_starterre, $environnement)
 {
+
     // Initialiser une session cURL
     $ch = curl_init();
 

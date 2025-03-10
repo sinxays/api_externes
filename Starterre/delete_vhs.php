@@ -8,22 +8,32 @@ ini_set('xdebug.var_display_max_data', '-1');
 set_time_limit(300); // 300 secondes = 5 minutes, adapte selon tes besoins
 
 
-//PAGE TEST
-$nbr_vh_delete_starterre = 0;
 
-// on récupere la base vehicule starterre soit par la base soit par un export de starterre
-// $vhs_starterre_from_base = get_vhs_starterre_from_base('dev');
 
-$vhs_starterre = get_vhs_starterre_from_csv();
 
-// var_dump($vhs_starterre);
-// die();
+if (isset($_POST['type_delete'])) {
+    $type_delete = $_POST['type_delete'];
+    $id_kepler = $_POST['id_kepler'];
+    $environnement = $_POST['environnement'];
 
-foreach ($vhs_starterre as $vh) {
-    $count = post_vh_to_delete_starterre($vh['id_starterre'], 'dev');
-    $nbr_vh_delete_starterre += $count;
+    switch ($type_delete) {
+        case 'unique':
+            // on va chercher le idStarterre depuis le idKepler , car le delete se fait depuis le idStarterre
+            $id_starterre = get_idStarterre_from_idKepler($id_kepler);
+            //suppression sur starterre via post en delete
+            post_vh_to_delete_starterre($id_starterre, $environnement);
+            //passage du state à l'état 0 du vh 
+            update_vh_replica_starterre($id_kepler, 0, $environnement);
+            echo "le véhicule" . $id_kepler . " a bien été delete de starterre et actualisé en base";
+            break;
+
+        case 'multiple_csv':
+            break;
+
+        default:
+            # code...
+            break;
+    }
 }
 
-sautdeligne();
 
-echo "nombre de vh supprimés : $nbr_vh_delete_starterre";
