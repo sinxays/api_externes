@@ -53,7 +53,7 @@ $(document).ready(function () {
 
 
         $.ajax({
-            url: "starterre/delete_vhs.php",
+            url: "Starterre/delete_vhs.php",
             type: "POST",
             data: datas,
             success: function (data_retour) {
