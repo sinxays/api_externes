@@ -69,7 +69,8 @@ $(document).ready(function () {
 
 
 
-    $("#starterre_reference_vh_input").change(function (e) {
+
+    $("#starterre_reference_vh_input").on("input", function (e) {
         let identifier_vh = $(this).val();
         if (identifier_vh !== "") {
             $("#button_rechercher_starterre_vh").prop("disabled", false);
@@ -78,7 +79,7 @@ $(document).ready(function () {
         }
     });
 
-    $("#input_search_reference_kepler").change(function (e) {
+    $("#input_search_reference_kepler").on("input", function (e) {
         let identifier_vh = $(this).val();
         if (identifier_vh !== "") {
             $("#button_rechercher_kepler_vh").prop("disabled", false);
@@ -88,7 +89,7 @@ $(document).ready(function () {
     });
 
 
-    $("#starterre_reference_vh_input_to_delete_starterre").change(function (e) {
+    $("#starterre_reference_vh_input_to_delete_starterre").on("input", function (e) {
         let identifier_vh_kepler = $(this).val();
         console.log(identifier_vh_kepler);
         if (identifier_vh_kepler !== "") {

@@ -167,12 +167,13 @@
                         <input type="text" class="form-control" id="starterre_reference_vh_input_to_delete_starterre"
                             name="starterre_reference_vh_input_to_delete_starterre" style="width: 200px;" disabled>
                         <br>
-                        ou
+                        <h2>OU</h2>
                         <br>
                         <button class="btn btn-warning" id="btn_delete_vhs_starterre" name="btn_delete_vhs_starterre"
                             style="width: 200px; color:red; font-weight:bold">
                             Delete avec fichier
                         </button>
+                        <p> (avoir préalablement placé le fichier csv)</p>
                 </div>
                 <input type="text" name="type_recherche_starterre_vh" id="type_recherche_starterre_vh"
                     value="identifier_vh_kepler_from_starterre" hidden>

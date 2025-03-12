@@ -352,83 +352,32 @@ function recup_vhs_kepler_for_starterre($parc, $page, $state)
     return $return;
 }
 
-function recup_vhs_vendus_kepler_for_starterre($parc, $page)
-{
-    // le token
-    $token = get_token();
 
-    $dataArray = array(
-        // "state" => 'vehicle.state.sold,vehicle.state.sold_ar,vehicle.state.pending,vehicle.state.out',
-        "state" => 'vehicle.state.sold',
-        "isNotAvailableForSelling" => FALSE,
-        "dateUpdatedStart" => "2024-11-14",
-        "dateUpdatedEnd" => "2024-11-15",
-        "fleet" => $parc,
-        "count" => 100,
-        "page" => $page
-    );
-
-    $request_vehicule = "v3.7/vehicles/";
-    $url = "https://www.kepler-soft.net/api/";
-
-    $url_vehicule = $url . "" . $request_vehicule;
-
-    $data = http_build_query($dataArray);
-
-    $getURL = $url_vehicule . '?' . $data;
-
-    // print_r($getURL);
-    // sautdeligne();
-
-    $ch = curl_init();
-    $header = array();
-    $header[] = 'X-Auth-Token:' . $token;
-    $header[] = 'Content-Type:text/html;charset=utf-8';
-
-    curl_setopt($ch, CURLOPT_URL, $getURL);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
-
-    $result = curl_exec($ch);
-
-    if (curl_error($ch)) {
-        $result = curl_error($ch);
-        print_r($result);
-        echo "<br/> erreur";
-    }
-
-    curl_close($ch);
-
-    // var_dump(gettype($result));
-    print_r($result);
-
-    // créer un objet à partir du retour qui est un string
-    $obj_vehicule = json_decode($result);
-
-    //on prend l'object qui est dans l'array
-    $return = $obj_vehicule;
-
-    // on retourne un objet
-    // var_dump($return);
-    return $return;
-}
-
-function recup_vhs_vendus_kepler_for_starterre_bis()
+function recup_vhs_vendus_kepler_for_starterre($vendu_AR = '')
 {
     // le token
     $token = get_token();
 
     // date du jour
-    $currentDateTime = date('Y-m-d');
+    $currentDateTime = date('2025-03-01');
 
-    $dataArray = array(
-        "state" => 'vehicle.state.sold',
-        "isNotAvailableForSelling" => FALSE,
-        "dateUpdatedStart" => $currentDateTime,
-        "count" => 100
-    );
+    if ($vendu_AR !== '') {
+        $dataArray = array(
+            "state" => 'vehicle.state.sold_ar',
+            "isNotAvailableForSelling" => FALSE,
+            "dateUpdatedStart" => $currentDateTime,
+            "count" => 100
+        );
+    } else {
+        $dataArray = array(
+            "state" => 'vehicle.state.sold',
+            "isNotAvailableForSelling" => FALSE,
+            "dateUpdatedStart" => $currentDateTime,
+            "count" => 100
+        );
+    }
+
+
 
     $request_vehicule = "v3.7/vehicles/";
     $url = "https://www.kepler-soft.net/api/";

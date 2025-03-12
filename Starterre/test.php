@@ -5,205 +5,102 @@ include 'fonctions_starterre.php';
 ini_set('xdebug.var_display_max_depth', '-1');
 ini_set('xdebug.var_display_max_children', '-1');
 ini_set('xdebug.var_display_max_data', '-1');
-set_time_limit(600); // 300 secondes = 5 minutes, adapte selon tes besoins
+set_time_limit(300); // 300 secondes = 5 minutes, adapte selon tes besoins
 
+$environnement = 'prod';
 
-//EXPORT STARTERRE
+//UPDATE DE STARTERRE EN RECUPERANT LES VHS VENDUS
 
-/*************************** BIEN MODIFIER L'ENVIRONNEMENT SI PASSAGE EN TEST OU EN PROD (dev ou prod) !!!  *******************************/
-$environnement = 'dev';
-/*************************** BIEN MODIFIER L'ENVIRONNEMENT SI PASSAGE EN TEST OU EN PROD (dev ou prod) !!!  *******************************/
+$nbr_vh_vendus_starterre = 0;
+$nbr_vh_vendus_AR_starterre = 0;
 
-// if ($environnement === 'prod') {
-//     echo "<script>
-//         if (!confirm('Vous êtes en mode PRODUCTION ! Voulez-vous continuer ?')) {
-//             window.location.href = '../index.php'; // Redirige ou stoppe l'exécution
-//         }
-//     </script>";
-// }
+// on recupere depuis kepler les vhs a l'état vendu depuis la date d'aujourd'hui
+// $recup_kepler_vhs_vendus_for_starterre = recup_vhs_vendus_kepler_for_starterre();
+$recup_kepler_vhs_vendus_AR_for_starterre = recup_vhs_vendus_kepler_for_starterre('vendu_ar');
 
-
-//creer un array avec tous les parc pour faire la boucle par parc
-// $parc_array = array("CVO BOURGES", "CVO CLERMONT FERRAND", "CVO MASSY", "CVO ORLEANS sud", "CVO TROYES","CVO ARRIVAGE");
-$parc_array = array("CVO ARRIVAGE");
-
-/***  Pour test sur un seul véhicule ***/
-// $reference = '2obmcquh';
-// $recup_kepler_for_starterre = recup_vh_unique_kepler_for_starterre($reference);
-// sautdeligne();
-// sautdeligne();
-
-// var_dump($recup_kepler_for_starterre);
+// var_dump($recup_kepler_vhs_vendus_AR_for_starterre);
 // die();
 
 
-$array_for_csv = array();
+/***  Pour test sur un seul véhicule ***/
+// $reference = '5nclw5pfj3';
+// $recup_kepler_for_starterre = recup_vh_unique_kepler_for_starterre($reference);
+// var_dump($recup_kepler_for_starterre);
+// die();
 
-$nbr_vhs_OK = 0;
-$nbr_vhs_NO_OK = 0;
-$nbr_vhs_NO_prix_pro = 0;
+// si on trouve des données 
+if (!empty($recup_kepler_vhs_vendus_for_starterre)) {
+    foreach ($recup_kepler_vhs_vendus_for_starterre as $vh) {
 
+        $reference_kepler = $vh->reference;
 
-$array_vhs_ok = array();
-$array_vhs_no_ok = array();
-$array_vhs_prix_pro_none = array();
+        // on va chercher le idStarterre depuis le idKepler , car le delete se fait depuis le idStarterre
+        $id_starterre = get_idStarterre_from_idKepler($reference_kepler);
 
-$nbr_vh_cree_starterre = 0;
-foreach ($parc_array as $parc) {
+        // si on trouve un idStarterre c'est qu'il est dans ma base
+        if ($id_starterre) {
 
-    $page = 1;
-    $datas_find = TRUE;
+            // on check si il est pas déja à l'état 0 dans ma base
+            $check_state_vh = check_state_vh($reference_kepler);
 
-    // si plusieurs page, tant qu'on trouve des données on boucle
-    while ($datas_find == TRUE) {
+            // si il est à 1 donc a l'état PARC
+            if ($check_state_vh) {
+                //on le post en DELETE vers l'api STARTERRE
+                $count = post_vh_to_delete_starterre($id_starterre, $environnement);
+                // et on actualise ma base pour que ça soit iso et on mt le vh à l'état 0 : deleted
+                update_vh_replica_starterre($reference_kepler, 0, $environnement);
 
-        $recup_kepler_for_starterre_parc = recup_vhs_kepler_for_starterre($parc, $page, 'parc');
-        $recup_kepler_for_starterre_arrivage = recup_vhs_kepler_for_starterre($parc, $page, 'arrivage');
+                //on affiche les données pour infos.
+                echo $reference_kepler . " || " . $vh->vin . " || " . $vh->licenseNumber;
+                sautdeligne();
 
-        //on assemble les deux tableaux (parc et arrivage) en un 
-        $recup_kepler_for_starterre = array_merge($recup_kepler_for_starterre_parc, $recup_kepler_for_starterre_arrivage);
-
-        // si on trouve des données 
-        if (!empty($recup_kepler_for_starterre)) {
-            foreach ($recup_kepler_for_starterre as $nb_index_vh => $vh) {
-
-                $reference_kepler = $vh->reference;
-
-                //si le vh à un prix négociant/pro HT on crée le véhicule
-                if (isset($vh->priceSellerWithoutTax) && $vh->priceSellerWithoutTax !== '') {
-                    //on met en forme les données
-
-                    $retour_json = mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh);
-
-                    // si retour[state] == 1 alors OK
-                    //si retour[state] == 0 alors on va alimenter le tableau des erreurs 
-                    if ($retour_json['state'] == 1) {
-
-                        //on le post vers l'api STARTERRE , si le vh existe déja il sera juste updaté, si il n'existe pas il sera crée.
-                        $retour = post_vh_to_starterre($retour_json['datas'], $environnement);
-
-                        $array_vhs_ok[$nbr_vhs_OK] = $reference_kepler;
-
-                        //on crée le véhicule dans ma base pour avoir un replica base <> base starterre, mais il ne sera pas crée si il existe déja
-                        if ($retour) {
-                            // On check si le vh existe déja et qu'il est a l'état delete dans la base avant, car ça peut etre un bdc annulé finalement et donc le véhicule ressort en état parc à nouveau.
-                            $check_vh = check_if_vh_exist($reference_kepler, $environnement);
-
-                            //si il existe pas alors on le crée
-                            if (!$check_vh) {
-
-                                create_vh_replica_starterre($reference_kepler, $retour['id_starterre'], $vh->licenseNumber, $vh->vin, $environnement);
-                                $nbr_vh_cree_starterre++;
-
-                                sautdeligne();
-                                echo "le véhicule crée porte l'identifiant partner kepler : " . $retour['id_partner'] . " || " . $vh->vin . " || " . $vh->licenseNumber;
-                                sautdeligne();
-                                echo "le véhicule crée porte l'id starterre : " . $retour['id_starterre'];
-                                separateur();
-
-                            }
-                            //si il existe déja c'est qu'il a été placé sur BDC puis annulé donc state passé à 0 , donc on repasse le vh a state 1 : parc
-                            else {
-                                //on check si le vh est à l'état 0 donc placé sur BDC
-                                if ($check_vh['state'] == 0) {
-                                    //on le repasse à 1 state parc
-                                    update_vh_replica_starterre($reference_kepler, 1, $environnement);
-                                }
-
-                            }
-                        }
-                        $nbr_vhs_OK++;
-                    }
-                    //si pas ok pour mise en forme 
-                    else {
-                        $array_vhs_no_ok[$nbr_vhs_NO_OK]['reference_kepler'] = $reference_kepler;
-                        $array_vhs_no_ok[$nbr_vhs_NO_OK]['cause'] = $retour_json['detail_erreur'];
-                        $nbr_vhs_NO_OK++;
-                    }
-
-                }
-                //si pas de prix pro HT
-                else {
-                    $array_vhs_prix_pro_none[$nbr_vhs_NO_prix_pro] = $reference_kepler;
-                    $nbr_vhs_NO_prix_pro++;
-                }
+                $nbr_vh_vendus_starterre++;
             }
-            $page++;
-            //a décommenter ci dessous si un seul vh a tester.
-            // $datas_find = FALSE;
-        } else {
-            $datas_find = FALSE;
+
         }
     }
+    sautdeligne();
+    echo "nombre de vh vendus : $nbr_vh_vendus_starterre";
+} else {
+    sautdeligne();
+    echo "Aucun véhicule vendu";
 }
 
 
-$texte_html_vhs_erreur = 'LISTE DE VHS EN ERREUR (' . count($array_vhs_no_ok) . ') : <br>';
-$texte_html_vhs_no_prix_pro = 'LISTE DE VHS SANS PRIX PRO (' . count($array_vhs_prix_pro_none) . ') : <br>';
+// si on trouve des données pour les vhs vendus AR
+if (!empty($recup_kepler_vhs_vendus_AR_for_starterre)) {
+    foreach ($recup_kepler_vhs_vendus_AR_for_starterre as $vh) {
 
+        $reference_kepler = $vh->reference;
 
-sautdeligne();
+        // on va chercher le idStarterre depuis le idKepler , car le delete se fait depuis le idStarterre
+        $id_starterre = get_idStarterre_from_idKepler($reference_kepler);
 
-echo "nombre de vh crées : $nbr_vh_cree_starterre";
+        // si on trouve un idStarterre c'est qu'il est dans ma base
+        if ($id_starterre) {
 
-sautdeligne();
-echo "nombre de vhs OK ==> $nbr_vhs_OK";
-sautdeligne();
-echo "LISTE de VH OK:";
-sautdeligne();
-if (!empty($array_vhs_ok)) {
-    foreach ($array_vhs_ok as $vh_ok) {
-        echo $vh_ok . "<br>";
-    }
-}
+            // on check si il est pas déja à l'état 0 dans ma base
+            $check_state_vh = check_state_vh($reference_kepler);
 
-sautdeligne();
-separateur();
+            // si il est à 1 donc a l'état PARC
+            if ($check_state_vh) {
+                //on le post en DELETE vers l'api STARTERRE
+                $count = post_vh_to_delete_starterre($id_starterre, $environnement);
+                // et on actualise ma base pour que ça soit iso et on mt le vh à l'état 0 : deleted
+                update_vh_replica_starterre($reference_kepler, 0, $environnement);
 
-echo "nombre de vhs PAS OK ==> $nbr_vhs_NO_OK";
-sautdeligne();
-echo "LISTE DE VHS EN ERREUR :";
-sautdeligne();
-if (!empty($array_vhs_no_ok)) {
-    foreach ($array_vhs_no_ok as $vh_no_ok) {
-        $detail_cause = '';
-        foreach ($vh_no_ok['cause'] as $cause) {
-            $detail_cause .= $cause . " | ";
+                //on affiche les données pour infos.
+                echo $reference_kepler . " || " . $vh->vin . " || " . $vh->licenseNumber;
+                sautdeligne();
+
+                $nbr_vh_vendus_AR_starterre++;
+            }
+
         }
-        echo "<b style='color: red;'>" . $vh_no_ok['reference_kepler'] . "</b> > " . $detail_cause . " <br>";
-        $texte_html_vhs_erreur .= $vh_no_ok['reference_kepler'] . " > " . $detail_cause . " <br>";
     }
+    sautdeligne();
+    echo "nombre de vh vendus AR: $nbr_vh_vendus_AR_starterre";
+} else {
+    sautdeligne();
+    echo "Aucun véhicule vendu AR";
 }
-
-sautdeligne();
-separateur();
-
-echo "nombre de vhs sans prix pro HT ==> $nbr_vhs_NO_prix_pro";
-sautdeligne();
-echo "LISTE DE VHS SANS PRIX PRO HT:";
-sautdeligne();
-if (!empty($array_vhs_prix_pro_none)) {
-    foreach ($array_vhs_prix_pro_none as $vh_prix_none) {
-        echo $vh_prix_none . "<br>";
-        $texte_html_vhs_no_prix_pro .= $vh_prix_none . "<br>";
-    }
-}
-
-
-//si il y a des véhicules en erreur ou des vhs sans prix pro
-if (count($array_vhs_no_ok) >= 1 || count($array_vhs_prix_pro_none) >= 1) {
-    $infos_graphmail = getInfosForAccesToken();
-
-    $token = getAccessToken($infos_graphmail);
-
-    $expediteur = 'portail@massoutre-locations.com';
-    // $to = 'sinxay.souvannavong@gmail.com';
-    $to = ['sinxay.souvannavong@massoutre-locations.com', 'sinxay.souvannavong@gmail.com'];
-    // $to = 'guillaume.honnert@massoutre-locations.com';
-    $objet = 'Rapport vhs en erreur pour Starterre';
-    $body = $texte_html_vhs_erreur . " <br><br>" . $texte_html_vhs_no_prix_pro;
-
-    sendEmail($token, $expediteur, $to, $objet, $body);
-}
-
-
