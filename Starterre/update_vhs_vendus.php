@@ -66,6 +66,8 @@ if (!empty($recup_kepler_vhs_vendus_for_starterre)) {
     echo "Aucun véhicule vendu";
 }
 
+separateur();
+
 
 // si on trouve des données pour les vhs vendus AR
 if (!empty($recup_kepler_vhs_vendus_AR_for_starterre)) {

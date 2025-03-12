@@ -193,8 +193,6 @@ function get_token_starterre($environnement)
         if (isset($response_data['token'])) {
             $token = $response_data['token'];
             echo "Token JWT obtenu : " . $token;
-            sautdeligne();
-            sautdeligne();
             separateur();
             return $token;
         } else {
