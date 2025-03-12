@@ -359,7 +359,7 @@ function recup_vhs_vendus_kepler_for_starterre($vendu_AR = '')
     $token = get_token();
 
     // date du jour
-    $currentDateTime = date('2025-03-01');
+    $currentDateTime = date('2025-02-20');
 
     if ($vendu_AR !== '') {
         $dataArray = array(
