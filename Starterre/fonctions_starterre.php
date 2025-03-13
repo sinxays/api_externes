@@ -192,8 +192,8 @@ function get_token_starterre($environnement)
         // Vérifier si le token est bien présent dans la réponse
         if (isset($response_data['token'])) {
             $token = $response_data['token'];
-            echo "Token JWT obtenu : " . $token;
-            separateur();
+            // echo "Token JWT obtenu : " . $token;
+            // separateur();
             return $token;
         } else {
             echo "Erreur : le token n'a pas été obtenu.";
