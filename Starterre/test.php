@@ -14,11 +14,18 @@ $environnement = 'prod';
 $nbr_vhs_maj = 0;
 $count_appel_api = 0;
 
+  // Chemin vers le fichier CSV
+  $cheminFichier = $_SERVER['DOCUMENT_ROOT'] . '/vehicules.csv';
+
 
 // on recupere depuis la base tous les vhs à l'état 1 donc non vendus
-$get_vhs_en_vente = get_vhs_starterre_from_csv();
+$get_vhs_en_vente = get_infos_from_csv($cheminFichier);
 
 //ensuite on boucle par fourchette 50/heure car on a une limite de 100 appels api kepler par heure..
+
+var_dump($get_vhs_en_vente);
+
+die();
 
 
 foreach ($get_vhs_en_vente as $vh) {

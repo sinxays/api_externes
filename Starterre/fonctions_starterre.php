@@ -226,14 +226,12 @@ function get_vhs_starterre_from_base($environnement, $id_kepler = '')
     return $result_vhs;
 }
 
-function get_vhs_starterre_from_csv()
+function get_infos_from_csv($chemin_fichier)
 {
 
-    // Chemin vers le fichier CSV
-    $cheminFichier = $_SERVER['DOCUMENT_ROOT'] . '/vehicules.csv';
 
     // Ouvrir le fichier en mode lecture
-    if (($handle = fopen($cheminFichier, "r")) !== FALSE) {
+    if (($handle = fopen($chemin_fichier, "r")) !== FALSE) {
         // Ignorer la première ligne (en-têtes)
         fgetcsv($handle);
 
