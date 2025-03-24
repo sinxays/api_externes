@@ -14,24 +14,20 @@ $environnement = 'prod';
 $nbr_vhs_maj = 0;
 $count_appel_api = 0;
 
-  // Chemin vers le fichier CSV
-  $cheminFichier = $_SERVER['DOCUMENT_ROOT'] . '/vehicules.csv';
+// Chemin vers le fichier CSV
+$cheminFichier = $_SERVER['DOCUMENT_ROOT'] . '/vehicules.csv';
 
 
 // on recupere depuis la base tous les vhs à l'état 1 donc non vendus
 $get_vhs_en_vente = get_infos_from_csv($cheminFichier);
 
-//ensuite on boucle par fourchette 50/heure car on a une limite de 100 appels api kepler par heure..
-
-var_dump($get_vhs_en_vente);
-
-die();
-
-
 foreach ($get_vhs_en_vente as $vh) {
     $id_kepler = $vh['id_kepler'];
     $id_starterre = $vh['id_starterre'];
 
+    echo "<strong>" . $id_kepler . "</strong> ==> ";
+
+    //ensuite on boucle par fourchette 50/heure car on a une limite de 100 appels api kepler par heure..
     if ($count_appel_api > 50) {
         break; // On arrête si on a atteint la limite de 50 appels API
     }
@@ -43,13 +39,17 @@ foreach ($get_vhs_en_vente as $vh) {
 
     //si il est vendu, on actualise la base des deux cotés (starterre et base adminer)
     if ($state !== 'vehicle.state.parc') {
-        post_vh_to_delete_starterre($id_starterre, $environnement);
-        //passage du state à l'état 0 du vh 
-        update_vh_state_replica_starterre($id_kepler, 0, $environnement);
-        echo "le véhicule <strong>" . $id_kepler . "</strong> a bien été delete de starterre et actualisé en base";
+        $return_delete_starterre = post_vh_to_delete_starterre($id_starterre, $environnement);
+        if ($return_delete_starterre) {
+            //passage du state à l'état 0 du vh 
+            update_vh_state_replica_starterre($id_kepler, 0, $environnement);
+            echo "le véhicule <strong>" . $id_kepler . "</strong> a bien été delete de starterre et actualisé en base";
+            separateur();
+        }
+    } else {
+        echo "le véhicule <strong>" . $id_kepler . "</strong> est OK";
         separateur();
     }
-
 }
 
 
