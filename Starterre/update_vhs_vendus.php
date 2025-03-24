@@ -48,7 +48,7 @@ if (!empty($recup_kepler_vhs_vendus_for_starterre)) {
                 //on le post en DELETE vers l'api STARTERRE
                 $count = post_vh_to_delete_starterre($id_starterre, $environnement);
                 // et on actualise ma base pour que ça soit iso et on mt le vh à l'état 0 : deleted
-                update_vh_replica_starterre($reference_kepler, 0, $environnement);
+                update_vh_state_replica_starterre($reference_kepler, 0, $environnement);
 
                 //on affiche les données pour infos.
                 echo $reference_kepler . " || " . $vh->vin . " || " . $vh->licenseNumber;
@@ -89,7 +89,7 @@ if (!empty($recup_kepler_vhs_vendus_AR_for_starterre)) {
                 //on le post en DELETE vers l'api STARTERRE
                 $count = post_vh_to_delete_starterre($id_starterre, $environnement);
                 // et on actualise ma base pour que ça soit iso et on mt le vh à l'état 0 : deleted
-                update_vh_replica_starterre($reference_kepler, 0, $environnement);
+                update_vh_state_replica_starterre($reference_kepler, 0, $environnement);
 
                 //on affiche les données pour infos.
                 echo $reference_kepler . " || " . $vh->vin . " || " . $vh->licenseNumber;

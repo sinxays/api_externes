@@ -230,7 +230,7 @@ function get_vhs_starterre_from_csv()
 {
 
     // Chemin vers le fichier CSV
-    $cheminFichier = $_SERVER['DOCUMENT_ROOT'] . '/Starterre/api_vehicles_final.csv';
+    $cheminFichier = $_SERVER['DOCUMENT_ROOT'] . '/vehicules.csv';
 
     // Ouvrir le fichier en mode lecture
     if (($handle = fopen($cheminFichier, "r")) !== FALSE) {
@@ -242,7 +242,8 @@ function get_vhs_starterre_from_csv()
         while (($data = fgetcsv($handle, 1000, ";")) !== FALSE) {
             // Afficher chaque ligne (tableau)
             // print_r($data);
-            $array[$i]['id_starterre'] = $data[3];
+            $array[$i]['id_kepler'] = $data[1];
+            $array[$i]['id_starterre'] = $data[2];
             $i++;
         }
         // Fermer le fichier après lecture
@@ -958,7 +959,7 @@ function create_vh_replica_starterre($id_kepler, $id_starterre, $immatriculation
     $stmt->execute($data);
 }
 
-function update_vh_replica_starterre($id_kepler, $state, $environnement)
+function update_vh_state_replica_starterre($id_kepler, $state, $environnement)
 {
 
     $pdo = set_environnement_pdo($environnement);
@@ -1473,4 +1474,78 @@ function sendEmail($accessToken, $fromBox, $to, $subject, $body)
     curl_close($ch);
 
     return $response;
+}
+
+
+function get_vhs_en_vente($environnement)
+{
+
+    switch ($environnement) {
+        case 'dev':
+            $pdo = Connection::getPDO_starterre();
+            break;
+        case 'prod':
+            $pdo = Connection::getPDO_starterre_prod();
+            break;
+
+        default:
+            $pdo = Connection::getPDO_starterre();
+            break;
+    }
+
+    $request = $pdo->query("SELECT id_kepler,id_starterre FROM vehicules WHERE state = 1");
+    $result_vhs = $request->fetchAll(PDO::FETCH_ASSOC);
+
+    return $result_vhs;
+}
+
+function get_state_from_reference_vh_kepler($reference){
+    // le token
+    $token = get_token();
+
+
+    $dataArray = array(
+        "reference" => $reference
+    );
+
+    $request_vehicule = "v3.7/vehicles/";
+    $url = "https://www.kepler-soft.net/api/";
+
+    $url_vehicule = $url . "" . $request_vehicule;
+
+    $data = http_build_query($dataArray);
+
+    $getURL = $url_vehicule . '?' . $data;
+
+    // print_r($getURL);
+    // sautdeligne();
+
+    $ch = curl_init();
+    $header = array();
+    $header[] = 'X-Auth-Token:' . $token;
+    $header[] = 'Content-Type:text/html;charset=utf-8';
+
+    curl_setopt($ch, CURLOPT_URL, $getURL);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+
+    $result = curl_exec($ch);
+
+    if (curl_error($ch)) {
+        $result = curl_error($ch);
+        print_r($result);
+        echo "<br/> erreur";
+    }
+
+    // var_dump(gettype($result));
+    // print_r($result);
+
+    curl_close($ch);
+
+    // créer un objet à partir du retour qui est un string
+    $obj_vehicule = json_decode($result);
+
+    return $obj_vehicule[0]->state;
 }

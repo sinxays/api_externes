@@ -9,98 +9,42 @@ set_time_limit(300); // 300 secondes = 5 minutes, adapte selon tes besoins
 
 $environnement = 'prod';
 
-//UPDATE DE STARTERRE EN RECUPERANT LES VHS VENDUS
+//MAJ DES VHS VENDUS AR ENTRE FIN FEVRIER ET MODIF CODE POUR PRENDRE EN COMPTE LES VENDU AR
 
-$nbr_vh_vendus_starterre = 0;
-$nbr_vh_vendus_AR_starterre = 0;
-
-// on recupere depuis kepler les vhs a l'état vendu depuis la date d'aujourd'hui
-// $recup_kepler_vhs_vendus_for_starterre = recup_vhs_vendus_kepler_for_starterre();
-$recup_kepler_vhs_vendus_AR_for_starterre = recup_vhs_vendus_kepler_for_starterre('vendu_ar');
-
-// var_dump($recup_kepler_vhs_vendus_AR_for_starterre);
-// die();
+$nbr_vhs_maj = 0;
+$count_appel_api = 0;
 
 
-/***  Pour test sur un seul véhicule ***/
-// $reference = '5nclw5pfj3';
-// $recup_kepler_for_starterre = recup_vh_unique_kepler_for_starterre($reference);
-// var_dump($recup_kepler_for_starterre);
-// die();
+// on recupere depuis la base tous les vhs à l'état 1 donc non vendus
+$get_vhs_en_vente = get_vhs_starterre_from_csv();
 
-// si on trouve des données 
-if (!empty($recup_kepler_vhs_vendus_for_starterre)) {
-    foreach ($recup_kepler_vhs_vendus_for_starterre as $vh) {
+//ensuite on boucle par fourchette 50/heure car on a une limite de 100 appels api kepler par heure..
 
-        $reference_kepler = $vh->reference;
 
-        // on va chercher le idStarterre depuis le idKepler , car le delete se fait depuis le idStarterre
-        $id_starterre = get_idStarterre_from_idKepler($reference_kepler);
+foreach ($get_vhs_en_vente as $vh) {
+    $id_kepler = $vh['id_kepler'];
+    $id_starterre = $vh['id_starterre'];
 
-        // si on trouve un idStarterre c'est qu'il est dans ma base
-        if ($id_starterre) {
-
-            // on check si il est pas déja à l'état 0 dans ma base
-            $check_state_vh = check_state_vh($reference_kepler);
-
-            // si il est à 1 donc a l'état PARC
-            if ($check_state_vh) {
-                //on le post en DELETE vers l'api STARTERRE
-                $count = post_vh_to_delete_starterre($id_starterre, $environnement);
-                // et on actualise ma base pour que ça soit iso et on mt le vh à l'état 0 : deleted
-                update_vh_replica_starterre($reference_kepler, 0, $environnement);
-
-                //on affiche les données pour infos.
-                echo $reference_kepler . " || " . $vh->vin . " || " . $vh->licenseNumber;
-                sautdeligne();
-
-                $nbr_vh_vendus_starterre++;
-            }
-
-        }
+    if ($count_appel_api > 50) {
+        break; // On arrête si on a atteint la limite de 50 appels API
     }
-    sautdeligne();
-    echo "nombre de vh vendus : $nbr_vh_vendus_starterre";
-} else {
-    sautdeligne();
-    echo "Aucun véhicule vendu";
+
+    //pour chaque vh on va checker sur kepler son état ( vendu, vendu AR, sorti.. etc ) en gros on va juste le passer a state 0 
+    // si son statut de kepler est différent de parc
+    $state = get_state_from_reference_vh_kepler($id_kepler);
+    $count_appel_api++;
+
+    //si il est vendu, on actualise la base des deux cotés (starterre et base adminer)
+    if ($state !== 'vehicle.state.parc') {
+        post_vh_to_delete_starterre($id_starterre, $environnement);
+        //passage du state à l'état 0 du vh 
+        update_vh_state_replica_starterre($id_kepler, 0, $environnement);
+        echo "le véhicule <strong>" . $id_kepler . "</strong> a bien été delete de starterre et actualisé en base";
+    }
+
 }
 
 
-// si on trouve des données pour les vhs vendus AR
-if (!empty($recup_kepler_vhs_vendus_AR_for_starterre)) {
-    foreach ($recup_kepler_vhs_vendus_AR_for_starterre as $vh) {
 
-        $reference_kepler = $vh->reference;
 
-        // on va chercher le idStarterre depuis le idKepler , car le delete se fait depuis le idStarterre
-        $id_starterre = get_idStarterre_from_idKepler($reference_kepler);
 
-        // si on trouve un idStarterre c'est qu'il est dans ma base
-        if ($id_starterre) {
-
-            // on check si il est pas déja à l'état 0 dans ma base
-            $check_state_vh = check_state_vh($reference_kepler);
-
-            // si il est à 1 donc a l'état PARC
-            if ($check_state_vh) {
-                //on le post en DELETE vers l'api STARTERRE
-                $count = post_vh_to_delete_starterre($id_starterre, $environnement);
-                // et on actualise ma base pour que ça soit iso et on mt le vh à l'état 0 : deleted
-                update_vh_replica_starterre($reference_kepler, 0, $environnement);
-
-                //on affiche les données pour infos.
-                echo $reference_kepler . " || " . $vh->vin . " || " . $vh->licenseNumber;
-                sautdeligne();
-
-                $nbr_vh_vendus_AR_starterre++;
-            }
-
-        }
-    }
-    sautdeligne();
-    echo "nombre de vh vendus AR: $nbr_vh_vendus_AR_starterre";
-} else {
-    sautdeligne();
-    echo "Aucun véhicule vendu AR";
-}

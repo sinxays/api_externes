@@ -23,7 +23,7 @@ if (isset($_POST['type_delete'])) {
             //suppression sur starterre via post en delete
             post_vh_to_delete_starterre($id_starterre, $environnement);
             //passage du state à l'état 0 du vh 
-            update_vh_replica_starterre($id_kepler, 0, $environnement);
+            update_vh_state_replica_starterre($id_kepler, 0, $environnement);
             echo "le véhicule <strong>" . $id_kepler . "</strong> a bien été delete de starterre et actualisé en base";
             break;
 

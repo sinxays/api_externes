@@ -110,7 +110,7 @@ foreach ($parc_array as $parc) {
                                 //on check si le vh est à l'état 0 donc placé sur BDC
                                 if ($check_vh['state'] == 0) {
                                     //on le repasse à 1 state parc
-                                    update_vh_replica_starterre($reference_kepler, 1, $environnement);
+                                    update_vh_state_replica_starterre($reference_kepler, 1, $environnement);
                                 }
 
                             }
