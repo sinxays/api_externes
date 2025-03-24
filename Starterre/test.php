@@ -40,6 +40,7 @@ foreach ($get_vhs_en_vente as $vh) {
         //passage du state à l'état 0 du vh 
         update_vh_state_replica_starterre($id_kepler, 0, $environnement);
         echo "le véhicule <strong>" . $id_kepler . "</strong> a bien été delete de starterre et actualisé en base";
+        separateur();
     }
 
 }
