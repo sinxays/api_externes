@@ -38,7 +38,7 @@ foreach ($get_vhs_en_vente as $vh) {
     $count_appel_api++;
 
     //si il est vendu, on actualise la base des deux cotés (starterre et base adminer)
-    if ($state !== 'vehicle.state.parc' || $state !== 'vehicle.state.on_arrival' ) {
+    if ($state !== 'vehicle.state.parc' && $state !== 'vehicle.state.on_arrival' ) {
         $return_delete_starterre = post_vh_to_delete_starterre($id_starterre, $environnement);
         if ($return_delete_starterre) {
             //passage du state à l'état 0 du vh 
