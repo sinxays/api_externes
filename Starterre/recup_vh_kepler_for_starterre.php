@@ -127,6 +127,20 @@ foreach ($parc_array as $parc) {
                 }
                 //si pas de prix pro HT
                 else {
+
+                    // update 27/03 : on va voir si le véhicule a déja existé et dans ce cas c'est un véhicule qui est passé LAG par exemple , et donc Guillaume a retiré le prix pro
+                    $check_vh = check_if_vh_exist($reference_kepler, $environnement);
+                    if ($check_vh) {
+                        $id_starterre = get_idStarterre_from_idKepler($reference_kepler);
+                        //on le supprime de starterre
+                        $return_delete_starterre = post_vh_to_delete_starterre($id_starterre, $environnement);
+                        if ($return_delete_starterre) {
+                            //on le passe a state 0 dans ma base
+                            update_vh_state_replica_starterre($reference_kepler, 0, $environnement);
+                        }
+                    }
+                    // fin update 27/03 
+
                     $array_vhs_prix_pro_none[$nbr_vhs_NO_prix_pro] = $reference_kepler;
                     $nbr_vhs_NO_prix_pro++;
                 }
