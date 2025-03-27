@@ -619,7 +619,14 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
     $array_for_csv["brand"]["name"] = isset($vh->brand->name) ? trim(strtolower($vh->brand->name)) : "";
 
 
-    $array_for_csv["prices"][0]["price-without-taxes"] = isset($vh->priceSellerWithoutTax) ? floatval($vh->priceSellerWithoutTax) : 0;
+    //update 27/03 : si il n'y a plus de prix pro c'est que le véhicule est parti LeaseAndGo par exemple
+    if (isset($vh->priceSellerWithoutTax) && !is_null($vh->priceSellerWithoutTax)) {
+        $array_for_csv["prices"][0]["price-without-taxes"] = floatval($vh->priceSellerWithoutTax);
+    } else {
+        $array_for_csv["prices"][0]["price-without-taxes"] = 0;
+        $no_export = TRUE;
+    }
+    
     $array_for_csv["prices"][0]["constructor-price-without-taxes"] = 0; // pas l'info sur kepler
     $array_for_csv["prices"][0]["estimated-costs-without-taxes"] = isset($vh->estimateCost) ? floatval($vh->estimateCost) : 0;
     $array_for_csv["prices"][0]["price-type"] = "prix_marchand_starterre";
@@ -1497,7 +1504,8 @@ function get_vhs_en_vente($environnement)
     return $result_vhs;
 }
 
-function get_state_from_reference_vh_kepler($reference){
+function get_state_from_reference_vh_kepler($reference)
+{
     // le token
     $token = get_token();
 
