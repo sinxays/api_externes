@@ -506,7 +506,7 @@ function recup_vh_unique_kepler_for_starterre($reference)
     // le token
     $token = get_token();
 
-    var_dump($token);
+    // var_dump($token);
 
     $dataArray = array(
         "reference" => $reference,
@@ -1073,7 +1073,7 @@ function get_energy_vh_for_starterre($energy_vh_kepler)
             $energy_for_starterre = "GO";
             break;
         case 'gpl':
-            $energy_for_starterre = "PLG";
+            $energy_for_starterre = "GP";
             break;
         case 'courant electrique':
         case 'electrique':

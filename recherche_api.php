@@ -25,8 +25,11 @@ if (isset($_POST)) {
             $array_for_csv = array();
             $datas_vh_for_starterre = recup_vh_unique_kepler_for_starterre($_POST['identifier_vh']);
 
+            var_dump($datas_vh_for_starterre);
+
+            die();
+
             if (!empty($datas_vh_for_starterre)) {
-                $result_final = $datas_vh_for_starterre;
 
                 foreach ($datas_vh_for_starterre as $nb_index_vh => $vh) {
 
