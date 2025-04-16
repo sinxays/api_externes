@@ -133,22 +133,13 @@ function get_token_starterre($environnement)
     switch ($environnement) {
         case 'prod':
             $url = "https://cameleon.starterre.fr/auth";
-            break;
-        case 'dev':
-            $url = "https://cameleon.starterre.dev/auth";
-            break;
-    }
-
-
-    // Préparer les données du body (le payload JSON)
-    switch ($environnement) {
-        case 'prod':
             $data = array(
                 "email" => "sinxay.souvannavong@massoutre-locations.com",
                 "password" => "wUK8aqXcTlxqQ8!M"
             );
             break;
         case 'dev':
+            $url = "https://cameleon.starterre.dev/auth";
             $data = array(
                 "email" => "guillaume.honnert@massoutre-locations.com",
                 "password" => "KXpOmwlRolW8%mAl"
