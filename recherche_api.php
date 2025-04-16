@@ -7,11 +7,14 @@ $environnement = 'prod';
 
 if (isset($_POST)) {
 
+    $id_kepler = trim($_POST['identifier_vh']);
     $type_recherche = $_POST['type_recherche'];
     switch ($type_recherche) {
         //RECHERCHE VH sur STARTERRE
         case "identifier_vh_kepler_from_starterre":
-            $datas_vh_starterre = starterre_recup_vh_by_identifier($_POST['identifier_vh'],$environnement);
+            $id_starterre = get_idStarterre_from_idKepler($id_kepler,$environnement);
+
+            $datas_vh_starterre = starterre_recup_vh_by_identifier($id_starterre,$environnement);
 
             if (!empty($datas_vh_starterre)) {
                 $result_final = $datas_vh_starterre;

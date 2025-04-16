@@ -21,10 +21,6 @@ function starterre_recup_vh_by_identifier($identifier_vh, $environnement)
     $url = set_url_environnement_starterre_vh($environnement);
     // $url = "https://cameleon.starterre.dev/api/vehicles";
 
-    $data = array(
-        "id" => $identifier_vh,
-    );
-
     // d'apres la doc cameleon, pour récupérer un véhicule il faut faire /api/vehicles/{id} donc on colle direct l'id derriere l'url
     $full_url = $url . "/" . $identifier_vh;
 
@@ -32,7 +28,7 @@ function starterre_recup_vh_by_identifier($identifier_vh, $environnement)
     $ch = curl_init();
 
     // le token
-    $token = use_token_from_base('prod');
+    $token = use_token_from_base($environnement);
 
     // Configuration de la requête cURL
     curl_setopt($ch, CURLOPT_URL, $full_url);
