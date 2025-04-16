@@ -35,7 +35,7 @@ if (!empty($recup_kepler_vhs_vendus_for_starterre)) {
         $reference_kepler = $vh->reference;
 
         // on va chercher le idStarterre depuis le idKepler , car le delete se fait depuis le idStarterre
-        $id_starterre = get_idStarterre_from_idKepler($reference_kepler);
+        $id_starterre = get_idStarterre_from_idKepler($reference_kepler,$environnement);
 
         // si on trouve un idStarterre c'est qu'il est dans ma base
         if ($id_starterre) {
@@ -76,7 +76,7 @@ if (!empty($recup_kepler_vhs_vendus_AR_for_starterre)) {
         $reference_kepler = $vh->reference;
 
         // on va chercher le idStarterre depuis le idKepler , car le delete se fait depuis le idStarterre
-        $id_starterre = get_idStarterre_from_idKepler($reference_kepler);
+        $id_starterre = get_idStarterre_from_idKepler($reference_kepler,$environnement);
 
         // si on trouve un idStarterre c'est qu'il est dans ma base
         if ($id_starterre) {

@@ -2,6 +2,8 @@
 
 include $_SERVER['DOCUMENT_ROOT'] . "/StarTerre/fonctions_starterre.php";
 
+$environnement = 'prod';
+
 
 if (isset($_POST)) {
 
@@ -9,7 +11,7 @@ if (isset($_POST)) {
     switch ($type_recherche) {
         //RECHERCHE VH sur STARTERRE
         case "identifier_vh_kepler_from_starterre":
-            $datas_vh_starterre = starterre_recup_vh_by_identifier($_POST['identifier_vh']);
+            $datas_vh_starterre = starterre_recup_vh_by_identifier($_POST['identifier_vh'],$environnement);
 
             if (!empty($datas_vh_starterre)) {
                 $result_final = $datas_vh_starterre;
@@ -32,18 +34,11 @@ if (isset($_POST)) {
             if (!empty($datas_vh_for_starterre)) {
 
                 foreach ($datas_vh_for_starterre as $nb_index_vh => $vh) {
-
-
                     //si le vh à un prix négociant HT on crée le véhicule
                     if (isset($vh->priceSellerWithoutTax) && $vh->priceSellerWithoutTax !== '') {
-
                         //UPDATE : si il ya un truc qui manque ou qui ne va pas pour starterre on s'embete pas on l'importe pas dans starterre.
                         $retour_json = mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh);
-
-
                     }
-
-
                 }
             } else {
                 $result_final = FALSE;

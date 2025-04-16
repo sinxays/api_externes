@@ -15,9 +15,11 @@ ini_set('xdebug.var_display_max_data', 1024);
 
 
 
-function starterre_recup_vh_by_identifier($identifier_vh)
+function starterre_recup_vh_by_identifier($identifier_vh, $environnement)
 {
-    $url = "https://cameleon.starterre.dev/api/vehicles";
+
+    $url = set_url_environnement_starterre_vh($environnement);
+    // $url = "https://cameleon.starterre.dev/api/vehicles";
 
     $data = array(
         "id" => $identifier_vh,
@@ -207,18 +209,7 @@ function get_token_starterre($environnement)
 function get_vhs_starterre_from_base($environnement, $id_kepler = '')
 {
 
-    switch ($environnement) {
-        case 'dev':
-            $pdo = Connection::getPDO_starterre();
-            break;
-        case 'prod':
-            $pdo = Connection::getPDO_starterre_prod();
-            break;
-
-        default:
-            $pdo = Connection::getPDO_starterre();
-            break;
-    }
+    $pdo = set_environnement_pdo($environnement);
 
     $request = $pdo->query("SELECT id_kepler,id_starterre FROM vehicules");
     $result_vhs = $request->fetchAll(PDO::FETCH_ASSOC);
@@ -820,18 +811,7 @@ function post_vh_to_starterre($donnees_vh_to_post, $environnement)
     // Initialiser une session cURL
     $ch = curl_init();
 
-
-    // Définir l'URL de l'API pour POST VEHICULES
-    switch ($environnement) {
-        case 'prod':
-            $url = "https://cameleon.starterre.fr/api/vehicles";
-            break;
-        case 'dev':
-            $url = "https://cameleon.starterre.dev/api/vehicles";
-            break;
-    }
-
-
+    $url = set_url_environnement_starterre_vh($environnement);
 
     $token = use_token_from_base($environnement);
 
@@ -893,16 +873,9 @@ function post_vh_to_delete_starterre($id_starterre, $environnement)
     // Initialiser une session cURL
     $ch = curl_init();
 
-    // Définir l'URL de l'API pour POST VEHICULES
-    switch ($environnement) {
-        case 'prod':
-            $url = "https://cameleon.starterre.fr/api/vehicles/" . $id_starterre;
-            break;
-        case 'dev':
-            $url = "https://cameleon.starterre.dev/api/vehicles/" . $id_starterre;
-            break;
-    }
+    $url_environement = set_url_environnement_starterre_vh($environnement);
 
+    $url = $url_environement . "/" . $id_starterre;
 
     $token = use_token_from_base($environnement);
     // var_dump($token);
@@ -1027,9 +1000,10 @@ function check_state_vh($reference_kepler)
     }
 }
 
-function get_idStarterre_from_idKepler($id_kepler)
+function get_idStarterre_from_idKepler($id_kepler, $environnement)
 {
-    $pdo = Connection::getPDO_starterre_prod();
+    $pdo = set_environnement_pdo($environnement);
+
     $request = $pdo->query("SELECT id_starterre FROM vehicules WHERE id_kepler = '$id_kepler'");
     $result = $request->fetch(PDO::FETCH_ASSOC);
 
@@ -1175,19 +1149,7 @@ function separateur()
 function use_token_from_base($environnement)
 {
 
-
-    switch ($environnement) {
-        case 'dev':
-            $pdo = Connection::getPDO_starterre();
-            break;
-        case 'prod':
-            $pdo = Connection::getPDO_starterre_prod();
-            break;
-
-        default:
-            $pdo = Connection::getPDO_starterre();
-            break;
-    }
+    $pdo = set_environnement_pdo($environnement);
 
     $request = $pdo->query("SELECT token,date_creation FROM token WHERE ID = 1");
     $token_starterre = $request->fetch(PDO::FETCH_ASSOC);
@@ -1323,6 +1285,7 @@ function set_bodywork_name_for_starterre($bodywork_name)
 function set_environnement_pdo($environnement)
 {
     switch ($environnement) {
+
         case 'dev':
             $pdo = Connection::getPDO_starterre();
             break;
@@ -1478,18 +1441,7 @@ function sendEmail($accessToken, $fromBox, $to, $subject, $body)
 function get_vhs_en_vente($environnement)
 {
 
-    switch ($environnement) {
-        case 'dev':
-            $pdo = Connection::getPDO_starterre();
-            break;
-        case 'prod':
-            $pdo = Connection::getPDO_starterre_prod();
-            break;
-
-        default:
-            $pdo = Connection::getPDO_starterre();
-            break;
-    }
+    $pdo = set_environnement_pdo($environnement);
 
     $request = $pdo->query("SELECT id_kepler,id_starterre FROM vehicules WHERE state = 1");
     $result_vhs = $request->fetchAll(PDO::FETCH_ASSOC);
@@ -1497,7 +1449,8 @@ function get_vhs_en_vente($environnement)
     return $result_vhs;
 }
 
-function get_state_from_reference_vh_kepler($reference){
+function get_state_from_reference_vh_kepler($reference)
+{
     // le token
     $token = get_token();
 
@@ -1546,4 +1499,28 @@ function get_state_from_reference_vh_kepler($reference){
     $obj_vehicule = json_decode($result);
 
     return $obj_vehicule[0]->state;
+}
+
+function get_idStarterre_from_VIN($vin, $environnement)
+{
+    $pdo = set_environnement_pdo($environnement);
+
+    $request = $pdo->query("SELECT id_starterre FROM vehicules WHERE vin = '$vin'");
+    $id_starterre = $request->fetch(PDO::FETCH_COLUMN);
+
+    return $id_starterre;
+}
+
+function set_url_environnement_starterre_vh($environnement)
+{
+    // Définir l'URL de l'API pour POST VEHICULES
+    switch ($environnement) {
+        case 'prod':
+            $url = "https://cameleon.starterre.fr/api/vehicles";
+            break;
+        case 'dev':
+            $url = "https://cameleon.starterre.dev/api/vehicles";
+            break;
+    }
+    return $url;
 }

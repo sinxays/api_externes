@@ -18,8 +18,19 @@ if (isset($_POST['type_delete'])) {
 
     switch ($type_delete) {
         case 'unique':
-            // on va chercher le idStarterre depuis le idKepler , car le delete se fait depuis le idStarterre
-            $id_starterre = get_idStarterre_from_idKepler($id_kepler);
+
+            //update 16/04/2025 : on check la longueur de id_kepler pour savoir si on supprime par reference ou par VIN 
+            // si c'est 17 caractères alors c'est un VIN
+            // on va chercher le idStarterre depuis le idKepler ou VIN , car le delete se fait depuis le idStarterre
+
+            //si c'est un VIN
+            if (strlen($id_kepler) == 17) {
+                $id_starterre = get_idStarterre_from_VIN($id_kepler, $environnement);
+            } 
+            //sinon c'est une reference
+            else {
+                $id_starterre = get_idStarterre_from_idKepler($id_kepler,$environnement);
+            }
             //suppression sur starterre via post en delete
             post_vh_to_delete_starterre($id_starterre, $environnement);
             //passage du state à l'état 0 du vh 
@@ -27,6 +38,8 @@ if (isset($_POST['type_delete'])) {
             echo "le véhicule <strong>" . $id_kepler . "</strong> a bien été delete de starterre et actualisé en base";
             break;
 
+
+            // TO DO
         case 'multiple_csv':
             break;
 

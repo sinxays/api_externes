@@ -131,7 +131,7 @@ foreach ($parc_array as $parc) {
                     // update 27/03 : on va voir si le véhicule a déja existé et dans ce cas c'est un véhicule qui est passé LAG par exemple , et donc Guillaume a retiré le prix pro
                     $check_vh = check_if_vh_exist($reference_kepler, $environnement);
                     if ($check_vh) {
-                        $id_starterre = get_idStarterre_from_idKepler($reference_kepler);
+                        $id_starterre = get_idStarterre_from_idKepler($reference_kepler,$environnement);
                         //on le supprime de starterre
                         $return_delete_starterre = post_vh_to_delete_starterre($id_starterre, $environnement);
                         if ($return_delete_starterre) {

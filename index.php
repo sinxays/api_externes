@@ -162,8 +162,7 @@
                             </label>
                         </div>
 
-                        <label for="starterre_reference_vh_input"><b>identifiant VH</b> (reference kepler du
-                            véhicule)</label>
+                        <label for="starterre_reference_vh_input"><b>reference kepler ou VIN </b></label>
                         <input type="text" class="form-control" id="starterre_reference_vh_input_to_delete_starterre"
                             name="starterre_reference_vh_input_to_delete_starterre" style="width: 200px;" disabled>
                         <br>
