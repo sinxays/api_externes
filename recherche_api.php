@@ -14,9 +14,9 @@ if (isset($_POST)) {
     switch ($type_recherche) {
         //RECHERCHE VH sur STARTERRE
         case "identifier_vh_kepler_from_starterre":
-            $id_starterre = get_idStarterre_from_idKepler($id_kepler,$environnement);
+            $id_starterre = get_idStarterre_from_idKepler($id_kepler, $environnement);
 
-            $datas_vh_starterre = starterre_recup_vh_by_identifier($id_starterre,$environnement);
+            $datas_vh_starterre = starterre_recup_vh_by_identifier($id_starterre, $environnement);
 
             if (!empty($datas_vh_starterre)) {
                 $result_final = $datas_vh_starterre;
@@ -30,7 +30,7 @@ if (isset($_POST)) {
         case "identifier_vh_kepler_to_post_starterre":
 
             $array_for_csv = array();
-            $datas_vh_for_starterre = recup_vh_unique_kepler_for_starterre($_POST['identifier_vh']);
+            $datas_vh_for_starterre = recup_vh_unique_kepler_for_starterre($id_kepler);
 
             var_dump($datas_vh_for_starterre);
 
