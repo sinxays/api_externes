@@ -1,6 +1,8 @@
 <?php
 
-include $_SERVER['DOCUMENT_ROOT'] . "/StarTerre/fonctions_starterre.php";
+include $_SERVER['DOCUMENT_ROOT'] . "/Starterre/fonctions_starterre.php";
+
+echo $_SERVER['DOCUMENT_ROOT'] . "/Starterre/fonctions_starterre.php";
 
 $environnement = 'prod';
 
