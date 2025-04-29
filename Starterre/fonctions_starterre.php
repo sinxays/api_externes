@@ -1497,6 +1497,17 @@ function get_idStarterre_from_VIN($vin, $environnement)
 
     return $id_starterre;
 }
+function get_idKepler_from_VIN($vin, $environnement)
+{
+    $pdo = set_environnement_pdo($environnement);
+
+    $request = $pdo->query("SELECT id_kepler FROM vehicules WHERE vin = '$vin'");
+    $id_kepler = $request->fetch(PDO::FETCH_COLUMN);
+
+    return $id_kepler;
+}
+
+
 
 function set_url_environnement_starterre_vh($environnement)
 {

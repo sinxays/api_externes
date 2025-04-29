@@ -26,6 +26,7 @@ if (isset($_POST['type_delete'])) {
             //si c'est un VIN
             if (strlen($id_kepler) == 17) {
                 $id_starterre = get_idStarterre_from_VIN($id_kepler, $environnement);
+                $id_kepler = get_idKepler_from_VIN($id_kepler,$environnement);
             } 
             //sinon c'est une reference
             else {
