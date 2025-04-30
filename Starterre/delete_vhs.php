@@ -62,14 +62,15 @@ if (isset($_POST['type_delete'])) {
                 }
 
                 //suppression sur starterre via post en delete
-                post_vh_to_delete_starterre($id_starterre, $environnement);
+                // post_vh_to_delete_starterre($id_starterre, $environnement);
                 //passage du state à l'état 0 du vh 
-                update_vh_state_replica_starterre($id_kepler, 0, $environnement);
-                array_push($liste_vhs_deleted,$id_kepler);
+                // update_vh_state_replica_starterre($id_kepler, 0, $environnement);
+                array_push($liste_vhs_deleted, $id_kepler);
             }
 
-            foreach($liste_vhs_deleted as $vh_deleted){
-                echo "le véhicule de référence $vh_deleted a été delete";
+            foreach ($liste_vhs_deleted as $vh_deleted) {
+                echo "le véhicule de référence <b>$vh_deleted</b> a été delete";
+                sautdeligne();
             }
 
             break;
