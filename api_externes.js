@@ -48,9 +48,7 @@ $(document).ready(function () {
             environnement: selectedValue
         };
 
-
         console.log(datas);
-
 
         $.ajax({
             url: "Starterre/delete_vhs.php",
@@ -63,6 +61,34 @@ $(document).ready(function () {
             },
             error: function () {
                 $("#area_result").html("VH NON TROUVE");
+            }
+        });
+    });
+
+    // si appui sur le bouton de delete vhs via fichier
+    $("#btn_delete_vhs_starterre").click(function (e) {
+        loader.show();
+        // window.location.href = 'Starterre/delete_vhs.php';
+        let selectedValue = $('input[name="flexRadioDefault"]:checked').val();
+        let datas = {
+            id_kepler: null,
+            type_delete: 'multiple_csv',
+            environnement: selectedValue
+        };
+
+        console.log(datas);
+
+        $.ajax({
+            url: "Starterre/delete_vhs.php",
+            type: "POST",
+            data: datas,
+            success: function (data_retour) {
+                loader.hide();
+                remove_modal($("#modal_api_starterre_delete_vh"));
+                $("#area_result").html(data_retour);
+            },
+            error: function () {
+                $("#area_result").html("erreur fichier ?");
             }
         });
     });
