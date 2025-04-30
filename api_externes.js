@@ -7,22 +7,29 @@ $(document).ready(function () {
 
 
     $("#btn_export_kepler_for_starterre").click(function (e) {
-        window.location.href = 'Starterre/recup_vh_kepler_for_starterre.php';
+        e.preventDefault(); // empêche le comportement par défaut du bouton si besoin
+        if (confirm("Êtes-vous sûr de vouloir lancer ce script ?")) {
+            window.location.href = 'Starterre/recup_vh_kepler_for_starterre.php';
+        }
     });
 
-    $("#btn_api_starterre_token").click(function (e) {
-        window.location.href = 'Starterre/recup_token.php';
-    });
-
-    // $("#btn_api_starterre_post_vh").click(function (e) {
-    //     window.location.href = 'Starterre/test_post_vh.php';
-    // });
     $("#btn_api_starterre_update_vhs_vendus").click(function (e) {
-        window.location.href = 'Starterre/update_vhs_vendus.php';
+        e.preventDefault(); // empêche le comportement par défaut du bouton si besoin
+        if (confirm("Êtes-vous sûr de vouloir lancer l'update ?")) {
+            window.location.href = 'Starterre/update_vhs_vendus.php';
+        }
     });
 
     $("#btn_api_starterre_page_test").click(function (e) {
-        window.location.href = 'Starterre/test.php';
+        e.preventDefault(); // empêche le comportement par défaut du bouton si besoin
+        if (confirm("Êtes-vous sûr de vouloir lancer la page test ?")) {
+            window.location.href = 'Starterre/test.php';
+        }
+    });
+
+
+    $("#btn_api_starterre_token").click(function (e) {
+        window.location.href = 'Starterre/recup_token.php';
     });
 
 

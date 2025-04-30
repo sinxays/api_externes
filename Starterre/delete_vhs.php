@@ -46,8 +46,7 @@ if (isset($_POST['type_delete'])) {
             $chemin_fichier = "vhs_a_sortir.csv";
             $vhs_to_delete_liste = get_infos_from_csv($chemin_fichier);
             $liste_vhs_deleted = array();
-
-
+            
             foreach ($vhs_to_delete_liste as $vh_to_delete) {
                 //si dans le fichier ya un id_kepler
                 if ($vh_to_delete['id_kepler']) {
