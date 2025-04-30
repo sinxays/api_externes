@@ -9,12 +9,12 @@ set_time_limit(300); // 300 secondes = 5 minutes, adapte selon tes besoins
 
 
 
-
-
 if (isset($_POST['type_delete'])) {
     $type_delete = $_POST['type_delete'];
     $id_kepler = $_POST['id_kepler'];
     $environnement = $_POST['environnement'];
+
+    
 
     switch ($type_delete) {
         case 'unique':
@@ -41,7 +41,7 @@ if (isset($_POST['type_delete'])) {
 
 
         // TO DO
-        case 'multiple_csv':
+        case 'multiple':
             // colonnes du fichier a csv pour delete : id_kepler ; id starterre ; vin
             $chemin_fichier = "vhs_a_sortir.csv";
             $vhs_to_delete_liste = get_infos_from_csv($chemin_fichier);
@@ -62,9 +62,9 @@ if (isset($_POST['type_delete'])) {
                 }
 
                 //suppression sur starterre via post en delete
-                // post_vh_to_delete_starterre($id_starterre, $environnement);
+                post_vh_to_delete_starterre($id_starterre, $environnement);
                 //passage du state à l'état 0 du vh 
-                // update_vh_state_replica_starterre($id_kepler, 0, $environnement);
+                update_vh_state_replica_starterre($id_kepler, 0, $environnement);
                 array_push($liste_vhs_deleted, $id_kepler);
             }
 
@@ -75,9 +75,6 @@ if (isset($_POST['type_delete'])) {
 
             break;
 
-        default:
-            # code...
-            break;
     }
 }
 

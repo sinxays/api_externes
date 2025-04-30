@@ -27,25 +27,49 @@ $(document).ready(function () {
 
 
 
-    $('input[name="flexRadioDefault"]').on('change', function () {
-        let selectedValue = $('input[name="flexRadioDefault"]:checked').val();
+    $('input[name="flexRadio_type_delete_vh"]').on('change', function () {
+        let selectedValue = $('input[name="flexRadio_type_delete_vh"]:checked').val();
         console.log("Nouvelle valeur sélectionnée :", selectedValue);
 
-        $("#starterre_reference_vh_input_to_delete_starterre").prop("disabled", false);
+        if (selectedValue == 'unique') {
+            $("#div_reference_kepler_or_vin_to_delete").prop("disabled", false);
+            $("#div_reference_kepler_or_vin_to_delete").prop("hidden", false);
+            $("#p_multiple_selected").prop("hidden", true);
+            $("#button_delete_starterre_vh").prop("disabled", true);
+        } else {
+            $("#div_reference_kepler_or_vin_to_delete").prop("disabled", true);
+            $("#div_reference_kepler_or_vin_to_delete").prop("hidden", true);
+            $("#p_multiple_selected").prop("hidden", false);
+            $("#starterre_reference_vh_input_to_delete_starterre").val("");
+            $("#button_delete_starterre_vh").prop("disabled", false);
+        }
+
+
     });
 
 
 
     // si appui sur le bouton de delete vhs 
     $("#button_delete_starterre_vh").click(function (e) {
+        remove_modal($("#modal_api_starterre_delete_vh"));
         loader.show();
-        // window.location.href = 'Starterre/delete_vhs.php';
-        let identifier_vh_kepler = $("#starterre_reference_vh_input_to_delete_starterre").val();
-        let selectedValue = $('input[name="flexRadioDefault"]:checked').val();
+
+        let identifier_vh_kepler = ""
+
+        let selectedValue_environnement = $('input[name="flexRadio_environnement"]:checked').val();
+
+        let selectedValue_type_delete = $('input[name="flexRadio_type_delete_vh"]:checked').val();
+
+        if (selectedValue_type_delete == 'multiple') {
+            identifier_vh_kepler = "";
+        } else {
+            identifier_vh_kepler = $("#starterre_reference_vh_input_to_delete_starterre").val();
+        }
+
         let datas = {
             id_kepler: identifier_vh_kepler,
-            type_delete: 'unique',
-            environnement: selectedValue
+            type_delete: selectedValue_type_delete,
+            environnement: selectedValue_environnement
         };
 
         console.log(datas);
@@ -56,7 +80,6 @@ $(document).ready(function () {
             data: datas,
             success: function (data_retour) {
                 loader.hide();
-                remove_modal($("#modal_api_starterre_delete_vh"));
                 $("#area_result").html(data_retour);
             },
             error: function () {
@@ -64,35 +87,6 @@ $(document).ready(function () {
             }
         });
     });
-
-    // si appui sur le bouton de delete vhs via fichier
-    $("#btn_delete_vhs_starterre").click(function (e) {
-        loader.show();
-        // window.location.href = 'Starterre/delete_vhs.php';
-        let selectedValue = $('input[name="flexRadioDefault"]:checked').val();
-        let datas = {
-            id_kepler: null,
-            type_delete: 'multiple_csv',
-            environnement: selectedValue
-        };
-
-        console.log(datas);
-
-        $.ajax({
-            url: "Starterre/delete_vhs.php",
-            type: "POST",
-            data: datas,
-            success: function (data_retour) {
-                loader.hide();
-                remove_modal($("#modal_api_starterre_delete_vh"));
-                $("#area_result").html(data_retour);
-            },
-            error: function () {
-                $("#area_result").html("erreur fichier ?");
-            }
-        });
-    });
-
 
 
 
@@ -189,9 +183,6 @@ $(document).ready(function () {
             }
         });
     });
-
-
-
 
 
 

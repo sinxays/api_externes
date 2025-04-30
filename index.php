@@ -62,6 +62,12 @@
     <div class="body_results">
         <!-- <button id="button_fade_sql" style="display: none;">Résultat Brut</button>
             <span id="area_result_brut" style="display: none;"></span> -->
+        <div class="lds-ellipsis" id="loader" style="display:none;">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
         <span id="area_result"></span>
     </div>
 
@@ -146,33 +152,55 @@
                 <div class="modal_body">
                     <form id="form_api_starterre_get_vh">
                         <!-- <span class="info_modal_body">Soit par un numéro, ou tous les BDC d'une date spécifique</span> -->
-
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1"
-                                value="prod">
-                            <label class="form-check-label" for="flexRadioDefault1">
-                                PROD
-                            </label>
+                        <label for="radio_environnement"><b>Environnement</b></label>
+                        <div id="radio_environnement ">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="flexRadio_environnement"
+                                    id="flexRadioDefault1" value="prod">
+                                <label class="form-check-label" for="flexRadioDefault1">
+                                    PROD
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="flexRadio_environnement"
+                                    id="flexRadioDefault2" value="dev">
+                                <label class="form-check-label" for="flexRadioDefault2">
+                                    DEV
+                                </label>
+                            </div>
                         </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2"
-                                value="dev">
-                            <label class="form-check-label" for="flexRadioDefault2">
-                                DEV
-                            </label>
+
+
+                        <label for="radio_type_delete_vh"><b>Type de suppression</b></label>
+                        <div id="radio_type_delete_vh">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="flexRadio_type_delete_vh"
+                                    id="flexRadio_unique" value="unique">
+                                <label class="form-check-label" for="flexRadio_unique">
+                                    Unique
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="flexRadio_type_delete_vh"
+                                    id="flexRadio_multiple" value="multiple">
+                                <label class="form-check-label" for="flexRadio_multiple">
+                                    Multiple
+                                </label>
+                            </div>
                         </div>
 
-                        <label for="starterre_reference_vh_input"><b>reference kepler ou VIN </b></label>
-                        <input type="text" class="form-control" id="starterre_reference_vh_input_to_delete_starterre"
-                            name="starterre_reference_vh_input_to_delete_starterre" style="width: 200px;" disabled>
-                        <br>
-                        <h2>OU</h2>
-                        <br>
-                        <button class="btn btn-warning" id="btn_delete_vhs_starterre" name="btn_delete_vhs_starterre"
-                            style="width: 200px; color:red; font-weight:bold">
-                            Delete avec fichier
-                        </button>
-                        <p> (avoir préalablement placé le fichier csv)</p>
+                        <div id="div_reference_kepler_or_vin_to_delete" disabled hidden>
+                            <label for="starterre_reference_vh_input"><b>reference kepler ou VIN </b></label>
+                            <input type="text" class="form-control"
+                                id="starterre_reference_vh_input_to_delete_starterre"
+                                name="starterre_reference_vh_input_to_delete_starterre" style="width: 200px;">
+                        </div>
+
+                        <p id="p_multiple_selected" hidden> <I>Avoir préalablement placé le fichier csv (séparateur ";")
+                                <br> colonne 1 id
+                                kepler || colonne 2 id starterre
+                                (optionnel) || colonne 3 VIN (optionnel)</I>
+                        </p>
                 </div>
                 <input type="text" name="type_recherche_starterre_vh" id="type_recherche_starterre_vh"
                     value="identifier_vh_kepler_from_starterre" hidden>
