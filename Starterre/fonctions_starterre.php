@@ -207,7 +207,6 @@ function get_vhs_starterre_from_base($environnement, $id_kepler = '')
 function get_infos_from_csv($chemin_fichier)
 {
 
-
     // Ouvrir le fichier en mode lecture
     if (($handle = fopen($chemin_fichier, "r")) !== FALSE) {
         // Ignorer la première ligne (en-têtes)
@@ -218,16 +217,14 @@ function get_infos_from_csv($chemin_fichier)
         while (($data = fgetcsv($handle, 1000, ";")) !== FALSE) {
             // Afficher chaque ligne (tableau)
             // print_r($data);
-            $array[$i]['id_kepler'] = $data[1];
-            $array[$i]['id_starterre'] = $data[2];
+            $array[$i]['id_kepler'] = $data[0];
+            $array[$i]['id_starterre'] = $data[1];
+            $array[$i]['vin'] = $data[2];
             $i++;
         }
         // Fermer le fichier après lecture
         fclose($handle);
-
         return $array;
-
-
     } else {
         echo "Impossible d'ouvrir le fichier.";
     }
