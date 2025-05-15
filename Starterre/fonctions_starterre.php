@@ -914,7 +914,7 @@ function create_vh_replica_starterre($id_kepler, $id_starterre, $immatriculation
     $stmt->execute($data);
 }
 
-function update_vh_state_replica_starterre($id_kepler, $state, $environnement)
+function update_vh_state_replica_starterre($id_kepler, $state, $environnement,$id_starterre ='')
 {
 
     $pdo = set_environnement_pdo($environnement);
@@ -941,10 +941,11 @@ function update_vh_state_replica_starterre($id_kepler, $state, $environnement)
         case 1:
             $data = [
                 'id_kepler' => $id_kepler,
-                'state' => $state
+                'state' => $state,
+                'id_starterre' => $id_starterre
             ];
 
-            $sql = "UPDATE vehicules SET state = :state WHERE id_kepler = :id_kepler";
+            $sql = "UPDATE vehicules SET state = :state, id_starterre = :id_starterre  WHERE id_kepler = :id_kepler";
             $stmt = $pdo->prepare($sql);
             $stmt->execute($data);
             break;
