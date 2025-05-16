@@ -942,10 +942,11 @@ function update_vh_state_replica_starterre($id_kepler, $state, $environnement,$i
             $data = [
                 'id_kepler' => $id_kepler,
                 'state' => $state,
-                'id_starterre' => $id_starterre
+                'id_starterre' => $id_starterre,
+                'date_insert_starterre' => $currentDateTime
             ];
 
-            $sql = "UPDATE vehicules SET state = :state, id_starterre = :id_starterre  WHERE id_kepler = :id_kepler";
+            $sql = "UPDATE vehicules SET state = :state, id_starterre = :id_starterre, date_insert_starterre = :date_insert_starterre  WHERE id_kepler = :id_kepler";
             $stmt = $pdo->prepare($sql);
             $stmt->execute($data);
             break;
