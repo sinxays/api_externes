@@ -109,8 +109,14 @@ foreach ($parc_array as $parc) {
                             else {
                                 //on check si le vh est à l'état 0 donc placé sur BDC
                                 if ($check_vh['state'] == 0) {
+
+                                     // et on doit le reposter ? 
+                                    $retour = post_vh_to_starterre($retour_json['datas'], $environnement);
+                                    
                                     //on le repasse à 1 state parc et on met à jour son id_starterre car il a changé 
-                                    update_vh_state_replica_starterre($reference_kepler, 1, $environnement,$retour['id_starterre']);
+                                    update_vh_state_replica_starterre($reference_kepler, 1, $environnement, $retour['id_starterre']);
+
+                                   
                                 }
 
                             }
@@ -131,7 +137,7 @@ foreach ($parc_array as $parc) {
                     // update 27/03 : on va voir si le véhicule a déja existé et dans ce cas c'est un véhicule qui est passé LAG par exemple , et donc Guillaume a retiré le prix pro
                     $check_vh = check_if_vh_exist($reference_kepler, $environnement);
                     if ($check_vh) {
-                        $id_starterre = get_idStarterre_from_idKepler($reference_kepler,$environnement);
+                        $id_starterre = get_idStarterre_from_idKepler($reference_kepler, $environnement);
                         //on le supprime de starterre
                         $return_delete_starterre = post_vh_to_delete_starterre($id_starterre, $environnement);
                         if ($return_delete_starterre) {
