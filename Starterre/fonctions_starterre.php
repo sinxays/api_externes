@@ -396,6 +396,81 @@ function recup_vhs_vendus_kepler_for_starterre($vendu_AR = '')
     return $return;
 }
 
+function recup_vhs_changed_fleet_for_starterre($fleet)
+{
+    // le token
+    $token = get_token();
+
+    // date du jour
+    $currentDateTime = date('Y-m-d');
+    // Date d'hier
+    $yesterday = date('Y-m-d', strtotime('-1 day'));
+
+    switch ($fleet) {
+        case 'PARC LOCATION':
+            $dataArray = array(
+                "fleet" => 'PARC LOCATION',
+                "isNotAvailableForSelling" => FALSE,
+                "dateUpdatedStart" => $yesterday,
+                "count" => 100
+            );
+            break;
+
+        case 'LEASE AND GO':
+            $dataArray = array(
+                "fleet" => 'LEASE AND GO',
+                "isNotAvailableForSelling" => FALSE,
+                "dateUpdatedStart" => $yesterday,
+                "count" => 100
+            );
+            break;
+    }
+
+    $request_vehicule = "v3.7/vehicles/";
+    $url = "https://www.kepler-soft.net/api/";
+
+    $url_vehicule = $url . "" . $request_vehicule;
+
+    $data = http_build_query($dataArray);
+
+    $getURL = $url_vehicule . '?' . $data;
+
+    // print_r($getURL);
+    // sautdeligne();
+
+    $ch = curl_init();
+    $header = array();
+    $header[] = 'X-Auth-Token:' . $token;
+    $header[] = 'Content-Type:text/html;charset=utf-8';
+
+    curl_setopt($ch, CURLOPT_URL, $getURL);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+
+    $result = curl_exec($ch);
+
+    if (curl_error($ch)) {
+        $result = curl_error($ch);
+        print_r($result);
+        echo "<br/> erreur";
+    }
+    curl_close($ch);
+
+    // var_dump(gettype($result));
+    print_r($result);
+
+    // créer un objet à partir du retour qui est un string
+    $obj_vehicule = json_decode($result);
+
+    //on prend l'object qui est dans l'array
+    $return = $obj_vehicule;
+    // on retourne un objet
+    // var_dump($return);
+    return $return;
+}
+
 
 function recup_vhs_arrivage_kepler_for_starterre($parc, $page)
 {
@@ -914,7 +989,7 @@ function create_vh_replica_starterre($id_kepler, $id_starterre, $immatriculation
     $stmt->execute($data);
 }
 
-function update_vh_state_replica_starterre($id_kepler, $state, $environnement,$id_starterre ='')
+function update_vh_state_replica_starterre($id_kepler, $state, $environnement, $id_starterre = '')
 {
 
     $pdo = set_environnement_pdo($environnement);

@@ -105,7 +105,8 @@ foreach ($parc_array as $parc) {
                                 separateur();
 
                             }
-                            //si il existe déja c'est qu'il a été placé sur BDC puis annulé donc state passé à 0 , donc on repasse le vh a state 1 : parc
+                            //si il existe déja c'est qu'il a été placé sur BDC puis annulé 
+                            //ou parti en LOC ou LAG puis revenu donc state passé à 0 , donc on repasse le vh a state 1 : parc
                             else {
                                 //on check si le vh est à l'état 0 donc placé sur BDC
                                 if ($check_vh['state'] == 0) {
