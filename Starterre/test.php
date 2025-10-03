@@ -12,12 +12,10 @@ ini_set('xdebug.var_display_max_data', '-1');
 
 $immatriculations_interessements = recup_immats_test();
 
-var_dump($immatriculations_interessements);
-
-die();
-
 foreach ($immatriculations_interessements as $key => $immatriculation) {
-    put_type_vehicule($immatriculation['immatriculation'],$immatriculation['id']);
+    echo $immatriculation['id'] . ' ==> ' . $immatriculation['immatriculation'] . '<br>';
+
+    // put_type_vehicule($immatriculation['immatriculation'],$immatriculation['id']);
 }
 
 // var_dump($test);
