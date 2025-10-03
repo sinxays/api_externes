@@ -15,7 +15,7 @@ $immatriculations_interessements = recup_immats_test();
 foreach ($immatriculations_interessements as $key => $immatriculation) {
     echo $immatriculation['ID'] . ' ==> ' . $immatriculation['immatriculation'] . '<br>';
 
-    // put_type_vehicule($immatriculation['immatriculation'],$immatriculation['ID']);
+    put_type_vehicule($immatriculation['immatriculation'],$immatriculation['ID']);
 }
 
 // var_dump($test);

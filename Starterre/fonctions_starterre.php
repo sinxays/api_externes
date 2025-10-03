@@ -1633,7 +1633,6 @@ function put_type_vehicule($immatriculation,$id)
     $data = [
         'type_vehicule' => $typevehicule,
         'id' => $id,
-        
     ];
 
     $sql = "UPDATE interessements SET type_vehicule = :type_vehicule WHERE ID = :id";
