@@ -596,7 +596,7 @@ function recup_vh_unique_kepler_for_starterre($reference)
     }
 
     // var_dump(gettype($result));
-    // print_r($result);
+    print_r($result);
 
     curl_close($ch);
 
@@ -1595,4 +1595,52 @@ function set_url_environnement_starterre_vh($environnement)
             break;
     }
     return $url;
+}
+
+
+function recup_immats_test()
+{
+    $pdo = Connection::getPDO_2();
+
+    $request = $pdo->query("SELECT ID,immatriculation FROM interessements");
+    $immats = $request->fetchAll(PDO::FETCH_ASSOC);
+
+    return $immats;
+
+}
+
+function put_type_vehicule($immatriculation,$id)
+{
+    $pdo = Connection::getPDO_2();
+
+    $query = $pdo->prepare("SELECT typevehicule_id FROM vehicules WHERE immatriculation = :immatriculation");
+    $query->execute(['immatriculation' => $immatriculation]);
+    $typevehicule_id = $query->fetchColumn();
+    switch ($typevehicule_id) {
+        case 1:
+            $typevehicule = 'VP';
+            break;
+
+        case 2:
+            $typevehicule = 'VU';
+            break;
+
+        default:
+            $typevehicule = '';
+            break;
+    }
+
+    $data = [
+        'type_vehicule' => $typevehicule,
+        'id' => $id,
+        
+    ];
+
+    $sql = "UPDATE interessements SET type_vehicule = :type_vehicule WHERE ID = :id";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($data);
+
+    
+
+
 }
