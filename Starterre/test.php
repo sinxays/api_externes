@@ -21,7 +21,7 @@ foreach ($immatriculations_interessements as $key => $immatriculation) {
 
     put_type_vehicule($immatriculation['immatriculation'],$immatriculation['ID']);
 }
-*/
+
 
 
 
@@ -34,6 +34,6 @@ foreach ($ids as $id) {
 
     put_infos_sites_interessements($id['agence_depart'], $id['agence_retour'], $id['ID']);
 }
-
+*/
 
 
