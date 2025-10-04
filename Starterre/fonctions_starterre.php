@@ -1602,14 +1602,14 @@ function recup_immats_test()
 {
     $pdo = Connection::getPDO_2();
 
-    $request = $pdo->query("SELECT ID,immatriculation FROM interessements");
+    $request = $pdo->query("SELECT ID,immatriculation FROM interessements WHERE type_vehicule IS NULL");
     $immats = $request->fetchAll(PDO::FETCH_ASSOC);
 
     return $immats;
 
 }
 
-function put_type_vehicule($immatriculation,$id)
+function put_type_vehicule($immatriculation, $id)
 {
     $pdo = Connection::getPDO_2();
 
@@ -1638,8 +1638,70 @@ function put_type_vehicule($immatriculation,$id)
     $sql = "UPDATE interessements SET type_vehicule = :type_vehicule WHERE ID = :id";
     $stmt = $pdo->prepare($sql);
     $stmt->execute($data);
+}
 
-    
+
+function recup_interessements_infos_sites_is_null()
+{
+    $pdo = Connection::getPDO_2();
+
+    $request = $pdo->query("SELECT ID,agence_depart,agence_retour FROM interessements WHERE ville_depart IS NULL");
+    $ids = $request->fetchAll(PDO::FETCH_ASSOC);
+
+    return $ids;
+}
 
 
+function put_infos_sites_interessements($agence_depart, $agence_retour, $id)
+{
+
+    $pdo = Connection::getPDO_2();
+
+    // les infos sites
+    $query = $pdo->prepare("SELECT 
+    situations.libelle AS type_agence, 
+    secteurs.libelle AS secteur,
+    districts.libelle AS district,
+    adresses_depart.ville AS ville_depart,
+    adresses_retour.ville AS ville_retour,
+    concessions.code_proprietaire AS prop_retour
+
+    FROM sites site_depart
+    LEFT JOIN situations ON site_depart.situation_id = situations.id
+    LEFT JOIN secteurs ON site_depart.secteur_id = secteurs.id
+    LEFT JOIN districts ON site_depart.district_id = districts.id
+    LEFT JOIN adresses adresses_depart ON adresses_depart.id = site_depart.adresse_id
+    LEFT JOIN sites site_retour ON site_retour.code_mnemonique = :agence_depart
+    LEFT JOIN adresses adresses_retour ON adresses_retour.id = site_retour.adresse_id
+    LEFT JOIN concessions ON concessions.id = site_retour.concession_id
+    WHERE site_depart.code_mnemonique = :agence_retour");
+
+    $query->execute([
+        'agence_depart' => $agence_depart,
+        'agence_retour' => $agence_retour
+    ]);
+
+    $infos_site = $query->fetch(PDO::FETCH_ASSOC);
+
+
+    $data = [
+        'ville_depart' => $infos_site['ville_depart'],
+        'ville_retour' => $infos_site['ville_retour'],
+        'type_agence' => $infos_site['type_agence'],
+        'secteur' => $infos_site['secteur'],
+        'district' => $infos_site['district'],
+        'prop_retour' => $infos_site['prop_retour'],
+        'id' => $id,
+    ];
+
+    $sql = "UPDATE interessements SET 
+    type_agence = :type_agence, 
+    ville_depart = :ville_depart, 
+    ville_retour = :ville_retour, 
+    secteur = :secteur, 
+    district = :district, 
+    prop_retour = :prop_retour    
+    WHERE ID = :id";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($data);
 }
