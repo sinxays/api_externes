@@ -1645,7 +1645,7 @@ function recup_interessements_infos_sites_is_null()
 {
     $pdo = Connection::getPDO_2();
 
-    $request = $pdo->query("SELECT ID,agence_depart,agence_retour FROM interessements WHERE ville_depart IS NULL");
+    $request = $pdo->query("SELECT ID,agence_depart,agence_retour FROM interessements");
     $ids = $request->fetchAll(PDO::FETCH_ASSOC);
 
     return $ids;
@@ -1671,10 +1671,10 @@ function put_infos_sites_interessements($agence_depart, $agence_retour, $id)
     LEFT JOIN secteurs ON site_depart.secteur_id = secteurs.id
     LEFT JOIN districts ON site_depart.district_id = districts.id
     LEFT JOIN adresses adresses_depart ON adresses_depart.id = site_depart.adresse_id
-    LEFT JOIN sites site_retour ON site_retour.code_mnemonique = :agence_depart
+    LEFT JOIN sites site_retour ON site_retour.code_mnemonique = :agence_retour
     LEFT JOIN adresses adresses_retour ON adresses_retour.id = site_retour.adresse_id
     LEFT JOIN concessions ON concessions.id = site_retour.concession_id
-    WHERE site_depart.code_mnemonique = :agence_retour");
+    WHERE site_depart.code_mnemonique = :agence_depart");
 
     $query->execute([
         'agence_depart' => $agence_depart,
