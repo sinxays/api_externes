@@ -14,7 +14,7 @@ ini_set('xdebug.var_display_max_data', '-1');
 
 
 
-$immatriculations_interessements = recup_immats_test();
+/*$immatriculations_interessements = recup_immats_test();
 
 foreach ($immatriculations_interessements as $key => $immatriculation) {
     echo $immatriculation['ID'] . ' ==> ' . $immatriculation['immatriculation'] . '<br>';
@@ -34,6 +34,7 @@ foreach ($ids as $id) {
 
     put_infos_sites_interessements($id['agence_depart'], $id['agence_retour'], $id['ID']);
 }
+*/
 
 
 

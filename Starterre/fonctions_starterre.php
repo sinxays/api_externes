@@ -1645,7 +1645,7 @@ function recup_interessements_infos_sites_is_null()
 {
     $pdo = Connection::getPDO_2();
 
-    $request = $pdo->query("SELECT ID,agence_depart,agence_retour FROM interessements");
+    $request = $pdo->query("SELECT ID,agence_depart,agence_retour FROM interessements WHERE type_agence IS NULL");
     $ids = $request->fetchAll(PDO::FETCH_ASSOC);
 
     return $ids;
