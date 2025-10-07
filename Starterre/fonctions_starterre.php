@@ -1616,7 +1616,7 @@ function put_type_vehicule($immatriculation, $id)
     $query = $pdo->prepare("SELECT typevehicule_id FROM vehicules WHERE immatriculation = :immatriculation");
     $query->execute(['immatriculation' => $immatriculation]);
     $typevehicule_id = $query->fetchColumn();
-    switch ($typevehicule_id) {
+    switch ((int)$typevehicule_id) {
         case 1:
             $typevehicule = 'VP';
             break;
