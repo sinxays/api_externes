@@ -1602,7 +1602,7 @@ function recup_immats_test()
 {
     $pdo = Connection::getPDO_2();
 
-    $request = $pdo->query("SELECT ID,immatriculation FROM interessements WHERE type_vehicule IS NULL");
+    $request = $pdo->query("SELECT ID,immatriculation FROM interessements WHERE type_vehicule = ''");
     $immats = $request->fetchAll(PDO::FETCH_ASSOC);
 
     return $immats;
