@@ -472,6 +472,77 @@ function recup_vhs_changed_fleet_for_starterre($fleet)
 }
 
 
+function recup_unique_vh_changed_fleet_for_starterre($fleet,$reference_kepler)
+{
+    // le token
+    $token = get_token();
+
+    switch ($fleet) {
+        case 'PARC LOCATION':
+            $dataArray = array(
+                "reference" => $reference_kepler,
+                "fleet" => 'PARC LOCATION',
+                "isNotAvailableForSelling" => FALSE,
+                "count" => 100
+            );
+            break;
+
+        case 'LEASE AND GO':
+            $dataArray = array(
+                "reference" => $reference_kepler,
+                "fleet" => 'LEASE AND GO',
+                "isNotAvailableForSelling" => FALSE,
+                "count" => 100
+            );
+            break;
+    }
+
+    $request_vehicule = "v3.7/vehicles/";
+    $url = "https://www.kepler-soft.net/api/";
+
+    $url_vehicule = $url . "" . $request_vehicule;
+
+    $data = http_build_query($dataArray);
+
+    $getURL = $url_vehicule . '?' . $data;
+
+    // print_r($getURL);
+    // sautdeligne();
+
+    $ch = curl_init();
+    $header = array();
+    $header[] = 'X-Auth-Token:' . $token;
+    $header[] = 'Content-Type:text/html;charset=utf-8';
+
+    curl_setopt($ch, CURLOPT_URL, $getURL);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+
+    $result = curl_exec($ch);
+
+    if (curl_error($ch)) {
+        $result = curl_error($ch);
+        print_r($result);
+        echo "<br/> erreur";
+    }
+    curl_close($ch);
+
+    // var_dump(gettype($result));
+    print_r($result);
+
+    // créer un objet à partir du retour qui est un string
+    $obj_vehicule = json_decode($result);
+
+    //on prend l'object qui est dans l'array
+    $return = $obj_vehicule;
+    // on retourne un objet
+    // var_dump($return);
+    return $return;
+}
+
+
 function recup_vhs_arrivage_kepler_for_starterre($parc, $page)
 {
     // le token
@@ -1602,7 +1673,7 @@ function recup_immats_test()
 {
     $pdo = Connection::getPDO_2();
 
-    $request = $pdo->query("SELECT ID,immatriculation FROM interessements WHERE type_vehicule = ''");
+    $request = $pdo->query("SELECT ID,immatriculation FROM interessements_2019_2024 WHERE type_vehicule IS NULL AND date_saisie > 2023-01-01");
     $immats = $request->fetchAll(PDO::FETCH_ASSOC);
 
     return $immats;
@@ -1645,7 +1716,7 @@ function recup_interessements_infos_sites_is_null()
 {
     $pdo = Connection::getPDO_2();
 
-    $request = $pdo->query("SELECT ID,agence_depart,agence_retour FROM interessements WHERE type_agence IS NULL");
+    $request = $pdo->query("SELECT ID,agence_depart,agence_retour FROM interessements_2019_2024 WHERE type_agence IS NULL");
     $ids = $request->fetchAll(PDO::FETCH_ASSOC);
 
     return $ids;

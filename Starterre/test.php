@@ -9,12 +9,13 @@ ini_set('xdebug.var_display_max_data', '-1');
 
 
 // $test = recup_vhs_changed_fleet_for_starterre('PARC LOCATION');
+$test = recup_unique_vh_changed_fleet_for_starterre('PARC LOCATION','285lzax');
+
+var_dump($test);
 
 
 
-
-
-/*$immatriculations_interessements = recup_immats_test();
+$immatriculations_interessements = recup_immats_test();
 
 foreach ($immatriculations_interessements as $key => $immatriculation) {
     echo $immatriculation['ID'] . ' ==> ' . $immatriculation['immatriculation'] . '<br>';
@@ -34,7 +35,7 @@ foreach ($ids as $id) {
 
     put_infos_sites_interessements($id['agence_depart'], $id['agence_retour'], $id['ID']);
 }
-*/
+
 
 
 
