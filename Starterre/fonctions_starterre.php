@@ -1673,7 +1673,7 @@ function recup_immats_test()
 {
     $pdo = Connection::getPDO_2();
 
-    $request = $pdo->query("SELECT ID,immatriculation FROM interessements_2019_2024 WHERE type_vehicule IS NULL AND date_saisie > 2023-01-01");
+    $request = $pdo->query("SELECT ID,immatriculation FROM interessements_2019_2024 WHERE type_vehicule IS NULL AND date_saisie > 2024-01-01");
     $immats = $request->fetchAll(PDO::FETCH_ASSOC);
 
     return $immats;
@@ -1716,7 +1716,7 @@ function recup_interessements_infos_sites_is_null()
 {
     $pdo = Connection::getPDO_2();
 
-    $request = $pdo->query("SELECT ID,agence_depart,agence_retour FROM interessements_2019_2024 WHERE type_agence IS NULL");
+    $request = $pdo->query("SELECT ID,agence_depart,agence_retour FROM interessements_2019_2024 WHERE type_agence IS NULL AND date_saisie > 2024-01-01");
     $ids = $request->fetchAll(PDO::FETCH_ASSOC);
 
     return $ids;
