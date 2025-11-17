@@ -1706,7 +1706,7 @@ function put_type_vehicule($immatriculation, $id)
         'id' => $id,
     ];
 
-    $sql = "UPDATE interessements SET type_vehicule = :type_vehicule WHERE ID = :id";
+    $sql = "UPDATE interessements_2019_2024 SET type_vehicule = :type_vehicule WHERE ID = :id";
     $stmt = $pdo->prepare($sql);
     $stmt->execute($data);
 }
@@ -1765,7 +1765,7 @@ function put_infos_sites_interessements($agence_depart, $agence_retour, $id)
         'id' => $id,
     ];
 
-    $sql = "UPDATE interessements SET 
+    $sql = "UPDATE interessements_2019_2024 SET 
     type_agence = :type_agence, 
     ville_depart = :ville_depart, 
     ville_retour = :ville_retour, 
