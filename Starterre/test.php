@@ -9,9 +9,9 @@ ini_set('xdebug.var_display_max_data', '-1');
 
 
 // $test = recup_vhs_changed_fleet_for_starterre('PARC LOCATION');
-$test = recup_unique_vh_changed_fleet_for_starterre('PARC LOCATION','285lzax');
+// $test = recup_unique_vh_changed_fleet_for_starterre('PARC LOCATION','285lzax');
 
-var_dump($test);
+// var_dump($test);
 
 
 
@@ -20,7 +20,7 @@ $immatriculations_interessements = recup_immats_test();
 foreach ($immatriculations_interessements as $key => $immatriculation) {
     echo $immatriculation['ID'] . ' ==> ' . $immatriculation['immatriculation'] . '<br>';
 
-    put_type_vehicule($immatriculation['immatriculation'],$immatriculation['ID']);
+    put_type_vehicule($immatriculation['immatriculation'], $immatriculation['ID']);
 }
 
 
