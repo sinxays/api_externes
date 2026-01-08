@@ -472,7 +472,7 @@ function recup_vhs_changed_fleet_for_starterre($fleet)
 }
 
 
-function recup_unique_vh_changed_fleet_for_starterre($fleet,$reference_kepler)
+function recup_unique_vh_changed_fleet_for_starterre($fleet, $reference_kepler)
 {
     // le token
     $token = get_token();
@@ -740,7 +740,9 @@ function mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh)
     $array_for_csv["brand"]["name"] = isset($vh->brand->name) ? trim(strtolower($vh->brand->name)) : "";
 
 
-    $array_for_csv["prices"][0]["price-without-taxes"] = isset($vh->priceSellerWithoutTax) ? floatval($vh->priceSellerWithoutTax) : 0;
+    // $array_for_csv["prices"][0]["price-without-taxes"] = isset($vh->priceSellerWithoutTax) ? floatval($vh->priceSellerWithoutTax) : 0;
+    // ajout des 120€ HT
+    $array_for_csv["prices"][0]["price-without-taxes"] = isset($vh->priceSellerWithoutTax) ? floatval($vh->priceSellerWithoutTax) + 120 : 0;
     $array_for_csv["prices"][0]["constructor-price-without-taxes"] = 0; // pas l'info sur kepler
     $array_for_csv["prices"][0]["estimated-costs-without-taxes"] = isset($vh->estimateCost) ? floatval($vh->estimateCost) : 0;
     $array_for_csv["prices"][0]["price-type"] = "prix_marchand_starterre";
@@ -1687,7 +1689,7 @@ function put_type_vehicule($immatriculation, $id)
     $query = $pdo->prepare("SELECT typevehicule_id FROM vehicules WHERE immatriculation = :immatriculation");
     $query->execute(['immatriculation' => $immatriculation]);
     $typevehicule_id = $query->fetchColumn();
-    switch ((int)$typevehicule_id) {
+    switch ((int) $typevehicule_id) {
         case 1:
             $typevehicule = 'VP';
             break;
