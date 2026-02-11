@@ -13,10 +13,14 @@ $environnement = 'prod';
 
 $nbr_vhs_to_loc_starterre = 0;
 $nbr_vh_to_LAG_starterre = 0;
+$nbr_vh_annul_fournisseur = 0;
 
 // on recupere depuis kepler les vhs a l'état vendu depuis la date d'aujourd'hui
 $recup_kepler_vhs_changed_to_loc_starterre = recup_vhs_changed_fleet_for_starterre('PARC LOCATION');
 $recup_kepler_vhs_changed_to_LAG_starterre = recup_vhs_changed_fleet_for_starterre('LEASE AND GO');
+$recup_kepler_vhs_changed_to_other_fleet = recup_vhs_changed_fleet_for_starterre('CVO ANNULATION FOURNISSEUR EN COURS');
+
+$count_total_vh_delete = 0;
 
 // var_dump($recup_kepler_vhs_vendus_AR_for_starterre);
 // die();
@@ -34,7 +38,7 @@ if (!empty($recup_kepler_vhs_changed_to_loc_starterre)) {
         $reference_kepler = $vh->reference;
 
         // on va chercher le idStarterre depuis le idKepler , car le delete se fait depuis le idStarterre
-        $id_starterre = get_idStarterre_from_idKepler($reference_kepler,$environnement);
+        $id_starterre = get_idStarterre_from_idKepler($reference_kepler, $environnement);
 
         // si on trouve un idStarterre c'est qu'il est dans ma base
         if ($id_starterre) {
@@ -45,7 +49,8 @@ if (!empty($recup_kepler_vhs_changed_to_loc_starterre)) {
             // si il est à 1 donc a l'état PARC
             if ($check_state_vh) {
                 //on le post en DELETE vers l'api STARTERRE
-                $count = post_vh_to_delete_starterre($id_starterre, $environnement);
+                post_vh_to_delete_starterre($id_starterre, $environnement);
+                $count_total_vh_delete += 1;
                 // et on actualise ma base pour que ça soit iso et on mt le vh à l'état 0 : deleted
                 update_vh_state_replica_starterre($reference_kepler, 0, $environnement);
 
@@ -57,6 +62,7 @@ if (!empty($recup_kepler_vhs_changed_to_loc_starterre)) {
             }
 
         }
+
     }
     sautdeligne();
     echo "nombre de vh partis en loc : $nbr_vhs_to_loc_starterre";
@@ -75,7 +81,7 @@ if (!empty($recup_kepler_vhs_changed_to_LAG_starterre)) {
         $reference_kepler = $vh->reference;
 
         // on va chercher le idStarterre depuis le idKepler , car le delete se fait depuis le idStarterre
-        $id_starterre = get_idStarterre_from_idKepler($reference_kepler,$environnement);
+        $id_starterre = get_idStarterre_from_idKepler($reference_kepler, $environnement);
 
         // si on trouve un idStarterre c'est qu'il est dans ma base
         if ($id_starterre) {
@@ -86,7 +92,8 @@ if (!empty($recup_kepler_vhs_changed_to_LAG_starterre)) {
             // si il est à 1 donc a l'état PARC
             if ($check_state_vh) {
                 //on le post en DELETE vers l'api STARTERRE
-                $count = post_vh_to_delete_starterre($id_starterre, $environnement);
+                post_vh_to_delete_starterre($id_starterre, $environnement);
+                $count_total_vh_delete += 1;
                 // et on actualise ma base pour que ça soit iso et on mt le vh à l'état 0 : deleted
                 update_vh_state_replica_starterre($reference_kepler, 0, $environnement);
 
@@ -105,3 +112,46 @@ if (!empty($recup_kepler_vhs_changed_to_LAG_starterre)) {
     sautdeligne();
     echo "Aucun véhicule partis en LAG AR";
 }
+
+
+// si on trouve des données pour les vhs vendus AR
+if (!empty($recup_kepler_vhs_changed_to_other_fleet)) {
+    foreach ($recup_kepler_vhs_changed_to_other_fleet as $vh) {
+
+        $reference_kepler = $vh->reference;
+
+        // on va chercher le idStarterre depuis le idKepler , car le delete se fait depuis le idStarterre
+        $id_starterre = get_idStarterre_from_idKepler($reference_kepler, $environnement);
+
+        // si on trouve un idStarterre c'est qu'il est dans ma base
+        if ($id_starterre) {
+
+            // on check si il est pas déja à l'état 0 dans ma base
+            $check_state_vh = check_state_vh($reference_kepler);
+
+            // si il est à 1 donc a l'état PARC
+            if ($check_state_vh) {
+                //on le post en DELETE vers l'api STARTERRE
+                post_vh_to_delete_starterre($id_starterre, $environnement);
+                $count_total_vh_delete += 1;
+                // et on actualise ma base pour que ça soit iso et on mt le vh à l'état 0 : deleted
+                update_vh_state_replica_starterre($reference_kepler, 0, $environnement);
+
+                //on affiche les données pour infos.
+                echo $reference_kepler . " || " . $vh->vin . " || " . $vh->licenseNumber;
+                sautdeligne();
+
+                $nbr_vh_annul_fournisseur++;
+            }
+
+        }
+    }
+    sautdeligne();
+    echo "nombre de vh sortis du parc: $nbr_vh_annul_fournisseur";
+} else {
+    sautdeligne();
+    echo "Aucun véhicule sortis en annulation";
+}
+
+
+echo "total vhs deleted ==> " .$count_total_vh_delete;

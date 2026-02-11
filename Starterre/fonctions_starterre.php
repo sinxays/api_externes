@@ -406,25 +406,12 @@ function recup_vhs_changed_fleet_for_starterre($fleet)
     // Date d'hier
     $yesterday = date('Y-m-d', strtotime('-1 day'));
 
-    switch ($fleet) {
-        case 'PARC LOCATION':
-            $dataArray = array(
-                "fleet" => 'PARC LOCATION',
-                "isNotAvailableForSelling" => FALSE,
-                "dateUpdatedStart" => $yesterday,
-                "count" => 100
-            );
-            break;
-
-        case 'LEASE AND GO':
-            $dataArray = array(
-                "fleet" => 'LEASE AND GO',
-                "isNotAvailableForSelling" => FALSE,
-                "dateUpdatedStart" => $yesterday,
-                "count" => 100
-            );
-            break;
-    }
+    $dataArray = array(
+        "fleet" => $fleet,
+        "isNotAvailableForSelling" => FALSE,
+        "dateUpdatedStart" => $yesterday,
+        "count" => 100
+    );
 
     $request_vehicule = "v3.7/vehicles/";
     $url = "https://www.kepler-soft.net/api/";
