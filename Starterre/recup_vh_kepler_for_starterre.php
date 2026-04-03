@@ -61,14 +61,14 @@ foreach ($parc_array as $parc) {
     while ($datas_find == TRUE) {
 
         $recup_kepler_for_starterre_parc = recup_vhs_kepler_for_starterre($parc, $page, 'parc');
-        $recup_kepler_for_starterre_arrivage = recup_vhs_kepler_for_starterre($parc, $page, 'arrivage');
+        // $recup_kepler_for_starterre_arrivage = recup_vhs_kepler_for_starterre($parc, $page, 'arrivage');
 
         //on assemble les deux tableaux (parc et arrivage) en un 
-        $recup_kepler_for_starterre = array_merge($recup_kepler_for_starterre_parc, $recup_kepler_for_starterre_arrivage);
+        // $recup_kepler_for_starterre = array_merge($recup_kepler_for_starterre_parc, $recup_kepler_for_starterre_arrivage);
 
         // si on trouve des données 
-        if (!empty($recup_kepler_for_starterre)) {
-            foreach ($recup_kepler_for_starterre as $nb_index_vh => $vh) {
+        if (!empty($recup_kepler_for_starterre_parc)) {
+            foreach ($recup_kepler_for_starterre_parc as $nb_index_vh => $vh) {
 
                 $reference_kepler = $vh->reference;
 

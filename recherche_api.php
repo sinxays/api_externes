@@ -32,9 +32,11 @@ if (isset($_POST)) {
             $array_for_csv = array();
             $datas_vh_for_starterre = recup_vh_unique_kepler_for_starterre($id_kepler);
 
-            var_dump($datas_vh_for_starterre);
+            echo "</br></br> POST vh to starterre </br></br>";
 
-            die();
+
+            // var_dump($datas_vh_for_starterre);
+            // die();
 
             if (!empty($datas_vh_for_starterre)) {
 
@@ -43,6 +45,14 @@ if (isset($_POST)) {
                     if (isset($vh->priceSellerWithoutTax) && $vh->priceSellerWithoutTax !== '') {
                         //UPDATE : si il ya un truc qui manque ou qui ne va pas pour starterre on s'embete pas on l'importe pas dans starterre.
                         $retour_json = mise_en_array_des_donnees_recup($array_for_csv, $nb_index_vh, $vh);
+                        $retour = post_vh_to_starterre($retour_json['datas'], $environnement);
+
+                        //on le met en base aussi si il n'existe pas déja
+                        $check_vh = check_if_vh_exist($id_kepler, $environnement);
+                        //si il existe pas alors on le crée
+                        if (!$check_vh) {
+                            create_vh_replica_starterre($id_kepler, $retour['id_starterre'], $vh->licenseNumber, $vh->vin, $environnement);
+                        }
                     }
                 }
             } else {
