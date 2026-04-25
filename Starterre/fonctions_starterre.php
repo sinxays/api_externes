@@ -333,7 +333,7 @@ function recup_vhs_vendus_kepler_for_starterre($vendu_AR = '')
 
     // date du jour
     $currentDateTime = date('Y-m-d');
-    $currentDateTime = date('2026-04-22');
+    // $currentDateTime = date('2026-04-22');
 
     if ($vendu_AR !== '') {
         $dataArray = array(
