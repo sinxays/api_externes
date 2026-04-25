@@ -107,7 +107,8 @@ function sautdeligne()
 
 function get_token()
 {
-    $url_token = "https://www.kepler-soft.net/api/v3.0/auth-token/";
+    $url_token = "https://app.keplervo.com/api/v3.0/auth-token/";
+    $url_token = "https://app.keplervo.com/api/v3.0/auth-token/";
 
     $ch2 = curl_init();
 
@@ -270,7 +271,7 @@ function recup_vhs_kepler_for_starterre($parc, $page, $state)
 
 
     $request_vehicule = "v3.7/vehicles/";
-    $url = "https://www.kepler-soft.net/api/";
+    $url = "https://app.keplervo.com/api/";
 
 
     $url_vehicule = $url . "" . $request_vehicule;
@@ -332,6 +333,7 @@ function recup_vhs_vendus_kepler_for_starterre($vendu_AR = '')
 
     // date du jour
     $currentDateTime = date('Y-m-d');
+    $currentDateTime = date('2026-04-22');
 
     if ($vendu_AR !== '') {
         $dataArray = array(
@@ -352,7 +354,8 @@ function recup_vhs_vendus_kepler_for_starterre($vendu_AR = '')
 
 
     $request_vehicule = "v3.7/vehicles/";
-    $url = "https://www.kepler-soft.net/api/";
+    $url = "https://app.keplervo.com/api/";
+    
 
     $url_vehicule = $url . "" . $request_vehicule;
 
@@ -414,7 +417,7 @@ function recup_vhs_changed_fleet_for_starterre($fleet)
     );
 
     $request_vehicule = "v3.7/vehicles/";
-    $url = "https://www.kepler-soft.net/api/";
+    $url = "https://app.keplervo.com/api/";
 
     $url_vehicule = $url . "" . $request_vehicule;
 
@@ -485,7 +488,7 @@ function recup_unique_vh_changed_fleet_for_starterre($fleet, $reference_kepler)
     }
 
     $request_vehicule = "v3.7/vehicles/";
-    $url = "https://www.kepler-soft.net/api/";
+    $url = "https://app.keplervo.com/api/";
 
     $url_vehicule = $url . "" . $request_vehicule;
 
@@ -546,7 +549,7 @@ function recup_vhs_arrivage_kepler_for_starterre($parc, $page)
 
 
     $request_vehicule = "v3.7/vehicles/";
-    $url = "https://www.kepler-soft.net/api/";
+    $url = "https://app.keplervo.com/api/";
 
 
     $url_vehicule = $url . "" . $request_vehicule;
@@ -623,7 +626,7 @@ function recup_vh_unique_kepler_for_starterre($reference)
     );
 
     $request_vehicule = "v3.7/vehicles/";
-    $url = "https://www.kepler-soft.net/api/";
+    $url = "https://app.keplervo.com/api/";
 
     $url_vehicule = $url . "" . $request_vehicule;
 
@@ -1581,7 +1584,7 @@ function get_state_from_reference_vh_kepler($reference)
     );
 
     $request_vehicule = "v3.7/vehicles/";
-    $url = "https://www.kepler-soft.net/api/";
+    $url = "https://app.keplervo.com/api/";
 
     $url_vehicule = $url . "" . $request_vehicule;
 
